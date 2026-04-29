@@ -1,14 +1,22 @@
 // Centralized router setup for the core application layer.
 import { createRouter, createWebHistory } from 'vue-router';
 
-import LandingView from '../../modules/landing/LandingView.vue';
+import Editor from '../../modules/builder/pages/Editor.vue';
+import Home from '../../modules/landing/pages/Home.vue';
 
-// Basic route table kept intentionally small for initial scaffolding.
+// Route table:
+// - /       public landing page
+// - /editor invitation builder workspace
 const routes = [
   {
     path: '/',
-    name: 'landing',
-    component: LandingView,
+    name: 'home',
+    component: Home,
+  },
+  {
+    path: '/editor',
+    name: 'editor',
+    component: Editor,
   },
 ];
 

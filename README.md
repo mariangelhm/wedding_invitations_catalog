@@ -117,6 +117,16 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Implementation uses a mobile-first CSS Grid approach (`1fr` by default, `1fr 1fr 1fr` from `1024px`).
 - Goal is structure clarity: controls on left, visual output in center, metadata on right.
 
+## Landing page purpose
+- `src/modules/landing/pages/Home.vue` is the public entry page for new users.
+- It presents a clear hero message and a single primary CTA: **Start now**.
+- The CTA routes users to `/editor`, which opens the builder workspace.
+- A simple **How it works** section explains the flow in 3 steps:
+  1. Customize
+  2. Add extras
+  3. Get your link
+- Styles are intentionally minimal and live in `src/modules/landing/styles/home.css`.
+
 ## Folder Structure
 ```text
 /src

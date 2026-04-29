@@ -3,11 +3,15 @@
   Organizes feature components into semantic left/center/right columns.
 -->
 <script setup>
+import { useAutosave } from '../composables/useAutosave';
 import AddonsSelector from '../components/AddonsSelector.vue';
 import BasicEditorForm from '../components/BasicEditorForm.vue';
 import ExpirationBanner from '../components/ExpirationBanner.vue';
 import InvitationPreview from '../components/InvitationPreview.vue';
 import PriceSummary from '../components/PriceSummary.vue';
+
+// Enable autosave while users interact with the editor workspace.
+useAutosave();
 </script>
 
 <template>
