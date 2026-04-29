@@ -5,6 +5,8 @@
 <script setup>
 import { onMounted, computed } from 'vue';
 
+import Input from '../../../../components/ui/Input.vue';
+import TextArea from '../../../../components/ui/TextArea.vue';
 import { useBuilderStore } from '../../../../store/builder.store';
 
 // Use the Pinia builder store as the single source of truth for invitation data.
@@ -32,31 +34,15 @@ const invitationJson = computed(() => JSON.stringify(builderStore.invitation, nu
       template reads and writes stay in sync automatically.
     -->
     <div v-if="builderStore.invitation" class="form-fields">
-      <label>
-        Names
-        <!--
-          v-model note:
-          v-model creates two-way binding between this input and
-          builderStore.invitation.base.names.
-          Typing here immediately mutates store state and updates all consumers.
-        -->
-        <input v-model="builderStore.invitation.base.names" type="text" />
-      </label>
-
-      <label>
-        Date
-        <input v-model="builderStore.invitation.base.date" type="text" />
-      </label>
-
-      <label>
-        Location
-        <input v-model="builderStore.invitation.base.location" type="text" />
-      </label>
-
-      <label>
-        Message
-        <textarea v-model="builderStore.invitation.base.message" rows="4"></textarea>
-      </label>
+      <!--
+        Reusability note:
+        Shared Input/TextArea components standardize field UI and v-model behavior,
+        so forms across modules stay consistent and easier to maintain.
+      -->
+      <Input v-model="builderStore.invitation.base.names" label="Names" />
+      <Input v-model="builderStore.invitation.base.date" label="Date" />
+      <Input v-model="builderStore.invitation.base.location" label="Location" />
+      <TextArea v-model="builderStore.invitation.base.message" label="Message" :rows="4" />
     </div>
 
     <h3>Current Invitation JSON</h3>
@@ -70,22 +56,11 @@ const invitationJson = computed(() => JSON.stringify(builderStore.invitation, nu
   display: grid;
   gap: 0.75rem;
   width: min(720px, 100%);
-  padding: 1rem;
 }
 
 .form-fields {
   display: grid;
   gap: 0.75rem;
-}
-
-label {
-  display: grid;
-  gap: 0.25rem;
-}
-
-input,
-textarea {
-  padding: 0.5rem;
 }
 
 pre {

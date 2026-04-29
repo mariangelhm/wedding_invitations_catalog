@@ -202,6 +202,19 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Styling uses CSS variables for template colors and font values.
 - Responsive adjustments preserve spacing and readability on small screens.
 
+## UI components system
+- Reusable UI building blocks were added under `src/components/ui/`:
+  - `Button.vue`
+  - `Input.vue`
+  - `TextArea.vue`
+- Goal: keep form/button styles and behavior consistent across modules.
+- `Input.vue` and `TextArea.vue` support `v-model` using `modelValue` + `update:modelValue`.
+- Shared field styling includes:
+  - consistent padding
+  - border radius
+  - focus ring/border state
+- `BasicEditorForm.vue` now uses these reusable input components instead of native fields.
+
 ## Folder Structure
 ```text
 /src
