@@ -28,6 +28,38 @@ This project is a clean Vue 3 starter for building a modular **Wedding Invitatio
    npm run preview
    ```
 
+## Invitation Model
+The `builderStore` creates and stores a default invitation draft with a consistent object shape.
+
+```js
+{
+  id,
+  status: 'draft',
+  base: {
+    names: '',
+    date: '',
+    location: '',
+    message: ''
+  },
+  styles: {
+    primaryColor: '#000000',
+    fontFamily: 'Arial'
+  },
+  addons: [],
+  expiresAt: null,
+  createdAt: new Date()
+}
+```
+
+### Field Meanings
+- `id`: unique draft identifier generated from current timestamp.
+- `status`: invitation lifecycle state (`draft` by default).
+- `base`: editable core invitation content (names, date, location, message).
+- `styles`: design defaults for color and font.
+- `addons`: optional extra features/items.
+- `expiresAt`: optional expiration timestamp (null when not used).
+- `createdAt`: date/time of draft creation.
+
 ## Folder Structure
 ```text
 /src
@@ -42,6 +74,7 @@ This project is a clean Vue 3 starter for building a modular **Wedding Invitatio
     /landing
     /catalog
   /store
+    builder.store.js
   /styles
     /base
       reset.css
