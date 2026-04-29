@@ -160,6 +160,14 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Loaded data is rendered dynamically through the romantic template.
 - This keeps public rendering decoupled from the editor/store context.
 
+## Routing structure
+- Routes are defined in `src/core/router/index.js` with explicit page mapping:
+  - `/` → `Home`
+  - `/catalog` → `Catalog`
+  - `/editor` → `Editor`
+  - `/i/:id` → `PublicInvitation` (dynamic invitation id)
+- `App.vue` contains simple navigation links to these routes for quick access during development.
+
 ## Folder Structure
 ```text
 /src

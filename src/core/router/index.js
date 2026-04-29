@@ -1,4 +1,4 @@
-// Centralized router setup for the core application layer.
+// Centralized router setup for primary app navigation.
 import { createRouter, createWebHistory } from 'vue-router';
 
 import Editor from '../../modules/builder/pages/Editor.vue';
@@ -6,11 +6,11 @@ import Catalog from '../../modules/catalog/pages/Catalog.vue';
 import PublicInvitation from '../../modules/invitations/pages/PublicInvitation.vue';
 import Home from '../../modules/landing/pages/Home.vue';
 
-// Route table:
-// - /        public landing page
-// - /catalog template catalog selection page
-// - /editor  invitation builder workspace
-// - /i/:id   public invitation page by id
+// Routing structure:
+// - /        : landing page entry point
+// - /catalog : template catalog page
+// - /editor  : invitation builder workspace
+// - /i/:id   : public invitation link with dynamic id parameter
 const routes = [
   {
     path: '/',
@@ -34,7 +34,7 @@ const routes = [
   },
 ];
 
-// Export a configured router instance for use in src/main.js.
+// Router instance used globally by main.js.
 const router = createRouter({
   history: createWebHistory(),
   routes,
