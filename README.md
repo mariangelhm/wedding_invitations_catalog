@@ -137,6 +137,22 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Clicking **Customize** routes users to `/editor` to continue the builder flow.
 - A dedicated route is available at `/catalog`.
 
+## Template system
+- `InvitationPreview.vue` now delegates visual rendering to a template component.
+- Added romantic template files:
+  - `src/modules/invitations/templates/romantic/Template.vue`
+  - `src/modules/invitations/templates/romantic/style.css`
+- The romantic template renders invitation sections for:
+  - names (large title)
+  - date
+  - location
+  - message
+- Styling is clean and simple with centered layout, elegant serif typography, and soft colors.
+- CSS variables are used in template styles for:
+  - primary color (`--romantic-primary-color`)
+  - font family (`--romantic-font-family`)
+- Responsive sizing/spacing is included using `clamp(...)` and a small-screen media query.
+
 ## Folder Structure
 ```text
 /src

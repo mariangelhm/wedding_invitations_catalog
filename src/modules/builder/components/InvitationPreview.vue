@@ -1,10 +1,11 @@
 <!--
   Invitation preview component.
-  Renders invitation data directly from store state.
+  Delegates rendering to a concrete invitation template.
 -->
 <script setup>
 import { computed, onMounted } from 'vue';
 
+import RomanticTemplate from '../../../invitations/templates/romantic/Template.vue';
 import { useBuilderStore } from '../../../../store/builder.store';
 
 const builderStore = useBuilderStore();
@@ -32,14 +33,16 @@ const hasMapAddon = computed(() =>
     <h2>Invitation Preview</h2>
 
     <!--
-      Dynamic rendering note:
-      These values come directly from reactive Pinia state, so preview text updates live
-      while user edits fields in the form.
+      Template rendering decision:
+      InvitationPreview acts as orchestration layer and passes store data
+      into the selected presentation template component.
     -->
-    <p><strong>Names:</strong> {{ builderStore.invitation?.base.names }}</p>
-    <p><strong>Date:</strong> {{ builderStore.invitation?.base.date }}</p>
-    <p><strong>Location:</strong> {{ builderStore.invitation?.base.location }}</p>
-    <p><strong>Message:</strong> {{ builderStore.invitation?.base.message }}</p>
+    <RomanticTemplate
+      :names="builderStore.invitation?.base.names"
+      :date="builderStore.invitation?.base.date"
+      :location="builderStore.invitation?.base.location"
+      :message="builderStore.invitation?.base.message"
+    />
 
     <!--
       Conditional addon placeholders:
