@@ -127,6 +127,16 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   3. Get your link
 - Styles are intentionally minimal and live in `src/modules/landing/styles/home.css`.
 
+## Catalog system
+- `src/modules/catalog/pages/Catalog.vue` provides a simple template catalog view.
+- It uses mock template data with required fields:
+  - `name`
+  - `description`
+  - `basePrice`
+- Templates are rendered as cards, each with a **Customize** button.
+- Clicking **Customize** routes users to `/editor` to continue the builder flow.
+- A dedicated route is available at `/catalog`.
+
 ## Folder Structure
 ```text
 /src
