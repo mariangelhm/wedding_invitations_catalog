@@ -1,0 +1,9 @@
+/*
+  CSS variables stylesheet:
+  Provides central design tokens for colors and spacing.
+*/
+:root {
+  --color-text-primary: #1f2937;
+  --color-bg-primary: #ffffff;
+  --space-md: 1rem;
+}
