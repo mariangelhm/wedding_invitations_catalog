@@ -1,0 +1,30 @@
+/* Basic landing page layout with simple spacing and readable alignment. */
+.home-page {
+  display: grid;
+  gap: 2rem;
+  padding: 2rem 1.5rem;
+}
+
+/* Hero block styles keep focus on message and primary action. */
+.home-hero {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 48rem;
+}
+
+.home-hero button {
+  width: fit-content;
+  padding: 0.6rem 1rem;
+}
+
+/* How-it-works section styles prioritize clarity over decoration. */
+.home-how-it-works {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.home-how-it-works ol {
+  margin-left: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+}
