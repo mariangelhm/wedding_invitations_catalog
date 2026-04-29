@@ -1,0 +1,98 @@
+/*
+  Modern landing page styling.
+  Uses simple structure, strong spacing, and soft visuals without overcomplication.
+*/
+.home-page {
+  --primary-color: #8b5a7a;
+
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(180deg, #fff8fb 0%, #fff 55%, #f9f7ff 100%);
+  padding: 3rem 1.25rem;
+}
+
+/* Max-width container keeps lines readable and content centered on large screens. */
+.home-container {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 2.5rem;
+}
+
+/* Hero: centered content with clear hierarchy and a prominent CTA. */
+.home-hero {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 1rem;
+  padding: 3rem 1.25rem;
+}
+
+.home-hero h1 {
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.home-hero p {
+  max-width: 44rem;
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  color: #4b5563;
+}
+
+/* Button styling: rounded, primary color, and hover feedback. */
+.home-hero button {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.35rem;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.home-hero button:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.95);
+}
+
+/* How-it-works section keeps instruction steps simple and scannable. */
+.home-how-it-works {
+  display: grid;
+  gap: 1rem;
+}
+
+.home-how-it-works h2 {
+  text-align: center;
+}
+
+/* Mobile-first single column, upgraded to 3 columns on desktop. */
+.steps-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+.step-card {
+  background: #ffffff;
+  border: 1px solid #ebe7ee;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.step-card h3 {
+  color: var(--primary-color);
+}
+
+.step-card p {
+  color: #4b5563;
+}
+
+@media (min-width: 900px) {
+  .steps-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}

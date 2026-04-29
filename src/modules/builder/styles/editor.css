@@ -1,0 +1,62 @@
+/*
+  Editor layout styles focused on spacing and structure.
+  Uses a centered max-width container and responsive grid columns.
+*/
+.editor-page {
+  padding: 1.5rem 1rem 2.5rem;
+}
+
+.editor-container {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+/* Desktop: 3-column layout (left controls, center preview, right metadata). */
+@media (min-width: 1024px) {
+  .editor-container {
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.editor-column {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Generic card wrapper used by side panels. */
+.editor-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+  padding: 1rem;
+}
+
+/* Preview shell mimics invitation surface with depth and spacing. */
+.editor-preview-shell {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+  padding: 1.25rem;
+}
+
+/* Typography improvements: stronger section titles in cards. */
+.editor-card :deep(h2),
+.editor-preview-shell :deep(h2) {
+  font-size: 1.25rem;
+}
+
+/* Typography improvements: smaller labels for cleaner input rhythm. */
+.editor-card :deep(label) {
+  font-size: 0.9rem;
+}
+
+/* Extra spacing between stacked form controls in left panel. */
+.editor-column-left .editor-card :deep(.form-fields) {
+  gap: 1rem;
+}
