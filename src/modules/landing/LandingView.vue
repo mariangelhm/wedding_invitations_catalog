@@ -6,6 +6,7 @@
 import { useAutosave } from '../builder/composables/useAutosave';
 import AddonsSelector from '../builder/components/AddonsSelector.vue';
 import BasicEditorForm from '../builder/components/BasicEditorForm.vue';
+import InvitationPreview from '../builder/components/InvitationPreview.vue';
 import PriceSummary from '../builder/components/PriceSummary.vue';
 
 // Enable autosave for invitation edits while this page is mounted.
@@ -18,6 +19,7 @@ useAutosave();
     <BasicEditorForm />
     <AddonsSelector />
     <PriceSummary />
+    <InvitationPreview />
   </section>
 </template>
 

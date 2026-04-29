@@ -93,6 +93,14 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `Saving to Firebase`, plus invitation payload.
 - Purpose: reduce risk of losing user progress during editing while avoiding too many save calls.
 
+## Preview system
+- `InvitationPreview.vue` reads `builderStore.invitation` and displays the current `names`, `date`, `location`, and `message` values.
+- Because the preview binds directly to reactive Pinia state, content updates instantly as users type in the editor.
+- Addon placeholders are rendered conditionally:
+  - `Countdown enabled` appears when addon type `countdown_wedding` exists.
+  - `Map enabled` appears when addon type `map` exists.
+- This keeps preview logic simple while validating dynamic rendering behavior.
+
 ## Folder Structure
 ```text
 /src
