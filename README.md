@@ -177,6 +177,19 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Step cards are responsive: 1 column on mobile and 3 columns on desktop.
 - Styling stays intentionally simple to keep the UI clean and maintainable.
 
+## Editor UI improvements
+- `Editor.vue` now uses a padded page wrapper with a centered max-width container.
+- Layout is CSS Grid based via `src/modules/builder/styles/editor.css`:
+  - mobile: 1 column
+  - desktop: 3 columns
+- Left panel wraps `BasicEditorForm` and `AddonsSelector` in cards for clearer grouping.
+- Center preview is wrapped in a larger invitation-like card (white surface, rounded corners, shadow, padding).
+- Right panel wraps `PriceSummary` and `ExpirationBanner` in separate cards.
+- Typography was tuned for readability:
+  - section titles larger
+  - labels slightly smaller
+- Spacing between form inputs was increased for cleaner editing rhythm.
+
 ## Folder Structure
 ```text
 /src

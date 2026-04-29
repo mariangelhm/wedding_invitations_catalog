@@ -16,50 +16,47 @@ useAutosave();
 
 <template>
   <section class="editor-page">
-    <!--
-      Layout decision:
-      Left column groups editing controls (form + addons).
-      Center column is dedicated to live preview.
-      Right column groups meta information (price + expiration).
-    -->
-    <aside class="editor-column editor-column-left">
-      <BasicEditorForm />
-      <AddonsSelector />
-    </aside>
+    <div class="editor-container">
+      <!--
+        Layout decision:
+        Left column groups editing controls (form + addons).
+        Each control block is wrapped in a card to improve scanning and separation.
+      -->
+      <aside class="editor-column editor-column-left">
+        <div class="editor-card">
+          <BasicEditorForm />
+        </div>
 
-    <main class="editor-column editor-column-center">
-      <InvitationPreview />
-    </main>
+        <div class="editor-card">
+          <AddonsSelector />
+        </div>
+      </aside>
 
-    <aside class="editor-column editor-column-right">
-      <PriceSummary />
-      <ExpirationBanner />
-    </aside>
+      <!--
+        Center column emphasizes preview output.
+        Preview is wrapped in an invitation-like card shell.
+      -->
+      <main class="editor-column editor-column-center">
+        <div class="editor-preview-shell">
+          <InvitationPreview />
+        </div>
+      </main>
+
+      <!--
+        Right column contains metadata blocks.
+        Price and expiration are separated into individual cards.
+      -->
+      <aside class="editor-column editor-column-right">
+        <div class="editor-card">
+          <PriceSummary />
+        </div>
+
+        <div class="editor-card">
+          <ExpirationBanner />
+        </div>
+      </aside>
+    </div>
   </section>
 </template>
 
-<style scoped>
-/*
-  Structure-first responsive layout:
-  - Mobile-first: stacked single column for narrow screens.
-  - Desktop: switches to 3 columns for parallel editing + preview + metadata.
-*/
-.editor-page {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  width: 100%;
-}
-
-.editor-column {
-  display: grid;
-  gap: 1rem;
-}
-
-@media (min-width: 1024px) {
-  .editor-page {
-    grid-template-columns: 1fr 1fr 1fr;
-    align-items: start;
-  }
-}
-</style>
+<style scoped src="../styles/editor.css"></style>
