@@ -168,6 +168,15 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `/i/:id` → `PublicInvitation` (dynamic invitation id)
 - `App.vue` contains simple navigation links to these routes for quick access during development.
 
+## Landing visual improvements
+- `Home.vue` was refactored into a modern, centered hero with clearer visual hierarchy.
+- Hero includes a large elegant title, subtitle, and prominent CTA button.
+- `home.css` now adds a soft gradient background and a max-width container for cleaner spacing.
+- CTA button uses `--primary-color`, rounded shape, and a subtle hover effect.
+- "How it works" was upgraded from a plain list to step cards with better spacing.
+- Step cards are responsive: 1 column on mobile and 3 columns on desktop.
+- Styling stays intentionally simple to keep the UI clean and maintainable.
+
 ## Folder Structure
 ```text
 /src
