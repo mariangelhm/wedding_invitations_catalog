@@ -153,6 +153,13 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - font family (`--romantic-font-family`)
 - Responsive sizing/spacing is included using `clamp(...)` and a small-screen media query.
 
+## Public invitation view
+- `src/modules/invitations/pages/PublicInvitation.vue` is a public-facing page for shared links.
+- It reads `invitationId` from route params using path `/i/:id`.
+- A mock async fetch simulates loading invitation data by ID.
+- Loaded data is rendered dynamically through the romantic template.
+- This keeps public rendering decoupled from the editor/store context.
+
 ## Folder Structure
 ```text
 /src
