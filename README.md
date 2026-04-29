@@ -60,6 +60,14 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - `expiresAt`: optional expiration timestamp (null when not used).
 - `createdAt`: date/time of draft creation.
 
+
+## Basic Editor Form behavior
+- The component at `src/modules/builder/components/BasicEditorForm.vue` uses `useBuilderStore()` directly.
+- On mount, it creates a draft invitation if one does not exist yet.
+- Each form field (`names`, `date`, `location`, `message`) uses `v-model` bound directly to `builderStore.invitation.base`.
+- Because Pinia store state is reactive, changes typed in the form immediately update the global store.
+- A JSON preview (`<pre>`) renders the current invitation object to make debugging and state validation easy.
+
 ## Folder Structure
 ```text
 /src

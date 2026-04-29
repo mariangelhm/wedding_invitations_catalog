@@ -1,24 +1,26 @@
 <!--
   Landing module root view.
-  Displays a placeholder message for the initial app screen.
+  Shows the app title and the basic builder editor form.
 -->
 <script setup>
-// Imports a non-visual component that performs a one-time console test of builder store behavior.
-import BuilderStoreConsoleTest from '../builder/BuilderStoreConsoleTest.vue';
+import BasicEditorForm from '../builder/components/BasicEditorForm.vue';
 </script>
 
 <template>
   <section class="landing-view">
     <h1>Wedding Invitation Builder App</h1>
-    <BuilderStoreConsoleTest />
+    <BasicEditorForm />
   </section>
 </template>
 
 <style scoped>
-/* Minimal section layout for the landing view content. */
+/* Minimal page layout for the landing screen. */
 .landing-view {
   min-height: 100vh;
   display: grid;
-  place-items: center;
+  gap: 1rem;
+  align-content: start;
+  justify-items: center;
+  padding: 1.5rem;
 }
 </style>
