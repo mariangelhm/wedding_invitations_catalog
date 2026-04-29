@@ -1,8 +1,9 @@
 <!--
   Landing module root view.
-  Shows the app title and the basic builder editor form.
+  Shows the app title and core builder module components.
 -->
 <script setup>
+import AddonsSelector from '../builder/components/AddonsSelector.vue';
 import BasicEditorForm from '../builder/components/BasicEditorForm.vue';
 </script>
 
@@ -10,6 +11,7 @@ import BasicEditorForm from '../builder/components/BasicEditorForm.vue';
   <section class="landing-view">
     <h1>Wedding Invitation Builder App</h1>
     <BasicEditorForm />
+    <AddonsSelector />
   </section>
 </template>
 

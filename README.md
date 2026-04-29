@@ -68,6 +68,16 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Because Pinia store state is reactive, changes typed in the form immediately update the global store.
 - A JSON preview (`<pre>`) renders the current invitation object to make debugging and state validation easy.
 
+## Addons system
+- The component at `src/modules/builder/components/AddonsSelector.vue` uses a static addon catalog:
+  - `countdown_wedding` (Wedding Countdown) / price `3000`
+  - `map` (Map) / price `3000`
+  - `gallery` (Gallery) / price `5000`
+- Each addon is rendered with a checkbox.
+- When checked, the addon is added to `builderStore.invitation.addons` only if it does not already exist (duplicate protection by `type`).
+- When unchecked, it is removed from `builderStore.invitation.addons` by filtering matching `type`.
+- A JSON debug block shows the currently selected addons for transparent state verification.
+
 ## Folder Structure
 ```text
 /src
