@@ -3,9 +3,13 @@
   Shows the app title and core builder module components.
 -->
 <script setup>
+import { useAutosave } from '../builder/composables/useAutosave';
 import AddonsSelector from '../builder/components/AddonsSelector.vue';
 import BasicEditorForm from '../builder/components/BasicEditorForm.vue';
 import PriceSummary from '../builder/components/PriceSummary.vue';
+
+// Enable autosave for invitation edits while this page is mounted.
+useAutosave();
 </script>
 
 <template>

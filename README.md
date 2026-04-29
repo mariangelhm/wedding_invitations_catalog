@@ -85,6 +85,14 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Because `totalPrice` is a Pinia getter, it updates automatically when addons are added or removed.
 - `PriceSummary.vue` displays base price, selected addons with their individual prices, and the live total.
 
+## Autosave behavior
+- `useAutosave` (`src/modules/builder/composables/useAutosave.js`) watches `builderStore.invitation` with `{ deep: true }` so nested changes (like `base.names` or `addons`) are captured.
+- Autosave uses a `500ms` debounce: each new change resets the timer, so saving runs only after input settles.
+- On debounce completion, autosave calls `saveInvitation(invitation)`.
+- Current service implementation is a mock in `src/modules/builder/services/invitations.service.js` and logs:
+  - `Saving to Firebase`, plus invitation payload.
+- Purpose: reduce risk of losing user progress during editing while avoiding too many save calls.
+
 ## Folder Structure
 ```text
 /src
