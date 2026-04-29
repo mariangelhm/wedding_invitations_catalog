@@ -101,6 +101,12 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `Map enabled` appears when addon type `map` exists.
 - This keeps preview logic simple while validating dynamic rendering behavior.
 
+## Expiration system
+- New drafts set `expiresAt` to `createdAt + 30 days` in `createDraftInvitation()`.
+- `ExpirationBanner.vue` shows the expiration date and calculates `daysRemaining` from current time.
+- Remaining days are computed with a millisecond difference converted to days and rounded up (`Math.ceil`) so partial days still count.
+- If fewer than 3 days remain, a warning message is displayed.
+
 ## Folder Structure
 ```text
 /src

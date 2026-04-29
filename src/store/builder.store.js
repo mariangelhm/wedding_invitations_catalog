@@ -32,6 +32,14 @@ export const useBuilderStore = defineStore('builderStore', {
       // Use current timestamp as a simple unique identifier for local draft creation.
       const id = Date.now();
 
+      // Capture creation time once so createdAt / expiresAt are based on the same reference.
+      const createdAt = new Date();
+
+      // Date logic:
+      // default expiration is 30 days after creation time.
+      const expiresAt = new Date(createdAt);
+      expiresAt.setDate(expiresAt.getDate() + 30);
+
       // Build a fresh invitation model.
       const invitation = {
         // id: unique identifier for this draft invitation record.
@@ -67,11 +75,11 @@ export const useBuilderStore = defineStore('builderStore', {
         // addons: optional enhancements/features selected for the invitation (none by default).
         addons: [],
 
-        // expiresAt: optional expiration date for the draft; null indicates no expiration set.
-        expiresAt: null,
+        // expiresAt: default expiration date set to createdAt + 30 days.
+        expiresAt,
 
         // createdAt: timestamp capturing when this draft was first created.
-        createdAt: new Date(),
+        createdAt,
       };
 
       // Persist the new draft in global state so all modules can access it.
