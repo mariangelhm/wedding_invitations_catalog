@@ -78,6 +78,13 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - When unchecked, it is removed from `builderStore.invitation.addons` by filtering matching `type`.
 - A JSON debug block shows the currently selected addons for transparent state verification.
 
+## Pricing system
+- `builderStore` includes a fixed `basePrice` of `20000`.
+- A reactive getter `totalPrice` computes the final amount as:
+  - `basePrice + sum(invitation.addons[].price)`
+- Because `totalPrice` is a Pinia getter, it updates automatically when addons are added or removed.
+- `PriceSummary.vue` displays base price, selected addons with their individual prices, and the live total.
+
 ## Folder Structure
 ```text
 /src

@@ -5,6 +5,7 @@
 <script setup>
 import AddonsSelector from '../builder/components/AddonsSelector.vue';
 import BasicEditorForm from '../builder/components/BasicEditorForm.vue';
+import PriceSummary from '../builder/components/PriceSummary.vue';
 </script>
 
 <template>
@@ -12,6 +13,7 @@ import BasicEditorForm from '../builder/components/BasicEditorForm.vue';
     <h1>Wedding Invitation Builder App</h1>
     <BasicEditorForm />
     <AddonsSelector />
+    <PriceSummary />
   </section>
 </template>
 

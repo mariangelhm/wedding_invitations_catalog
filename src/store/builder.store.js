@@ -4,10 +4,27 @@ import { defineStore } from 'pinia';
 export const useBuilderStore = defineStore('builderStore', {
   // State keeps the currently active invitation model in memory.
   state: () => ({
+    // basePrice: starting price for an invitation before optional addons.
+    basePrice: 20000,
+
     // invitation: full invitation draft object.
     // Starts as null because no draft exists until createDraftInvitation() is called.
     invitation: null,
   }),
+
+  getters: {
+    // totalPrice is reactive: it recalculates whenever basePrice or addons change.
+    totalPrice: (state) => {
+      // If invitation is not initialized yet, total is just the base price.
+      if (!state.invitation) return state.basePrice;
+
+      // Sum all selected addon prices from invitation.addons.
+      const addonsTotal = state.invitation.addons.reduce((sum, addon) => sum + addon.price, 0);
+
+      // Final total = base invitation price + selected addons.
+      return state.basePrice + addonsTotal;
+    },
+  },
 
   actions: {
     // Creates a new invitation draft with sensible defaults for the builder module.
