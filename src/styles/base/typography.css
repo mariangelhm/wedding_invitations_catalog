@@ -1,0 +1,8 @@
+/*
+  Typography stylesheet:
+  Defines global text defaults for readability.
+*/
+body {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+}
