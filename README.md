@@ -215,6 +215,20 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - focus ring/border state
 - `BasicEditorForm.vue` now uses these reusable input components instead of native fields.
 
+## Landing hero SaaS refactor
+- `Home.vue` hero was redesigned into a modern 2-column SaaS layout.
+- Left side now contains:
+  - title
+  - subtitle
+  - two CTAs: `Ver catálogo` and `Cómo funciona`
+- Right side includes a phone mockup that previews invitation content.
+- Added soft abstract background shapes for visual depth.
+- Button system now includes:
+  - primary filled button
+  - secondary outlined button
+- Layout is centered with `max-width: 1200px` and stacks on mobile.
+- Styles are implemented in `src/modules/landing/styles/home.css` with clear layout comments.
+
 ## Folder Structure
 ```text
 /src
