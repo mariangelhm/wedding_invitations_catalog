@@ -190,6 +190,18 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - labels slightly smaller
 - Spacing between form inputs was increased for cleaner editing rhythm.
 
+## Template improvements
+- The romantic template was refined to be minimal but more elegant.
+- Layout now centers content vertically using a shell wrapper.
+- Added clearer spacing between sections for better readability.
+- Typography updates:
+  - names are larger with elegant emphasis
+  - date/location are smaller metadata text
+  - message is italic for a softer personal tone
+- Added soft background/surface treatment and centralized container (`max-width: 500px`).
+- Styling uses CSS variables for template colors and font values.
+- Responsive adjustments preserve spacing and readability on small screens.
+
 ## Folder Structure
 ```text
 /src

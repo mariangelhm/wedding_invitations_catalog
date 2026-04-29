@@ -1,6 +1,6 @@
 <!--
   Romantic invitation template.
-  Provides a clean centered composition with soft color styling.
+  Uses a centered, minimal composition focused on readability and elegance.
 -->
 <script setup>
 import './style.css';
@@ -29,14 +29,17 @@ defineProps({
 <template>
   <!--
     Design structure:
-    - names as visual focal point
-    - date/location as event metadata
-    - message as personal body copy
+    - vertically centered shell for a ceremonial feel
+    - names emphasized as the primary focal point
+    - date/location kept smaller as metadata
+    - message in italic for a personal tone
   -->
-  <article class="romantic-template">
-    <h2 class="romantic-template__names">{{ names || 'Your Names Here' }}</h2>
-    <p class="romantic-template__date">{{ date || 'Event Date' }}</p>
-    <p class="romantic-template__location">{{ location || 'Event Location' }}</p>
-    <p class="romantic-template__message">{{ message || 'Your invitation message will appear here.' }}</p>
-  </article>
+  <div class="romantic-template-shell">
+    <article class="romantic-template">
+      <h2 class="romantic-template__names">{{ names || 'Your Names Here' }}</h2>
+      <p class="romantic-template__date">{{ date || 'Event Date' }}</p>
+      <p class="romantic-template__location">{{ location || 'Event Location' }}</p>
+      <p class="romantic-template__message">{{ message || 'Your invitation message will appear here.' }}</p>
+    </article>
+  </div>
 </template>
