@@ -107,6 +107,16 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Remaining days are computed with a millisecond difference converted to days and rounded up (`Math.ceil`) so partial days still count.
 - If fewer than 3 days remain, a warning message is displayed.
 
+## Editor layout structure
+- `src/modules/builder/pages/Editor.vue` defines a responsive 3-region layout for the builder.
+- Desktop layout (3 columns):
+  - **Left:** `BasicEditorForm` + `AddonsSelector`
+  - **Center:** `InvitationPreview`
+  - **Right:** `PriceSummary` + `ExpirationBanner`
+- Mobile layout: all sections are stacked into a single column.
+- Implementation uses a mobile-first CSS Grid approach (`1fr` by default, `1fr 1fr 1fr` from `1024px`).
+- Goal is structure clarity: controls on left, visual output in center, metadata on right.
+
 ## Folder Structure
 ```text
 /src
