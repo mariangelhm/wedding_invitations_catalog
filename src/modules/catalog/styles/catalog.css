@@ -189,3 +189,16 @@
 .not-found { padding: 24px; border: 1px solid var(--color-border); border-radius: 12px; }
 .similar-block { margin-top: 28px; display: grid; gap: 14px; }
 @media (min-width: 992px) { .detail-grid { grid-template-columns: 1fr 1fr; align-items: start; } }
+
+.preview-modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); display: grid; place-items: center; z-index: 90; padding: 16px; }
+.preview-modal { background: #fff; width: min(900px, 100%); border-radius: 16px; padding: 18px; display: grid; gap: 14px; max-height: 92vh; overflow-y: auto; }
+.modal-close { justify-self: end; border: none; background: transparent; color: var(--color-primary); cursor: pointer; }
+.view-switch { display: flex; gap: 8px; }
+.view-switch button { border: 1px solid var(--color-border); background: #fff; padding: 8px 12px; border-radius: 999px; }
+.view-switch button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+.modal-preview-area.mobile { display: grid; place-items: center; }
+.phone-wrapper { width: min(280px, 100%); aspect-ratio: 9/16; border-radius: 28px; background: #111827; padding: 10px; }
+.phone-notch { width: 36%; height: 14px; border-radius: 999px; margin: 0 auto 8px; background: #374151; }
+.phone-screen { background: #fff; border-radius: 20px; height: calc(100% - 22px); display: grid; place-items: center; padding: 10px; }
+.modal-footer { border-top: 1px solid var(--color-border); padding-top: 12px; display: grid; gap: 10px; }
+@media (max-width: 640px) { .preview-modal { padding: 12px; } }

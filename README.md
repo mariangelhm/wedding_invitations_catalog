@@ -437,3 +437,15 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Includes breadcrumb (`Inicio/Home / Catálogo/Catalog / Template Name`), large preview mockup, pricing, level/category metadata, feature list, and actions for customize + preview.
 - Similar designs section shows up to 3 templates from the same category excluding the current template.
 - Data source is shared between catalog list and detail to avoid duplication.
+
+## Template preview modal
+- Added reusable `TemplatePreviewModal.vue` for catalog templates.
+- Props:
+  - `template`
+  - `isOpen`
+  - `initialView` (`web` or `mobile`)
+- Emits:
+  - `close`
+  - `customize`
+- Modal includes Web/Mobile view switch, dark overlay, centered responsive container, and editor helper text.
+- `TemplateDetail.vue` now opens this modal from the "Vista previa" action and routes to `/editor?templateId={id}` from the customize callback.
