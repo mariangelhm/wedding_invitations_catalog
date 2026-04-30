@@ -307,6 +307,21 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Public page explicitly prevents horizontal scrolling and adjusts outer padding.
 - Responsive comments were added in styles to explain full-width and spacing decisions.
 
+## Landing page visual redesign
+- The landing page was redesigned to a modern SaaS wedding-invitation style focused on clean UI and conversion clarity.
+- Global color palette was centralized in `src/styles/base/variables.css` with dark pink brand tones:
+  - `--color-primary`, `--color-primary-dark`, `--color-primary-light`
+  - `--color-text-main`, `--color-text-muted`, `--color-border`, `--color-surface`, `--color-background-soft`
+- Landing navbar now includes:
+  - brand text `InvitaLove`
+  - center navigation links
+  - right-side `Comenzar` button and `ES | EN` switch
+- Hero uses responsive 2-column layout on desktop and stacked layout on mobile:
+  - left: badge, title, subtitle, CTAs, benefits
+  - right: modern phone mockup invitation preview
+- "¿Cómo funciona?" section uses modern cards with rounded corners, soft shadows, and icon circles.
+- Landing-specific styles live in `src/modules/landing/styles/home.css` and are documented with layout comments.
+
 ## Folder Structure
 ```text
 /src

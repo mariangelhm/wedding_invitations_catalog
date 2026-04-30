@@ -1,8 +1,4 @@
-<!--
-  Root app shell.
-  Provides global navigation and language switch for application pages.
-  Public invitation route intentionally hides this chrome to preserve presentation mode.
--->
+<!-- Root app shell; navbar is hidden for presentation-focused routes/pages that provide their own header. -->
 <script setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
@@ -14,12 +10,9 @@ const { currentLang, t } = useI18n();
 const languageStore = useLanguageStore();
 const route = useRoute();
 
-// Public invitation view should render as a clean presentation page without app navbar.
-const showAppNav = computed(() => !route.path.startsWith('/i/'));
-
-const setLang = (lang) => {
-  languageStore.setLanguage(lang);
-};
+// Home and public invitation manage their own presentation headers.
+const showAppNav = computed(() => route.path !== '/' && !route.path.startsWith('/i/'));
+const setLang = (lang) => languageStore.setLanguage(lang);
 </script>
 
 <template>
@@ -51,14 +44,14 @@ const setLang = (lang) => {
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
 }
 .lang-switch {
   margin-left: auto;
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 999px;
   padding: 0.25rem 0.55rem;
   background: #fff;
@@ -70,5 +63,5 @@ const setLang = (lang) => {
   padding: 0.2rem 0.45rem;
   cursor: pointer;
 }
-.lang-btn--active { background: #8b5a7a; color: #fff; }
+.lang-btn--active { background: var(--color-primary); color: #fff; }
 </style>

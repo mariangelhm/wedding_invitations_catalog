@@ -1,9 +1,16 @@
 /*
-  CSS variables stylesheet:
-  Provides central design tokens for colors and spacing.
+  Global design tokens.
+  Primary brand palette is a modern dark-pink SaaS scheme.
 */
 :root {
-  --color-text-primary: #1f2937;
-  --color-bg-primary: #ffffff;
+  --color-primary: #C7355C;
+  --color-primary-dark: #A82B4A;
+  --color-primary-light: #FBE8EE;
+  --color-text-main: #111827;
+  --color-text-muted: #6B7280;
+  --color-border: #E5E7EB;
+  --color-surface: #FFFFFF;
+  --color-background-soft: #FFF7FA;
+
   --space-md: 1rem;
 }
