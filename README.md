@@ -528,3 +528,15 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - Confirmation countdown
   - RSVP
 - The template is intentionally presentation-focused and avoids business logic; it only renders received data and fallback content.
+
+## Reusable CountdownBlock
+- Added reusable countdown block at `src/modules/builder/blocks/CountdownBlock/CountdownBlock.vue` with companion metadata config at `src/modules/builder/blocks/CountdownBlock/config.js`.
+- Props:
+  - `targetDate` (string)
+  - `label` (string)
+- Behavior:
+  - computes days/hours/minutes/seconds
+  - refreshes every second with an interval
+  - clears interval on unmount
+  - shows fallback state `El tiempo ha finalizado` once expired
+- Designed as a reusable card block with dark-pink accents and responsive grid for integration into invitation templates.
