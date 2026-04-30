@@ -39,5 +39,13 @@ export const useBuilderStore = defineStore('builderStore', {
       this.invitation = invitation;
       return invitation;
     },
+
+    toggleAddon(type, label, price, checked) {
+      if (!this.invitation) return;
+      const exists = this.invitation.addons.some((addon) => addon.type === type);
+      if (checked && !exists) this.invitation.addons.push({ type, label, price });
+      if (!checked) this.invitation.addons = this.invitation.addons.filter((addon) => addon.type !== type);
+    },
+
   },
 });
