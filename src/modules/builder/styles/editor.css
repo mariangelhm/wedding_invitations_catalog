@@ -1,0 +1,106 @@
+/*
+  Professional editor workspace styles.
+  Architecture: sidebar navigation + center mobile preview + right settings panel.
+*/
+.editor-page {
+  padding: 1.25rem;
+}
+
+.editor-layout {
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+/* Desktop arrangement: left menu, center preview, right settings. */
+@media (min-width: 1100px) {
+  .editor-layout {
+    grid-template-columns: 240px minmax(360px, 1fr) minmax(340px, 1fr);
+    align-items: start;
+  }
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.9rem;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+  padding: 1rem;
+}
+
+.panel h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.panel-sidebar {
+  position: sticky;
+  top: 1rem;
+}
+
+.sidebar-menu {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.menu-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.6rem;
+  background: #fff;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+}
+
+.menu-item--active {
+  border-color: #8b5a7a;
+  background: rgba(139, 90, 122, 0.08);
+}
+
+/* Phone-like preview frame to simulate real mobile invitation rendering. */
+.phone-frame {
+  width: min(360px, 100%);
+  margin: 0 auto;
+  background: #111827;
+  border-radius: 2rem;
+  padding: 0.65rem;
+  box-shadow: 0 14px 28px rgba(17, 24, 39, 0.25);
+}
+
+.phone-notch {
+  width: 35%;
+  height: 16px;
+  margin: 0 auto 0.55rem;
+  border-radius: 999px;
+  background: #1f2937;
+}
+
+.phone-screen {
+  border-radius: 1.4rem;
+  background: #f9fafb;
+  padding: 0.85rem;
+  min-height: 560px;
+  overflow: auto;
+}
+
+.settings-block {
+  display: grid;
+  gap: 0.85rem;
+}
+
+/* Mobile: naturally stacked panels; hide sticky behavior. */
+@media (max-width: 1099px) {
+  .panel-sidebar {
+    position: static;
+  }
+}
+
+.template-context { margin: 8px 0 12px; color: var(--color-text-muted); font-size: 0.9rem; }
+.custom-components-panel { display: grid; gap: 10px; }
+.component-card { border: 1px solid var(--color-border); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; gap: 10px; background: #fff; }
+.component-card.static { border-color: var(--color-primary-light); background: #fff7fa; }
+.component-card strong { color: var(--color-text-main); }
+.component-card p { margin: 4px 0; color: var(--color-text-muted); font-size: 0.9rem; }
+.component-card small { color: var(--color-primary-dark); font-weight: 600; }
