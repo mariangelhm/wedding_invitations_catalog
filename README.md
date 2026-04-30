@@ -300,6 +300,13 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Styling is intentionally soft so it does not distract from invitation content.
 - Invitation container keeps visual priority using a light drop-shadow and centered layout.
 
+## Mobile responsiveness
+- Public invitation and romantic template were tuned with a mobile-first approach.
+- On small screens, invitation card expands to full width and uses reduced padding.
+- Typography scales down on mobile to avoid overflow and keep readability.
+- Public page explicitly prevents horizontal scrolling and adjusts outer padding.
+- Responsive comments were added in styles to explain full-width and spacing decisions.
+
 ## Folder Structure
 ```text
 /src

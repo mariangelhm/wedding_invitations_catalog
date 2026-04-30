@@ -14,7 +14,6 @@ const invitationId = route.params.id;
 const isLoading = ref(true);
 const invitation = ref(null);
 
-// Mock async fetch by invitation ID.
 const fetchInvitationById = async (id) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -39,7 +38,6 @@ onMounted(async () => {
 
 <template>
   <main class="public-invitation-page">
-    <!-- Decorative background layers kept subtle to support (not distract from) invitation. -->
     <div class="bg-shape bg-shape--one" aria-hidden="true"></div>
     <div class="bg-shape bg-shape--two" aria-hidden="true"></div>
 
@@ -63,10 +61,7 @@ onMounted(async () => {
   padding: 1rem;
   position: relative;
   overflow: hidden;
-  /*
-    Background choice:
-    Soft radial + linear gradients create depth while preserving readability.
-  */
+  overflow-x: hidden;
   background:
     radial-gradient(circle at top left, #fce7f3 0%, transparent 45%),
     radial-gradient(circle at bottom right, #ede9fe 0%, transparent 45%),
@@ -101,7 +96,18 @@ onMounted(async () => {
   margin: auto;
   position: relative;
   z-index: 1;
-  /* Helps invitation card stand out from decorative backdrop. */
   filter: drop-shadow(0 12px 24px rgba(15, 23, 42, 0.12));
+}
+
+/* Mobile-first safety: allow full-width container and prevent accidental horizontal overflow. */
+@media (max-width: 640px) {
+  .public-invitation-page {
+    padding: 0.6rem;
+  }
+
+  .public-invitation-container {
+    width: 100%;
+    max-width: none;
+  }
 }
 </style>

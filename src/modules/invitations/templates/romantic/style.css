@@ -1,6 +1,6 @@
 /*
   Romantic invitation card style.
-  Keeps layout elegant, centered, and lightweight.
+  Mobile-first to ensure strong readability on small devices.
 */
 .romantic-template-shell {
   --romantic-bg-color: #fff8fb;
@@ -10,59 +10,71 @@
   min-height: 60vh;
   display: grid;
   place-items: center;
-  padding: 1rem;
+  padding: 0.75rem;
   background: var(--romantic-bg-color);
 }
 
-/* Main invitation card with requested white surface, radius, shadow, and padding. */
+/* Main invitation card with clean centered layout. */
 .romantic-template-card {
   width: 100%;
   max-width: 400px;
   margin: auto;
   background: #fff;
   border-radius: 20px;
-  padding: 30px;
+  padding: 24px;
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
   text-align: center;
   color: var(--romantic-card-text);
   display: grid;
-  gap: 0.9rem;
+  gap: 0.8rem;
   animation: fadeInCard 0.45s ease;
 }
 
-/* Typography hierarchy: large names, supporting metadata, and italic message. */
+/* Typography hierarchy optimized for mobile-first readability. */
 .romantic-template__names {
-  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-size: clamp(1.8rem, 6vw, 2.8rem);
   font-family: 'Georgia', 'Times New Roman', serif;
   font-weight: 600;
 }
 
 .romantic-template__date,
 .romantic-template__location {
-  font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+  font-size: clamp(0.9rem, 3.8vw, 1.05rem);
   color: var(--romantic-meta-text);
 }
 
 .romantic-template__message {
-  margin-top: 0.25rem;
+  margin-top: 0.2rem;
   font-style: italic;
-  line-height: 1.7;
+  line-height: 1.65;
+  font-size: clamp(0.95rem, 3.8vw, 1.05rem);
 }
 
-/* Subtle fade-in to make template appearance feel refined. */
 @keyframes fadeInCard {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
+/*
+  Small-screen tuning:
+  - keep card full width
+  - reduce inner padding
+  - lower typography to avoid overflow/horizontal scroll
+*/
 @media (max-width: 640px) {
+  .romantic-template-shell {
+    width: 100%;
+    padding: 0.5rem;
+  }
+
   .romantic-template-card {
-    padding: 24px;
+    max-width: none;
+    width: 100%;
+    padding: 18px;
+    gap: 0.7rem;
+  }
+
+  .romantic-template__names {
+    font-size: 1.7rem;
   }
 }
