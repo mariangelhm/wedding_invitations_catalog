@@ -242,6 +242,26 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - `Home.vue` now reads localized strings through `t(...)`.
 - `App.vue` includes a simple `[ES | EN]` language switch button that toggles app language globally.
 
+## Catalog UI improvements
+- `Catalog.vue` was upgraded into a product-style catalog experience.
+- Added top style filters:
+  - Todos
+  - Románticas
+  - Modernas
+  - Minimalistas
+- Template cards now include:
+  - preview image area
+  - style badge
+  - template name
+  - price
+  - customize button
+- Grid behavior:
+  - mobile: 1 column
+  - desktop: 3 columns
+  - wide screens: 4 columns
+- Added hover interaction on cards (scale + shadow) for stronger product affordance.
+- Styles were moved to `src/modules/catalog/styles/catalog.css`.
+
 ## Folder Structure
 ```text
 /src

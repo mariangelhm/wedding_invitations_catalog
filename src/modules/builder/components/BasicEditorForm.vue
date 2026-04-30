@@ -5,9 +5,9 @@
 <script setup>
 import { onMounted, computed } from 'vue';
 
-import Input from '../../../components/ui/Input.vue';
-import TextArea from '../../../components/ui/TextArea.vue';
-import { useBuilderStore } from '../../../store/builder.store';
+import Input from '../../../../components/ui/Input.vue';
+import TextArea from '../../../../components/ui/TextArea.vue';
+import { useBuilderStore } from '../../../../store/builder.store';
 
 // Use the Pinia builder store as the single source of truth for invitation data.
 const builderStore = useBuilderStore();

@@ -5,7 +5,7 @@
 <script setup>
 import { computed, onMounted } from 'vue';
 
-import { useBuilderStore } from '../../../store/builder.store';
+import { useBuilderStore } from '../../../../store/builder.store';
 
 const builderStore = useBuilderStore();
 
