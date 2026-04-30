@@ -1,0 +1,13 @@
+/*
+  Global style entrypoint:
+  Aggregates base reset, variables, and typography styles.
+*/
+@import './base/reset.css';
+@import './base/variables.css';
+@import './base/typography.css';
+
+/* Apply shared app-level background and text colors. */
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
