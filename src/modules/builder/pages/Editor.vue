@@ -10,6 +10,7 @@ import AddonsSelector from '../components/AddonsSelector.vue';
 import BasicEditorForm from '../components/BasicEditorForm.vue';
 import InvitationPreview from '../components/InvitationPreview.vue';
 import PriceSummary from '../components/PriceSummary.vue';
+import SummaryCard from '../components/SummaryCard.vue';
 
 // Enable autosave while users interact with the editor workspace.
 useAutosave();
@@ -83,6 +84,7 @@ const activeTab = ref('Información');
         <div v-else class="settings-block">
           <p>Configuración de secciones (próximamente).</p>
           <PriceSummary />
+          <SummaryCard />
         </div>
       </aside>
     </div>
