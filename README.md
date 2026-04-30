@@ -540,3 +540,14 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - clears interval on unmount
   - shows fallback state `El tiempo ha finalizado` once expired
 - Designed as a reusable card block with dark-pink accents and responsive grid for integration into invitation templates.
+
+## Reusable MapBlock
+- Added reusable map block at `src/modules/builder/blocks/MapBlock/MapBlock.vue` with config metadata in `src/modules/builder/blocks/MapBlock/config.js`.
+- Props:
+  - `mapUrl` (string)
+  - `locationName` (string)
+- MVP behavior:
+  - Shows location title
+  - Renders `Ver ubicación` action opening map link in a new tab
+  - No embedded Google Maps iframe yet
+- Includes help tooltip indicator with bilingual guidance on how to obtain a shareable Google Maps URL.
