@@ -379,3 +379,20 @@ The `builderStore` creates and stores a default invitation draft with a consiste
       variables.css
     main.css
 ```
+
+## Catalog marketplace page
+- The catalog now behaves as a marketplace-style template browser using a local `templates` array in `src/modules/catalog/pages/Catalog.vue`.
+- Each template item includes structured fields for product-like rendering:
+  - `id`, `name`, `category`, `level`, `basePrice`, `popular`, `shortDescription`, and `previewStyle` (`background`, `accentColor`, `textColor`).
+- Category filter pills support: `Todas`, `Románticas`, `Elegantes`, `Modernas`, `Minimalistas`, and `Temáticas`.
+- Sorting options include:
+  - `Más populares`
+  - `Precio menor a mayor`
+  - `Precio mayor a menor`
+- Card previews are generated with CSS only (no image assets): a vertical invitation mockup with names placeholder, date, and decorative line/heart driven by `previewStyle` colors.
+- Actions:
+  - `Personalizar` routes to `/editor`.
+  - `Ver detalle` uses a safe fallback (`console.log`) when a dedicated `/catalog/:id` route is not present.
+- Shared global layout usage is preserved:
+  - `Catalog.vue` does not embed local header/footer.
+  - App-level shell (`MainLayout`) remains responsible for global navigation and footer consistency across pages.
