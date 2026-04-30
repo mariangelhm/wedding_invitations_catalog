@@ -229,6 +229,19 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Layout is centered with `max-width: 1200px` and stacks on mobile.
 - Styles are implemented in `src/modules/landing/styles/home.css` with clear layout comments.
 
+## Language system
+- A lightweight i18n system was added without external libraries.
+- Translation dictionary lives in `src/core/i18n/translations.js` with `es` and `en` keys.
+- Global language state is managed by `src/store/language.store.js`:
+  - `currentLang` (default `es`)
+  - `toggleLanguage()` action
+- Helper `useI18n()` in `src/core/i18n/index.js` provides:
+  - `t(key)` for nested key lookup (e.g. `t("home.title")`)
+  - `currentLang`
+  - `toggleLanguage`
+- `Home.vue` now reads localized strings through `t(...)`.
+- `App.vue` includes a simple `[ES | EN]` language switch button that toggles app language globally.
+
 ## Folder Structure
 ```text
 /src
