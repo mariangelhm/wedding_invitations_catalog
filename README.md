@@ -449,3 +449,12 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `customize`
 - Modal includes Web/Mobile view switch, dark overlay, centered responsive container, and editor helper text.
 - `TemplateDetail.vue` now opens this modal from the "Vista previa" action and routes to `/editor?templateId={id}` from the customize callback.
+
+## Catalog to editor flow
+- The catalog passes `templateId` via query string using `/editor?templateId={id}`.
+- In `Editor.vue`, route query is read and used to resolve the selected template from shared catalog template data.
+- Builder store now supports `createDraftInvitation(template)` to initialize draft metadata from catalog selection:
+  - `templateId`, `templateName`, `level`, `basePrice`, `customizableOptions`, and style defaults.
+- Editor UI adapts tabs/panels based on `customizableOptions` (colors, fonts, photos, music, map, countdown).
+- `AddonsSelector` filters available add-ons according to selected template capabilities.
+- If no `templateId` is provided, editor still initializes with default mock draft values.

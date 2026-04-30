@@ -45,8 +45,7 @@ const invitationJson = computed(() => JSON.stringify(builderStore.invitation, nu
       <TextArea v-model="builderStore.invitation.base.message" label="Message" :rows="4" />
     </div>
 
-    <h3>Current Invitation JSON</h3>
-    <pre>{{ invitationJson }}</pre>
+    
   </section>
 </template>
 
