@@ -1,40 +1,29 @@
-<!--
-  Public landing page for first-time visitors.
-  Uses a modern SaaS-style hero with clear CTA actions.
--->
+<!-- Public landing page for first-time visitors. -->
 <script setup>
 import { useRouter } from 'vue-router';
-
 import { useI18n } from '../../../core/i18n';
 
 const router = useRouter();
 const { t } = useI18n();
 
-const goToCatalog = () => {
-  router.push('/catalog');
-};
-
-const goToHowItWorks = () => {
-  document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
-};
+const goToCatalog = () => router.push('/catalog');
+const goToHowItWorks = () => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
 </script>
 
 <template>
   <main class="home-page">
-    <!-- Decorative soft background shapes for a light SaaS visual layer. -->
     <div class="bg-shape bg-shape--one" aria-hidden="true"></div>
     <div class="bg-shape bg-shape--two" aria-hidden="true"></div>
 
     <div class="home-container">
       <section class="home-hero">
         <div class="hero-content">
-          <!-- i18n text values are resolved through t(key) using current global language. -->
           <h1>{{ t('home.title') }}</h1>
           <p>{{ t('home.subtitle') }}</p>
 
           <div class="hero-actions">
             <button class="btn btn-primary" type="button" @click="goToCatalog">{{ t('home.start') }}</button>
-            <button class="btn btn-secondary" type="button" @click="goToHowItWorks">Cómo funciona</button>
+            <button class="btn btn-secondary" type="button" @click="goToHowItWorks">{{ t('home.howItWorks') }}</button>
           </div>
         </div>
 
@@ -53,7 +42,7 @@ const goToHowItWorks = () => {
       </section>
 
       <section id="how-it-works" class="home-how-it-works">
-        <h2>How it works</h2>
+        <h2>{{ t('home.howItWorks') }}</h2>
         <div class="steps-grid">
           <article class="step-card">
             <h3>1. {{ t('home.steps.customize') }}</h3>

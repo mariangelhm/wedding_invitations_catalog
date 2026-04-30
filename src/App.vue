@@ -1,26 +1,40 @@
 <!--
   Root app shell.
-  Provides simple global navigation links and language switching.
+  Provides global navigation and a simple ES/EN language switch.
 -->
 <script setup>
 import { useI18n } from './core/i18n';
 
-const { currentLang, toggleLanguage } = useI18n();
+const { currentLang, t } = useI18n();
+
+import { useLanguageStore } from './store/language.store';
+const languageStore = useLanguageStore();
+
+// Sets active language and persists it through the language store.
+const setLang = (lang) => {
+  languageStore.setLanguage(lang);
+};
 </script>
 
 <template>
   <div class="app-shell">
     <nav class="app-nav">
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/catalog">Catalog</RouterLink>
-      <RouterLink to="/editor">Editor</RouterLink>
-      <RouterLink to="/i/demo-invitation">Public Invitation</RouterLink>
+      <RouterLink to="/">{{ t('nav.home') }}</RouterLink>
+      <RouterLink to="/catalog">{{ t('nav.catalog') }}</RouterLink>
+      <RouterLink to="/editor">{{ t('nav.editor') }}</RouterLink>
+      <RouterLink to="/i/demo-invitation">{{ t('nav.publicInvitation') }}</RouterLink>
 
       <!--
-        Simple language switch control.
-        It toggles global language store between ES and EN.
+        Language switch:
+        - shows ES and EN options
+        - highlights current active language
+        - updates persisted value in localStorage via Pinia store
       -->
-      <button class="lang-toggle" type="button" @click="toggleLanguage">[ {{ currentLang.toUpperCase() }} ] ES | EN</button>
+      <div class="lang-switch">
+        <button type="button" class="lang-btn" :class="{ 'lang-btn--active': currentLang === 'es' }" @click="setLang('es')">ES</button>
+        <span>|</span>
+        <button type="button" class="lang-btn" :class="{ 'lang-btn--active': currentLang === 'en' }" @click="setLang('en')">EN</button>
+      </div>
     </nav>
 
     <router-view />
@@ -37,12 +51,28 @@ const { currentLang, toggleLanguage } = useI18n();
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #e5e7eb;
 }
-.lang-toggle {
+
+.lang-switch {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
   border: 1px solid #d1d5db;
   border-radius: 999px;
-  padding: 0.4rem 0.75rem;
+  padding: 0.25rem 0.55rem;
   background: #fff;
+}
+
+.lang-btn {
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.2rem 0.45rem;
   cursor: pointer;
+}
+
+.lang-btn--active {
+  background: #8b5a7a;
+  color: #fff;
 }
 </style>

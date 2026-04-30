@@ -241,6 +241,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `toggleLanguage`
 - `Home.vue` now reads localized strings through `t(...)`.
 - `App.vue` includes a simple `[ES | EN]` language switch button that toggles app language globally.
+- Language selection now persists in `localStorage` through `language.store.js` (`setLanguage`).
+- Navbar language switch uses `[ES | EN]` buttons with active-language highlighting.
+- Navigation labels and key Home texts update dynamically through i18n keys.
 
 ## Catalog UI improvements
 - `Catalog.vue` was upgraded into a product-style catalog experience.
@@ -261,6 +264,17 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - wide screens: 4 columns
 - Added hover interaction on cards (scale + shadow) for stronger product affordance.
 - Styles were moved to `src/modules/catalog/styles/catalog.css`.
+
+## Purchase summary card
+- Added `src/modules/builder/components/SummaryCard.vue` to present a clear pre-payment pricing summary.
+- Card includes:
+  - invitation name
+  - base price
+  - selected add-ons
+  - highlighted total price
+- Includes note: **"Your invitation will be active for 12 months"**.
+- Includes CTA button: **"Continue to payment"**.
+- Styled as a concise card with rounded corners, shadow, and padding for clear pricing UX.
 
 ## Folder Structure
 ```text
