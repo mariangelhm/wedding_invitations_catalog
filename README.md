@@ -283,6 +283,17 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Background uses a soft gradient to keep focus on invitation content.
 - Only the invitation template is rendered, inside a centered container with `max-width: 420px`.
 
+## Invitation card design
+- Romantic template now uses a dedicated invitation card container with:
+  - white background
+  - `border-radius: 20px`
+  - `padding: 30px`
+  - soft shadow
+- Card content is fully centered and spaced for readability.
+- Width is constrained to `max-width: 400px` for focused presentation.
+- A subtle fade-in animation is applied on load for a polished appearance.
+- Design remains clean and elegant, prioritizing invitation readability.
+
 ## Folder Structure
 ```text
 /src
