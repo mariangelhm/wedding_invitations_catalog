@@ -477,3 +477,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Uses `router-link` for navigable items and plain text for final/current item.
 - Uses slash (`/`) separators, muted typography, and primary-color hover on links.
 - Catalog pages now consume the reusable breadcrumb component instead of duplicating breadcrumb markup.
+
+## Layout and catalog flow refactor
+- The app now uses a single global layout shell: `MainLayout` renders exactly one `Header`, one `router-view`, and one `Footer`.
+- Header menu was simplified to product-navigation links only (`Inicio/Home`, `Catálogo/Catalog`, `Cómo funciona/How it works`, `Precios/Pricing`, `Tutoriales/Tutorials`) and CTA (`Comenzar/Start now`).
+- `Editor` and `Public Invitation` entries were removed from top navigation to keep the header focused on discovery flow.
+- Catalog cards now route directly to editor customization via `/editor?templateId={id}`.
+- Editor reads `templateId` from query params, resolves selected template from shared catalog data, and initializes builder draft with template metadata.

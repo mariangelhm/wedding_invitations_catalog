@@ -1,47 +1,19 @@
 <!-- Landing page with modern SaaS wedding-invitation presentation. -->
 <script setup>
-import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useI18n } from '../../../core/i18n';
-import { useLanguageStore } from '../../../store/language.store';
 
 const router = useRouter();
 const { t } = useI18n();
-const languageStore = useLanguageStore();
-
-const currentLang = computed(() => languageStore.currentLang);
-
 const goToCatalog = () => router.push('/catalog');
 const goToEditor = () => router.push('/editor');
 const goToHowItWorks = () => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
-const setLang = (lang) => languageStore.setLanguage(lang);
 </script>
 
 <template>
   <main class="landing-page">
-    <header class="landing-nav-wrap">
-      <nav class="landing-nav">
-        <div class="brand">♡ <span>Invita</span>Love</div>
-
-        <ul class="nav-links">
-          <li><a href="#" class="active-link">{{ t('navbar.inicio') }}</a></li>
-          <li><a href="/catalog">{{ t('navbar.catalogo') }}</a></li>
-          <li><button type="button" @click="goToHowItWorks">{{ t('navbar.comoFunciona') }}</button></li>
-          <li><a href="#">{{ t('navbar.precios') }}</a></li>
-          <li><a href="#">{{ t('navbar.tutoriales') }}</a></li>
-        </ul>
-
-        <div class="nav-actions">
-          <button class="btn btn-primary" type="button" @click="goToEditor">{{ t('navbar.comenzar') }}</button>
-          <div class="lang-switch">
-            <button type="button" :class="{ active: currentLang === 'es' }" @click="setLang('es')">ES</button>
-            <span>|</span>
-            <button type="button" :class="{ active: currentLang === 'en' }" @click="setLang('en')">EN</button>
-          </div>
-        </div>
-      </nav>
-    </header>
+    
 
     <section class="hero">
       <div class="hero-left">

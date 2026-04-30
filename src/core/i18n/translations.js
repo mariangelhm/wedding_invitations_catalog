@@ -1,12 +1,13 @@
 export const translations = {
   es: {
-    nav: { home: 'Inicio', catalog: 'Catálogo', editor: 'Editor', publicInvitation: 'Invitación pública', start: 'Comenzar' },
+    nav: { home: 'Inicio', catalog: 'Catálogo', howItWorks: 'Cómo funciona', pricing: 'Precios', tutorials: 'Tutoriales', start: 'Comenzar' },
     navbar: { inicio: 'Inicio', catalogo: 'Catálogo', comoFunciona: 'Cómo funciona', precios: 'Precios', tutoriales: 'Tutoriales', comenzar: 'Comenzar' },
     catalog: {
       breadcrumbHome: 'Inicio', breadcrumbCatalog: 'Catálogo', badge: 'Templates personalizables', title: 'Catálogo de invitaciones', subtitle: 'Elige el diseño perfecto y personalízalo en minutos.',
       filters: { all: 'Todas', romantic: 'Románticas', elegant: 'Elegantes', modern: 'Modernas', minimal: 'Minimalistas', themed: 'Temáticas' },
       sort: { label: 'Ordenar por', popular: 'Más populares', lowPrice: 'Precio menor a mayor', highPrice: 'Precio mayor a menor' },
-      card: { from: 'Desde', detail: 'Ver detalle', customize: 'Personalizar', basic: 'Básica', medium: 'Media', full: 'Full' },
+      card: { from: 'Desde', customize: 'Personalizar', basic: 'Básica', medium: 'Media', full: 'Full' },
+      customize: 'Personalizar',
     },
     previewModal: { web: 'Web', mobile: 'Mobile', helper: 'Esta es una vista previa. Podrás personalizar colores, textos y componentes en el editor.', customize: 'Personalizar', close: 'Cerrar' },
     templateDetail: { breadcrumbHome: 'Inicio', breadcrumbCatalog: 'Catálogo', from: 'Desde', customize: 'Personalizar esta invitación', preview: 'Vista previa', includes: 'Incluye', similar: 'Explorar diseños similares', notFound: 'No encontramos esta invitación' },
@@ -14,13 +15,14 @@ export const translations = {
     phone: { label: 'NUESTRA BODA', names: 'María & Carlos', date: '14 de Junio, 2027', location: 'Rose Garden Hall', message: 'Nos encantaría que seas parte de este día tan especial.', button: 'Confirmar asistencia' },
   },
   en: {
-    nav: { home: 'Home', catalog: 'Catalog', editor: 'Editor', publicInvitation: 'Public Invitation', start: 'Start' },
+    nav: { home: 'Home', catalog: 'Catalog', howItWorks: 'How it works', pricing: 'Pricing', tutorials: 'Tutorials', start: 'Start now' },
     navbar: { inicio: 'Home', catalogo: 'Catalog', comoFunciona: 'How it works', precios: 'Pricing', tutoriales: 'Tutorials', comenzar: 'Start now' },
     catalog: {
       breadcrumbHome: 'Home', breadcrumbCatalog: 'Catalog', badge: 'Customizable templates', title: 'Invitation catalog', subtitle: 'Choose the perfect design and customize it in minutes.',
       filters: { all: 'All', romantic: 'Romantic', elegant: 'Elegant', modern: 'Modern', minimal: 'Minimal', themed: 'Themed' },
       sort: { label: 'Sort by', popular: 'Most popular', lowPrice: 'Lowest price', highPrice: 'Highest price' },
-      card: { from: 'From', detail: 'View detail', customize: 'Customize', basic: 'Basic', medium: 'Medium', full: 'Full' },
+      card: { from: 'From', customize: 'Customize', basic: 'Basic', medium: 'Medium', full: 'Full' },
+      customize: 'Customize',
     },
     previewModal: { web: 'Web', mobile: 'Mobile', helper: 'This is a preview. You will be able to customize colors, texts and components in the editor.', customize: 'Customize', close: 'Close' },
     templateDetail: { breadcrumbHome: 'Home', breadcrumbCatalog: 'Catalog', from: 'From', customize: 'Customize this invitation', preview: 'Preview', includes: 'Includes', similar: 'Explore similar designs', notFound: 'We could not find this invitation' },

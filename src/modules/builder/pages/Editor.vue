@@ -17,7 +17,7 @@ const builderStore = useBuilderStore();
 
 const activeTab = ref('Información');
 const options = computed(() => builderStore.invitation?.customizableOptions || {});
-const tabs = computed(() => ['Información', ...(options.value.colors ? ['Colores'] : []), ...(options.value.fonts ? ['Fuentes'] : []), ...(options.value.photos ? ['Fotos'] : []), ...(options.value.music ? ['Música'] : []), 'Secciones']);
+const tabs = computed(() => ['Información', 'Colores', 'Tipografías', 'Fotos', 'Música', 'Mapa', 'Componentes']);
 
 watchEffect(() => {
   const templateId = route.query.templateId;
@@ -41,10 +41,11 @@ watchEffect(() => {
         <h2>{{ activeTab }}</h2>
         <div v-if="activeTab === 'Información'" class="settings-block"><BasicEditorForm /></div>
         <div v-else-if="activeTab === 'Colores' && options.colors" class="settings-block"><p>Configuración de colores habilitada.</p></div>
-        <div v-else-if="activeTab === 'Fuentes' && options.fonts" class="settings-block"><p>Configuración de tipografías habilitada.</p></div>
-        <div v-else-if="activeTab === 'Fotos' && options.photos" class="settings-block"><p>Gestión de fotos habilitada.</p><AddonsSelector /></div>
-        <div v-else-if="activeTab === 'Música' && options.music" class="settings-block"><p>Música de fondo habilitada.</p></div>
-        <div v-else class="settings-block"><p>Configuración de secciones.</p><CustomizableComponentsPanel /><AddonsSelector /><PriceSummary /><SummaryCard /></div>
+        <div v-else-if="activeTab === 'Tipografías'" class="settings-block"><p>Configuración de tipografías habilitada.</p></div>
+        <div v-else-if="activeTab === 'Fotos'" class="settings-block"><p>Gestión de fotos habilitada.</p><AddonsSelector /></div>
+        <div v-else-if="activeTab === 'Música'" class="settings-block"><p>Música de fondo habilitada.</p></div>
+        <div v-else-if="activeTab === 'Mapa'" class="settings-block"><p>Configuración de mapa.</p><AddonsSelector /></div>
+        <div v-else class="settings-block"><p>Configuración de componentes.</p><CustomizableComponentsPanel /><PriceSummary /><SummaryCard /></div>
       </aside>
     </div>
   </section>

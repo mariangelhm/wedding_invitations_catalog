@@ -22,6 +22,7 @@ export const useBuilderStore = defineStore('builderStore', {
         status: 'draft',
         templateId: template?.id || null,
         templateName: template?.name || 'Invitación base',
+        category: template?.category || 'general',
         level: template?.level || 'basic',
         basePrice: template?.basePrice || this.basePrice,
         base: { names: '', date: '', location: '', message: '' },
