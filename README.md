@@ -346,6 +346,17 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - inner white invitation screen
 - Navbar hover states now include primary color emphasis and animated underline.
 
+## Landing layout & Footer improvements
+- Hero height was tuned to reduce unnecessary first-screen scroll using `min-height: calc(100vh - navbar height)` and balanced spacing.
+- Mobile spacing/readability was improved with dedicated breakpoints for `768px` and `480px`:
+  - cleaner stacked hero
+  - full-width CTA buttons
+  - wrapped benefits and cards
+  - scaled phone mockup
+- Added reusable global footer component at `src/components/layout/Footer.vue` with legal, contact, and social/help sections.
+- Added reusable `src/components/layout/MainLayout.vue` that centralizes app navbar + `<router-view />` + global footer structure.
+- Footer is responsive: 3 columns desktop, 1 column mobile.
+
 ## Folder Structure
 ```text
 /src
