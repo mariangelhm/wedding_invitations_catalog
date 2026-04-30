@@ -294,6 +294,12 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - A subtle fade-in animation is applied on load for a polished appearance.
 - Design remains clean and elegant, prioritizing invitation readability.
 
+## Public background styling
+- Public invitation page now uses a subtle layered pastel background (radial + linear gradients).
+- Added optional abstract decorative shapes at page edges for visual depth.
+- Styling is intentionally soft so it does not distract from invitation content.
+- Invitation container keeps visual priority using a light drop-shadow and centered layout.
+
 ## Folder Structure
 ```text
 /src
