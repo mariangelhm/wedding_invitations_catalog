@@ -7,6 +7,20 @@
   gap: 24px;
 }
 
+
+.breadcrumb {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+}
+.breadcrumb a {
+  color: var(--color-text-main);
+  text-decoration: none;
+}
+.breadcrumb a:hover { color: var(--color-primary); }
+
 .catalog-header { margin-top: 8px; }
 .catalog-badge {
   display: inline-block;

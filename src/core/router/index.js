@@ -7,34 +7,19 @@ import PublicInvitation from '../../modules/invitations/pages/PublicInvitation.v
 import Home from '../../modules/landing/pages/Home.vue';
 
 // Routing structure:
-// - /        : landing page entry point
-// - /catalog : template catalog page
-// - /editor  : invitation builder workspace
-// - /i/:id   : public invitation link with dynamic id parameter
+// - /            : landing page entry point
+// - /catalog     : template catalog page
+// - /catalog/:id : template detail path (currently rendered by catalog page)
+// - /editor      : invitation builder workspace
+// - /i/:id       : public invitation link with dynamic id parameter
 const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: Home,
-  },
-  {
-    path: '/catalog',
-    name: 'catalog',
-    component: Catalog,
-  },
-  {
-    path: '/editor',
-    name: 'editor',
-    component: Editor,
-  },
-  {
-    path: '/i/:id',
-    name: 'public-invitation',
-    component: PublicInvitation,
-  },
+  { path: '/', name: 'home', component: Home },
+  { path: '/catalog', name: 'catalog', component: Catalog },
+  { path: '/catalog/:id', name: 'catalog-detail', component: Catalog },
+  { path: '/editor', name: 'editor', component: Editor },
+  { path: '/i/:id', name: 'public-invitation', component: PublicInvitation },
 ];
 
-// Router instance used globally by main.js.
 const router = createRouter({
   history: createWebHistory(),
   routes,

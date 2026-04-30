@@ -410,3 +410,23 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - no browser-default blue underlined links
   - active link and hover states using `--color-primary`
 - Mobile behavior (`<= 768px`) currently keeps logo, start button, and language switch visible while hiding center navigation links for readability.
+
+## Catalog page
+- The catalog is a marketplace-style page with translated UI labels managed through `catalog.*` keys in `src/core/i18n/translations.js` for Spanish and English.
+- A breadcrumb is displayed at the top using router links (`Home/Inicio -> Catalog/Catálogo`) and supports optional detail context when a `/catalog/:id` route is active.
+- Catalog templates are mocked locally with rich metadata:
+  - `id`, `name`, `category`, `level`, `basePrice`, `popular`, `shortDescription`, `previewStyle`, and `customizableOptions`.
+- Filtering supports six categories (`all`, `romantic`, `elegant`, `modern`, `minimal`, `themed`) and highlights the active filter for better scanability.
+- Sorting supports:
+  - popular-first ranking
+  - low-price to high-price
+  - high-price to low-price
+- Card previews are CSS-based marketplace mockups (no images) and include:
+  - invitation mini-preview
+  - template identity (name/category/level)
+  - base price and summary text
+  - actions: detail and customize.
+- Route behavior:
+  - `View detail` -> `/catalog/:id`
+  - `Customize` -> `/editor?templateId={id}`
+- Global header/footer are not duplicated in the catalog page; they remain provided by shared layout components.
