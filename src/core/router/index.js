@@ -20,9 +20,4 @@ const routes = [
   { path: '/i/:id', name: 'public-invitation', component: PublicInvitation },
 ];
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-});
-
-export default router;
+export default createRouter({ history: createWebHistory(), routes });

@@ -430,3 +430,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `View detail` -> `/catalog/:id`
   - `Customize` -> `/editor?templateId={id}`
 - Global header/footer are not duplicated in the catalog page; they remain provided by shared layout components.
+
+## Template detail page
+- Added dedicated detail route `/catalog/:id` rendered by `TemplateDetail.vue`.
+- Detail page reads `id` from route params, resolves template from shared `src/modules/catalog/data/templates.js`, and shows a friendly not-found message when missing.
+- Includes breadcrumb (`Inicio/Home / Catálogo/Catalog / Template Name`), large preview mockup, pricing, level/category metadata, feature list, and actions for customize + preview.
+- Similar designs section shows up to 3 templates from the same category excluding the current template.
+- Data source is shared between catalog list and detail to avoid duplication.
