@@ -458,3 +458,22 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Editor UI adapts tabs/panels based on `customizableOptions` (colors, fonts, photos, music, map, countdown).
 - `AddonsSelector` filters available add-ons according to selected template capabilities.
 - If no `templateId` is provided, editor still initializes with default mock draft values.
+
+## Customizable components panel
+- Added `CustomizableComponentsPanel.vue` in the editor settings flow.
+- The panel reads `builderStore.invitation.customizableOptions` and always includes basic text/date/location/message customization context.
+- Optional components are shown only when allowed by selected template options.
+- Add-on toggles update `builderStore.invitation.addons` through store action `toggleAddon(...)` with duplicate-safe add/remove behavior.
+- Default add-on prices configured:
+  - map: 3000
+  - countdown_wedding: 3000
+  - countdown_rsvp: 2000
+  - gallery/photos: 5000
+  - music: 4000
+
+## Reusable Breadcrumb component
+- Added shared UI component `src/components/ui/Breadcrumb.vue`.
+- Accepts `items` prop with `{ label, to? }` entries.
+- Uses `router-link` for navigable items and plain text for final/current item.
+- Uses slash (`/`) separators, muted typography, and primary-color hover on links.
+- Catalog pages now consume the reusable breadcrumb component instead of duplicating breadcrumb markup.

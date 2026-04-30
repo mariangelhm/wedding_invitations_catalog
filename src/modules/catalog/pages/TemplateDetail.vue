@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from '../../../core/i18n';
 import { templates } from '../data/templates';
 import TemplatePreviewModal from '../components/TemplatePreviewModal.vue';
+import Breadcrumb from '../../../components/ui/Breadcrumb.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -18,7 +19,7 @@ const goEditor = (id) => router.push(`/editor?templateId=${id}`);
 
 <template>
   <main class="catalog-page detail-page">
-    <nav class="breadcrumb"><RouterLink to="/">{{ t('templateDetail.breadcrumbHome') }}</RouterLink><span>/</span><RouterLink to="/catalog">{{ t('templateDetail.breadcrumbCatalog') }}</RouterLink><span v-if="template">/ {{ template.name }}</span></nav>
+    <Breadcrumb :items="[{ label: t('templateDetail.breadcrumbHome'), to: '/' }, { label: t('templateDetail.breadcrumbCatalog'), to: '/catalog' }, { label: template?.name || t('templateDetail.breadcrumbCatalog') }]" />
     <section v-if="template" class="detail-grid">
       <div class="preview-shell" :style="{ background: template.previewStyle.background }"><div class="mini-invitation large" :style="{ color: template.previewStyle.textColor, borderColor: template.previewStyle.accentColor }"><p class="mini-kicker">{{ t('templateDetail.breadcrumbCatalog') }}</p><h3>María &amp; Carlos</h3><div class="mini-divider" :style="{ background: template.previewStyle.accentColor }">❤</div><p class="mini-date">16 · Noviembre · 2026</p></div></div>
       <div class="detail-info">

@@ -8,6 +8,7 @@ import { useRouter } from 'vue-router';
 
 import { useI18n } from '../../../core/i18n';
 import { templates } from '../data/templates';
+import Breadcrumb from '../../../components/ui/Breadcrumb.vue';
 
 const router = useRouter();
 const { t } = useI18n();
@@ -47,11 +48,7 @@ const personalizeTemplate = (template) => router.push(`/editor?templateId=${temp
 
 <template>
   <main class="catalog-page">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <RouterLink to="/">{{ t('catalog.breadcrumbHome') }}</RouterLink>
-      <span>/</span>
-      <span>{{ t('catalog.breadcrumbCatalog') }}</span>
-    </nav>
+    <Breadcrumb :items="[{ label: t('catalog.breadcrumbHome'), to: '/' }, { label: t('catalog.breadcrumbCatalog') }]" />
 
     <section class="catalog-header">
       <span class="catalog-badge">{{ t('catalog.badge') }}</span>
