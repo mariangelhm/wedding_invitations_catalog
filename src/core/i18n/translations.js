@@ -1,6 +1,13 @@
 // Static translation dictionary for the lightweight i18n system.
 export const translations = {
   es: {
+    nav: {
+      home: 'Inicio',
+      catalog: 'Catálogo',
+      editor: 'Editor',
+      publicInvitation: 'Invitación pública',
+      start: 'Comenzar',
+    },
     navbar: {
       inicio: 'Inicio',
       catalogo: 'Catálogo',
@@ -47,6 +54,13 @@ export const translations = {
     },
   },
   en: {
+    nav: {
+      home: 'Home',
+      catalog: 'Catalog',
+      editor: 'Editor',
+      publicInvitation: 'Public Invitation',
+      start: 'Start',
+    },
     navbar: {
       inicio: 'Home',
       catalogo: 'Catalog',

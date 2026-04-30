@@ -396,3 +396,17 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Shared global layout usage is preserved:
   - `Catalog.vue` does not embed local header/footer.
   - App-level shell (`MainLayout`) remains responsible for global navigation and footer consistency across pages.
+
+## Global header and translations
+- The app now uses a reusable `Header.vue` component mounted from `MainLayout.vue`, so navigation is globally consistent and not duplicated inside page modules.
+- Header structure is split into three zones:
+  - Left: brand (`InvitaLove`)
+  - Center: translated links (`Inicio`, `Catálogo`, `Editor`, `Invitación pública`)
+  - Right: translated CTA (`Comenzar`) plus language switch (`ES | EN`)
+- Translation keys were expanded under `nav` for both `es` and `en` to avoid rendering raw key paths such as `nav.home`.
+- Header visuals were standardized with brand-consistent interactions:
+  - white background
+  - subtle bottom border
+  - no browser-default blue underlined links
+  - active link and hover states using `--color-primary`
+- Mobile behavior (`<= 768px`) currently keeps logo, start button, and language switch visible while hiding center navigation links for readability.
