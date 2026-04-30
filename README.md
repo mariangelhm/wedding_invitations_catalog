@@ -242,7 +242,7 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - `Home.vue` now reads localized strings through `t(...)`.
 - `App.vue` includes a simple `[ES | EN]` language switch button that toggles app language globally.
 - Language selection now persists in `localStorage` through `language.store.js` (`setLanguage`).
-- Navbar language switch uses `[ES | EN]` buttons with active-language highlighting.
+- Navbar language switch uses `[ES | EN]` toggle controls with active-language highlighting.
 - Navigation labels and key Home texts update dynamically through i18n keys.
 
 ## Catalog UI improvements

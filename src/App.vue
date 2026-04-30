@@ -4,10 +4,9 @@
 -->
 <script setup>
 import { useI18n } from './core/i18n';
+import { useLanguageStore } from './store/language.store';
 
 const { currentLang, t } = useI18n();
-
-import { useLanguageStore } from './store/language.store';
 const languageStore = useLanguageStore();
 
 // Sets active language and persists it through the language store.
@@ -25,15 +24,17 @@ const setLang = (lang) => {
       <RouterLink to="/i/demo-invitation">{{ t('nav.publicInvitation') }}</RouterLink>
 
       <!--
-        Language switch:
-        - shows ES and EN options
-        - highlights current active language
-        - updates persisted value in localStorage via Pinia store
+        Language switch logic:
+        - ES/EN options map to language.store.js
+        - active option is visually highlighted
+        - setLanguage() persists selected value to localStorage
       -->
-      <div class="lang-switch">
+      <div class="lang-switch" aria-label="Language switch">
+        <span>[</span>
         <button type="button" class="lang-btn" :class="{ 'lang-btn--active': currentLang === 'es' }" @click="setLang('es')">ES</button>
         <span>|</span>
         <button type="button" class="lang-btn" :class="{ 'lang-btn--active': currentLang === 'en' }" @click="setLang('en')">EN</button>
+        <span>]</span>
       </div>
     </nav>
 
@@ -56,7 +57,7 @@ const setLang = (lang) => {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.35rem;
   border: 1px solid #d1d5db;
   border-radius: 999px;
   padding: 0.25rem 0.55rem;
