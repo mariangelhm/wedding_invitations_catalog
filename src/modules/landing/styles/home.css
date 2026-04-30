@@ -1,0 +1,134 @@
+/* Modern SaaS-style landing presentation with restrained visual complexity. */
+.home-page {
+  --primary-color: #8b5a7a;
+  --text-color: #1f2937;
+  --muted-color: #4b5563;
+
+  position: relative;
+  overflow: hidden;
+  min-height: calc(100vh - 80px);
+  padding: 3.5rem 1.25rem;
+  background: linear-gradient(180deg, #fff9fc 0%, #ffffff 65%);
+}
+
+/* Soft decorative shapes to enrich background without visual noise. */
+.bg-shape {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(1px);
+  pointer-events: none;
+}
+.bg-shape--one {
+  width: 320px;
+  height: 320px;
+  top: -80px;
+  left: -120px;
+  background: rgba(139, 90, 122, 0.12);
+}
+.bg-shape--two {
+  width: 260px;
+  height: 260px;
+  right: -80px;
+  top: 120px;
+  background: rgba(168, 141, 194, 0.14);
+}
+
+/* Centered max-width container for consistent SaaS page rhythm. */
+.home-container {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Two-column hero on desktop, stacked on mobile. */
+.home-hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.hero-content h1 {
+  font-size: clamp(2rem, 4.5vw, 3.4rem);
+  line-height: 1.1;
+  color: var(--text-color);
+}
+.hero-content p {
+  margin-top: 0.9rem;
+  max-width: 40rem;
+  color: var(--muted-color);
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+}
+
+.hero-actions {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Button system: primary filled + secondary outlined. */
+.btn {
+  border-radius: 999px;
+  padding: 0.7rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-primary {
+  border: 1px solid transparent;
+  background: var(--primary-color);
+  color: #fff;
+}
+.btn-primary:hover { filter: brightness(0.95); transform: translateY(-1px); }
+.btn-secondary {
+  border: 1px solid var(--primary-color);
+  background: transparent;
+  color: var(--primary-color);
+}
+.btn-secondary:hover { background: rgba(139, 90, 122, 0.08); }
+
+/* Phone visual mockup to represent invitation preview in-product. */
+.hero-visual { display: grid; justify-items: center; }
+.phone-mockup {
+  width: min(320px, 100%);
+  border-radius: 2rem;
+  background: #111827;
+  padding: 0.75rem;
+  box-shadow: 0 16px 30px rgba(17, 24, 39, 0.2);
+}
+.phone-notch {
+  width: 36%;
+  height: 18px;
+  margin: 0 auto 0.6rem;
+  border-radius: 999px;
+  background: #1f2937;
+}
+.phone-screen {
+  border-radius: 1.4rem;
+  background: #fff;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  color: #7e4f70;
+  display: grid;
+  gap: 0.45rem;
+}
+.preview-kicker { font-size: 0.8rem; color: #6b7280; }
+.preview-message { font-style: italic; margin-top: 0.4rem; }
+
+.home-how-it-works { display: grid; gap: 1rem; }
+.steps-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.step-card {
+  background: #fff;
+  border: 1px solid #ebe7ee;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+@media (min-width: 900px) {
+  .home-hero { grid-template-columns: 1.05fr 0.95fr; }
+  .steps-grid { grid-template-columns: 1fr 1fr 1fr; }
+}
