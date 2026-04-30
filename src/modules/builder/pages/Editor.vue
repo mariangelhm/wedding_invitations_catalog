@@ -44,7 +44,7 @@ watchEffect(() => {
         <div v-else-if="activeTab === 'Fuentes' && options.fonts" class="settings-block"><p>Configuración de tipografías habilitada.</p></div>
         <div v-else-if="activeTab === 'Fotos' && options.photos" class="settings-block"><p>Gestión de fotos habilitada.</p><AddonsSelector /></div>
         <div v-else-if="activeTab === 'Música' && options.music" class="settings-block"><p>Música de fondo habilitada.</p></div>
-        <div v-else class="settings-block"><p>Configuración de secciones.</p><CustomizableComponentsPanel /><AddonsSelector /><PriceSummary /><SummaryCard /></div>
+        <div v-else class="settings-block"><p>Configuración de secciones.</p><AddonsSelector /><PriceSummary /><SummaryCard /></div>
       </aside>
     </div>
   </section>

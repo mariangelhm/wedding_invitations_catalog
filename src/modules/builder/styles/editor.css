@@ -98,9 +98,3 @@
 }
 
 .template-context { margin: 8px 0 12px; color: var(--color-text-muted); font-size: 0.9rem; }
-.custom-components-panel { display: grid; gap: 10px; }
-.component-card { border: 1px solid var(--color-border); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; gap: 10px; background: #fff; }
-.component-card.static { border-color: var(--color-primary-light); background: #fff7fa; }
-.component-card strong { color: var(--color-text-main); }
-.component-card p { margin: 4px 0; color: var(--color-text-muted); font-size: 0.9rem; }
-.component-card small { color: var(--color-primary-dark); font-weight: 600; }
