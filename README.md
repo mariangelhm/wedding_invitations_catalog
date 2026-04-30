@@ -490,3 +490,18 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `/editor?templateId={id}`
 - The visible `Personalizar` / `Customize` button routes to the same path and uses click-stop behavior to avoid double navigation.
 - The detail action/button was removed from catalog cards to keep the flow focused on immediate customization.
+
+## Section-based editor UI
+- The editor now uses local `selectedSection` state (default: `info`) to drive a professional section-based customization workflow.
+- Desktop layout uses a 3-column composition:
+  - left: section menu
+  - center: preview canvas
+  - right: settings + summary/actions
+- Mobile layout stacks vertically and turns section menu into horizontal-scroll tabs.
+- Section content mapping:
+  - info -> `BasicEditorForm`
+  - colors -> primary color control
+  - typography -> font family selector
+  - photos/music/map -> placeholder or lightweight controls
+  - components -> `CustomizableComponentsPanel`
+- Right panel keeps summary actions visible (`PriceSummary`, `ExpirationBanner`, Save/Preview actions).
