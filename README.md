@@ -513,3 +513,18 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - open from editor "Vista previa" button
   - close from modal close action or overlay click
 - Mobile mode uses a phone mockup frame to preview responsive invitation appearance.
+
+## Romantic wedding template
+- Added new invitation template at `src/modules/invitations/templates/romantic-wedding/`:
+  - `Template.vue`
+  - `style.css`
+  - `config.js`
+- The template accepts a single prop `invitationData` and renders a romantic-modern invitation composition using reusable presentational blocks:
+  - Hero
+  - Wedding countdown
+  - Story
+  - Timeline
+  - Map
+  - Confirmation countdown
+  - RSVP
+- The template is intentionally presentation-focused and avoids business logic; it only renders received data and fallback content.
