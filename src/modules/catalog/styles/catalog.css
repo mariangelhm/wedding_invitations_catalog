@@ -1,0 +1,184 @@
+/* Marketplace catalog with consistent spacing and shared brand tokens. */
+.catalog-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: grid;
+  gap: 24px;
+}
+
+
+.breadcrumb {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+}
+.breadcrumb a {
+  color: var(--color-text-main);
+  text-decoration: none;
+}
+.breadcrumb a:hover { color: var(--color-primary); }
+
+.catalog-header { margin-top: 8px; }
+.catalog-badge {
+  display: inline-block;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  margin-bottom: 12px;
+  color: var(--color-primary-dark);
+  background: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.catalog-header h1 { margin-bottom: 12px; }
+.catalog-header p { margin-bottom: 16px; color: var(--color-text-muted); }
+
+.catalog-toolbar {
+  display: grid;
+  gap: 16px;
+  align-items: center;
+}
+
+.catalog-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-pill {
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-text-main);
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.filter-pill--active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.sort-control {
+  justify-self: start;
+  display: grid;
+  gap: 8px;
+}
+.sort-control span { color: var(--color-text-muted); font-size: 0.9rem; }
+.sort-control select {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 9px 12px;
+  min-width: 220px;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.template-card {
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.template-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 30px rgba(17, 24, 39, 0.14);
+}
+
+/* CSS-only invitation simulation (no image assets required). */
+.preview-shell {
+  padding: 16px;
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+}
+.mini-invitation {
+  width: min(180px, 100%);
+  aspect-ratio: 9 / 14;
+  background: rgba(255, 255, 255, 0.96);
+  border: 2px solid;
+  border-radius: 14px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 16px 12px;
+}
+.mini-kicker { font-size: 0.75rem; opacity: 0.8; }
+.mini-invitation h3 { margin: 0; font-size: 1rem; }
+.mini-divider {
+  width: 80%;
+  height: 2px;
+  color: #fff;
+  font-size: 0.75rem;
+  line-height: 0;
+}
+.mini-date { font-size: 0.76rem; opacity: 0.85; }
+
+.card-body {
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+.card-top {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.card-category {
+  margin-bottom: 6px;
+  color: var(--color-text-muted);
+  font-size: 0.86rem;
+}
+.card-body h2 { margin: 0; font-size: 1.15rem; }
+.level-badge {
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  background: var(--color-surface);
+}
+.card-price { margin-bottom: 4px; font-weight: 700; }
+.card-description { color: var(--color-text-muted); margin-bottom: 16px; }
+
+.card-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn {
+  border-radius: 999px;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-primary { background: var(--color-primary); color: #fff; }
+.btn-primary:hover { background: var(--color-primary-dark); }
+.btn-secondary {
+  background: #fff;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+@media (min-width: 768px) {
+  .catalog-toolbar { grid-template-columns: 1fr auto; }
+  .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1200px) {
+  .catalog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (max-width: 480px) {
+  .catalog-page { padding: 28px 14px; }
+  .sort-control select { min-width: 100%; }
+  .card-actions .btn { width: 100%; }
+}
