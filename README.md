@@ -551,3 +551,12 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - Renders `Ver ubicación` action opening map link in a new tab
   - No embedded Google Maps iframe yet
 - Includes help tooltip indicator with bilingual guidance on how to obtain a shareable Google Maps URL.
+
+## Reusable TimelineBlock
+- Added reusable itinerary timeline block:
+  - `src/modules/builder/blocks/TimelineBlock/TimelineBlock.vue`
+  - `src/modules/builder/blocks/TimelineBlock/config.js`
+- Props:
+  - `items` array with entries like `{ time, title, place }`.
+- Renders an elegant vertical timeline with dark-pink accent line and event dots.
+- Designed mobile-first and reusable across invitation templates and editor-driven block composition.
