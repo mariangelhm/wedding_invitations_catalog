@@ -276,6 +276,13 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Includes CTA button: **"Continue to payment"**.
 - Styled as a concise card with rounded corners, shadow, and padding for clear pricing UX.
 
+## Public invitation layout
+- Public invitation view (`/i/:id`) is treated as a presentation page, not a dashboard page.
+- App-level navbar/links are intentionally hidden for this route to avoid UI distractions.
+- `PublicInvitation.vue` uses a full-screen centered layout (`min-height: 100vh`).
+- Background uses a soft gradient to keep focus on invitation content.
+- Only the invitation template is rendered, inside a centered container with `max-width: 420px`.
+
 ## Folder Structure
 ```text
 /src

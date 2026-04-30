@@ -1,6 +1,6 @@
 <!--
-  Public invitation page.
-  Loads invitation data by URL param and renders it with a template.
+  Public invitation presentation page.
+  Intentionally renders without navbar/links to avoid dashboard-like chrome.
 -->
 <script setup>
 import { onMounted, ref } from 'vue';
@@ -9,15 +9,12 @@ import { useRoute } from 'vue-router';
 import RomanticTemplate from '../templates/romantic/Template.vue';
 
 const route = useRoute();
-
-// Route param source of truth for invitation lookup (e.g. /i/abc123).
 const invitationId = route.params.id;
 
 const isLoading = ref(true);
 const invitation = ref(null);
 
-// Mock async fetch function.
-// In production this would call a backend endpoint by invitationId.
+// Mock async fetch by invitation ID.
 const fetchInvitationById = async (id) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -35,27 +32,20 @@ const fetchInvitationById = async (id) => {
 };
 
 onMounted(async () => {
-  isLoading.value = true;
   invitation.value = await fetchInvitationById(invitationId);
   isLoading.value = false;
 });
 </script>
 
 <template>
-  <main>
-    <h1>Public Invitation</h1>
-
-    <p v-if="isLoading">Loading invitation...</p>
-
-    <section v-else-if="invitation">
-      <p><strong>Invitation ID:</strong> {{ invitation.id }}</p>
-
-      <!--
-        Dynamic rendering note:
-        All displayed values come from fetched invitation data,
-        then are passed into the romantic template as props.
-      -->
+  <main class="public-invitation-page">
+    <!--
+      Full-screen centered layout keeps focus exclusively on invitation content.
+      No navigation is shown to preserve a clean presentation experience.
+    -->
+    <section class="public-invitation-container">
       <RomanticTemplate
+        v-if="!isLoading && invitation"
         :names="invitation.base.names"
         :date="invitation.base.date"
         :location="invitation.base.location"
@@ -64,3 +54,18 @@ onMounted(async () => {
     </section>
   </main>
 </template>
+
+<style scoped>
+.public-invitation-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: linear-gradient(180deg, #fff9fc 0%, #f9f7ff 100%);
+}
+
+.public-invitation-container {
+  width: min(420px, 100%);
+  margin: auto;
+}
+</style>
