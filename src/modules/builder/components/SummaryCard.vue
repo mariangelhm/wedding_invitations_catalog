@@ -5,8 +5,8 @@
 <script setup>
 import { onMounted } from 'vue';
 
-import Button from '../../../../components/ui/Button.vue';
-import { useBuilderStore } from '../../../../store/builder.store';
+import Button from '../../../components/ui/Button.vue';
+import { useBuilderStore } from '../../../store/builder.store';
 
 const builderStore = useBuilderStore();
 
