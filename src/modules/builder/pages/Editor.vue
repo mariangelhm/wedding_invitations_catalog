@@ -7,6 +7,7 @@ import BasicEditorForm from '../components/BasicEditorForm.vue';
 import InvitationPreview from '../components/InvitationPreview.vue';
 import PriceSummary from '../components/PriceSummary.vue';
 import SummaryCard from '../components/SummaryCard.vue';
+import CustomizableComponentsPanel from '../components/CustomizableComponentsPanel.vue';
 import { useBuilderStore } from '../../../store/builder.store';
 import { templates } from '../../catalog/data/templates';
 
