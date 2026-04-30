@@ -1,98 +1,62 @@
 /*
-  Professional editor workspace styles.
-  Architecture: sidebar navigation + center mobile preview + right settings panel.
+  Editor layout styles focused on spacing and structure.
+  Uses a centered max-width container and responsive grid columns.
 */
 .editor-page {
-  padding: 1.25rem;
+  padding: 1.5rem 1rem 2.5rem;
 }
 
-.editor-layout {
-  width: min(1280px, 100%);
+.editor-container {
+  width: min(1200px, 100%);
   margin: 0 auto;
   display: grid;
   gap: 1rem;
   grid-template-columns: 1fr;
 }
 
-/* Desktop arrangement: left menu, center preview, right settings. */
-@media (min-width: 1100px) {
-  .editor-layout {
-    grid-template-columns: 240px minmax(360px, 1fr) minmax(340px, 1fr);
+/* Desktop: 3-column layout (left controls, center preview, right metadata). */
+@media (min-width: 1024px) {
+  .editor-container {
+    grid-template-columns: 1fr 1fr 1fr;
     align-items: start;
   }
 }
 
-.panel {
+.editor-column {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Generic card wrapper used by side panels. */
+.editor-card {
   background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 0.9rem;
-  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+  border-radius: 0.75rem;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
   padding: 1rem;
 }
 
-.panel h2 {
-  font-size: 1.1rem;
-  margin-bottom: 0.75rem;
-}
-
-.panel-sidebar {
-  position: sticky;
-  top: 1rem;
-}
-
-.sidebar-menu {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.menu-item {
-  border: 1px solid #e5e7eb;
-  border-radius: 0.6rem;
+/* Preview shell mimics invitation surface with depth and spacing. */
+.editor-preview-shell {
   background: #fff;
-  text-align: left;
-  padding: 0.6rem 0.75rem;
-  cursor: pointer;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+  padding: 1.25rem;
 }
 
-.menu-item--active {
-  border-color: #8b5a7a;
-  background: rgba(139, 90, 122, 0.08);
+/* Typography improvements: stronger section titles in cards. */
+.editor-card :deep(h2),
+.editor-preview-shell :deep(h2) {
+  font-size: 1.25rem;
 }
 
-/* Phone-like preview frame to simulate real mobile invitation rendering. */
-.phone-frame {
-  width: min(360px, 100%);
-  margin: 0 auto;
-  background: #111827;
-  border-radius: 2rem;
-  padding: 0.65rem;
-  box-shadow: 0 14px 28px rgba(17, 24, 39, 0.25);
+/* Typography improvements: smaller labels for cleaner input rhythm. */
+.editor-card :deep(label) {
+  font-size: 0.9rem;
 }
 
-.phone-notch {
-  width: 35%;
-  height: 16px;
-  margin: 0 auto 0.55rem;
-  border-radius: 999px;
-  background: #1f2937;
-}
-
-.phone-screen {
-  border-radius: 1.4rem;
-  background: #f9fafb;
-  padding: 0.85rem;
-  min-height: 560px;
-  overflow: auto;
-}
-
-.settings-block {
-  display: grid;
-  gap: 0.85rem;
-}
-
-/* Mobile: naturally stacked panels; hide sticky behavior. */
-@media (max-width: 1099px) {
-  .panel-sidebar {
-    position: static;
-  }
+/* Extra spacing between stacked form controls in left panel. */
+.editor-column-left .editor-card :deep(.form-fields) {
+  gap: 1rem;
 }

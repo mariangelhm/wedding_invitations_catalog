@@ -1,88 +1,58 @@
 <!--
-  Builder editor workspace.
-  Uses a 3-panel professional layout: navigation sidebar, live preview, settings panel.
+  Builder editor page layout.
+  Organizes feature components into semantic left/center/right columns.
 -->
 <script setup>
-import { ref } from 'vue';
-
 import { useAutosave } from '../composables/useAutosave';
 import AddonsSelector from '../components/AddonsSelector.vue';
 import BasicEditorForm from '../components/BasicEditorForm.vue';
+import ExpirationBanner from '../components/ExpirationBanner.vue';
 import InvitationPreview from '../components/InvitationPreview.vue';
 import PriceSummary from '../components/PriceSummary.vue';
 
 // Enable autosave while users interact with the editor workspace.
 useAutosave();
-
-// Left menu tabs define which settings block is shown on the right panel.
-const tabs = ['Información', 'Colores', 'Fotos', 'Música', 'Secciones'];
-const activeTab = ref('Información');
 </script>
 
 <template>
   <section class="editor-page">
-    <div class="editor-layout">
+    <div class="editor-container">
       <!--
-        LEFT SIDEBAR:
-        Vertical menu acts as section navigation for editor settings.
+        Layout decision:
+        Left column groups editing controls (form + addons).
+        Each control block is wrapped in a card to improve scanning and separation.
       -->
-      <aside class="panel panel-sidebar">
-        <h2>Editor</h2>
-        <nav class="sidebar-menu">
-          <button
-            v-for="tab in tabs"
-            :key="tab"
-            class="menu-item"
-            :class="{ 'menu-item--active': activeTab === tab }"
-            type="button"
-            @click="activeTab = tab"
-          >
-            {{ tab }}
-          </button>
-        </nav>
+      <aside class="editor-column editor-column-left">
+        <div class="editor-card">
+          <BasicEditorForm />
+        </div>
+
+        <div class="editor-card">
+          <AddonsSelector />
+        </div>
       </aside>
 
       <!--
-        CENTER PREVIEW:
-        Preview is wrapped in a phone-like device frame for realistic mobile context.
+        Center column emphasizes preview output.
+        Preview is wrapped in an invitation-like card shell.
       -->
-      <main class="panel panel-preview">
-        <h2>Vista previa móvil</h2>
-        <div class="phone-frame">
-          <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <InvitationPreview />
-          </div>
+      <main class="editor-column editor-column-center">
+        <div class="editor-preview-shell">
+          <InvitationPreview />
         </div>
       </main>
 
       <!--
-        RIGHT SETTINGS PANEL:
-        Content switches by selected tab to keep editing focused.
+        Right column contains metadata blocks.
+        Price and expiration are separated into individual cards.
       -->
-      <aside class="panel panel-settings">
-        <h2>{{ activeTab }}</h2>
-
-        <div v-if="activeTab === 'Información'" class="settings-block">
-          <BasicEditorForm />
-        </div>
-
-        <div v-else-if="activeTab === 'Colores'" class="settings-block">
-          <p>Configuración de colores (próximamente).</p>
-        </div>
-
-        <div v-else-if="activeTab === 'Fotos'" class="settings-block">
-          <p>Gestión de fotos y galería (próximamente).</p>
-          <AddonsSelector />
-        </div>
-
-        <div v-else-if="activeTab === 'Música'" class="settings-block">
-          <p>Configuración de música de fondo (próximamente).</p>
-        </div>
-
-        <div v-else class="settings-block">
-          <p>Configuración de secciones (próximamente).</p>
+      <aside class="editor-column editor-column-right">
+        <div class="editor-card">
           <PriceSummary />
+        </div>
+
+        <div class="editor-card">
+          <ExpirationBanner />
         </div>
       </aside>
     </div>
