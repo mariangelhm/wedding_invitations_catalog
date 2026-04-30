@@ -10,6 +10,8 @@ export const translations = {
       customize: 'Personalizar',
     },
     previewModal: { web: 'Web', mobile: 'Mobile', helper: 'Esta es una vista previa. Podrás personalizar colores, textos y componentes en el editor.', customize: 'Personalizar', close: 'Cerrar' },
+    editor: { preview: 'Vista previa', web: 'Web', mobile: 'Mobile', close: 'Cerrar' },
+    editor: { preview: 'Preview', web: 'Web', mobile: 'Mobile', close: 'Close' },
     templateDetail: { breadcrumbHome: 'Inicio', breadcrumbCatalog: 'Catálogo', from: 'Desde', customize: 'Personalizar esta invitación', preview: 'Vista previa', includes: 'Incluye', similar: 'Explorar diseños similares', notFound: 'No encontramos esta invitación' },
     home: { badge: 'Invitaciones digitales únicas e inolvidables', titleStart: 'Crea tu invitación de boda en', titleHighlight: 'minutos', subtitle: 'Personaliza cada detalle, agrega extras increíbles y comparte tu link con tus invitados.', primaryButton: 'Crear mi invitación', secondaryButton: 'Ver ejemplos', benefits: { fast: 'Fácil y rápido', customizable: '100% Personalizable', secure: 'Seguro y privado' }, howTitle: '¿Cómo funciona?', steps: { personaliza: { title: 'Personaliza', description: 'Completa la información de tu evento y elige tu estilo favorito.' }, extras: { title: 'Agrega extras', description: 'Añade funcionalidades como galería, mapa, cuenta regresiva y más.' }, link: { title: 'Obtén tu link', description: 'Revisa tu invitación y compártela con tus invitados.' } } },
     phone: { label: 'NUESTRA BODA', names: 'María & Carlos', date: '14 de Junio, 2027', location: 'Rose Garden Hall', message: 'Nos encantaría que seas parte de este día tan especial.', button: 'Confirmar asistencia' },

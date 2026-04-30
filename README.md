@@ -505,3 +505,11 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - photos/music/map -> placeholder or lightweight controls
   - components -> `CustomizableComponentsPanel`
 - Right panel keeps summary actions visible (`PriceSummary`, `ExpirationBanner`, Save/Preview actions).
+
+## Editor preview modal
+- Added `EditorPreviewModal.vue` with two view modes: `Web` and `Mobile`.
+- The modal reads live builder state via the existing `InvitationPreview` component, so current texts, styles, and addons are reflected immediately.
+- Open/close flow:
+  - open from editor "Vista previa" button
+  - close from modal close action or overlay click
+- Mobile mode uses a phone mockup frame to preview responsive invitation appearance.

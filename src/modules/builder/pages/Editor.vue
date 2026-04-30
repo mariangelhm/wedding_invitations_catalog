@@ -6,6 +6,7 @@ import BasicEditorForm from '../components/BasicEditorForm.vue';
 import CustomizableComponentsPanel from '../components/CustomizableComponentsPanel.vue';
 import ExpirationBanner from '../components/ExpirationBanner.vue';
 import InvitationPreview from '../components/InvitationPreview.vue';
+import EditorPreviewModal from '../components/EditorPreviewModal.vue';
 import PriceSummary from '../components/PriceSummary.vue';
 import { useBuilderStore } from '../../../store/builder.store';
 import { templates } from '../../catalog/data/templates';
@@ -17,6 +18,7 @@ const builderStore = useBuilderStore();
 const { currentLang } = useI18n();
 
 const selectedSection = ref('info');
+const isPreviewOpen = ref(false);
 const sections = computed(() => [
   { id: 'info', es: 'Información', en: 'Information' },
   { id: 'colors', es: 'Colores', en: 'Colors' },
@@ -61,9 +63,10 @@ watchEffect(() => {
         <div v-else-if="selectedSection === 'map'" class="settings-block"><label>Ubicación / enlace mapa <input type="text" v-model="builderStore.invitation.base.location" placeholder="https://maps..." /></label></div>
         <div v-else class="settings-block"><CustomizableComponentsPanel /></div>
 
-        <div class="summary-block"><PriceSummary /><ExpirationBanner /><div class="summary-actions"><button class="btn btn-primary">Guardar</button><button class="btn btn-secondary">Vista previa</button></div></div>
+        <div class="summary-block"><PriceSummary /><ExpirationBanner /><div class="summary-actions"><button class="btn btn-primary">Guardar</button><button class="btn btn-secondary" @click="isPreviewOpen = true">Vista previa</button></div></div>
       </aside>
     </div>
+  <EditorPreviewModal :is-open="isPreviewOpen" @close="isPreviewOpen = false" />
   </section>
 </template>
 
