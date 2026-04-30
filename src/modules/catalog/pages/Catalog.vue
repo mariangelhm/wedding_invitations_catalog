@@ -41,7 +41,6 @@ const visibleTemplates = computed(() => {
   });
 });
 
-const viewTemplateDetail = (template) => router.push(`/catalog/${template.id}`);
 const personalizeTemplate = (template) => router.push(`/editor?templateId=${template.id}`);
 
 </script>
@@ -74,7 +73,7 @@ const personalizeTemplate = (template) => router.push(`/editor?templateId=${temp
     </section>
 
     <section class="catalog-grid">
-      <article v-for="template in visibleTemplates" :key="template.id" class="template-card">
+      <article v-for="template in visibleTemplates" :key="template.id" class="template-card" role="button" tabindex="0" @click.stop="personalizeTemplate(template)" @keydown.enter="personalizeTemplate(template)">
         <div class="preview-shell" :style="{ background: template.previewStyle.background }">
           <div class="mini-invitation" :style="{ color: template.previewStyle.textColor, borderColor: template.previewStyle.accentColor }">
             <p class="mini-kicker">{{ t('catalog.breadcrumbCatalog') }}</p>
@@ -95,8 +94,7 @@ const personalizeTemplate = (template) => router.push(`/editor?templateId=${temp
           <p class="card-price">{{ t('catalog.card.from') }} {{ formatPrice(template.basePrice) }}</p>
           <p class="card-description">{{ template.shortDescription }}</p>
           <div class="card-actions">
-            <button class="btn btn-secondary" type="button" @click="viewTemplateDetail(template)">{{ t('catalog.card.detail') }}</button>
-            <button class="btn btn-primary" type="button" @click="personalizeTemplate(template)">{{ t('catalog.card.customize') }}</button>
+            <button class="btn btn-primary" type="button" @click.stop="personalizeTemplate(template)">{{ t('catalog.card.customize') }}</button>
           </div>
         </div>
       </article>

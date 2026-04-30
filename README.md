@@ -484,3 +484,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - `Editor` and `Public Invitation` entries were removed from top navigation to keep the header focused on discovery flow.
 - Catalog cards now route directly to editor customization via `/editor?templateId={id}`.
 - Editor reads `templateId` from query params, resolves selected template from shared catalog data, and initializes builder draft with template metadata.
+
+## Catalog flow
+- Catalog cards are now fully clickable and route directly to the editor with query-param template handoff:
+  - `/editor?templateId={id}`
+- The visible `Personalizar` / `Customize` button routes to the same path and uses click-stop behavior to avoid double navigation.
+- The detail action/button was removed from catalog cards to keep the flow focused on immediate customization.
