@@ -560,3 +560,12 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `items` array with entries like `{ time, title, place }`.
 - Renders an elegant vertical timeline with dark-pink accent line and event dots.
 - Designed mobile-first and reusable across invitation templates and editor-driven block composition.
+
+## Reusable StoryBlock
+- Added reusable narrative block:
+  - `src/modules/builder/blocks/StoryBlock/StoryBlock.vue`
+  - `src/modules/builder/blocks/StoryBlock/config.js`
+- Props:
+  - `message` (string)
+  - `title` (string, default: `Nuestra historia`)
+- Presents story content in a romantic, clean, card-based paragraph layout designed for high readability across mobile and desktop.
