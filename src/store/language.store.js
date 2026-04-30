@@ -1,22 +1,27 @@
-// Global language store for simple app-wide language state.
+// Global language store for app-wide language state.
 import { defineStore } from 'pinia';
 
 const STORAGE_KEY = 'wedding_builder_lang';
 
+const resolveInitialLang = () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  return saved === 'en' ? 'en' : 'es';
+};
+
 export const useLanguageStore = defineStore('languageStore', {
   state: () => ({
-    // Initialize from localStorage if available, fallback to Spanish.
-    currentLang: localStorage.getItem(STORAGE_KEY) || 'es',
+    // Default language is Spanish unless a valid saved value exists.
+    currentLang: resolveInitialLang(),
   }),
 
   actions: {
-    // Explicit setter used by UI toggle buttons.
+    // Explicit setter used by language switch controls.
     setLanguage(lang) {
-      this.currentLang = lang;
-      localStorage.setItem(STORAGE_KEY, lang);
+      this.currentLang = lang === 'en' ? 'en' : 'es';
+      localStorage.setItem(STORAGE_KEY, this.currentLang);
     },
 
-    // Backward-compatible toggle between Spanish and English.
+    // Toggle helper kept for convenience in simple UIs.
     toggleLanguage() {
       this.setLanguage(this.currentLang === 'es' ? 'en' : 'es');
     },

@@ -322,6 +322,30 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - "¿Cómo funciona?" section uses modern cards with rounded corners, soft shadows, and icon circles.
 - Landing-specific styles live in `src/modules/landing/styles/home.css` and are documented with layout comments.
 
+## Landing responsive and language improvements
+- Language switching on landing now uses `language.store.js` with:
+  - default `currentLang = "es"`
+  - `setLanguage(lang)` and `toggleLanguage()`
+  - localStorage persistence (`wedding_builder_lang`)
+- Landing texts now come from `src/core/i18n/translations.js` for both Spanish and English, including:
+  - navbar labels
+  - hero content
+  - benefits
+  - steps
+  - phone mockup content
+- Responsive behavior was refined in `src/modules/landing/styles/home.css`:
+  - desktop hero uses two columns with `min-height: calc(100vh - navbar)`
+  - mobile/tablet stacks hero blocks cleanly
+  - CTA and benefits wrap predictably
+  - phone mockup scales down and remains centered
+  - how-it-works cards stack on small screens
+- Phone mockup now uses a more realistic vertical smartphone structure:
+  - 9:16 aspect ratio
+  - dark outer frame
+  - notch
+  - inner white invitation screen
+- Navbar hover states now include primary color emphasis and animated underline.
+
 ## Folder Structure
 ```text
 /src
