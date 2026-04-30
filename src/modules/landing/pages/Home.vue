@@ -5,10 +5,14 @@
 <script setup>
 import { useRouter } from 'vue-router';
 
+<<<<<<< HEAD
 import { useI18n } from '../../../core/i18n';
 
 const router = useRouter();
 const { t } = useI18n();
+=======
+const router = useRouter();
+>>>>>>> main
 
 const goToCatalog = () => {
   router.push('/catalog');
@@ -26,6 +30,7 @@ const goToHowItWorks = () => {
     <div class="bg-shape bg-shape--two" aria-hidden="true"></div>
 
     <div class="home-container">
+<<<<<<< HEAD
       <section class="home-hero">
         <div class="hero-content">
           <!-- i18n text values are resolved through t(key) using current global language. -->
@@ -34,10 +39,28 @@ const goToHowItWorks = () => {
 
           <div class="hero-actions">
             <button class="btn btn-primary" type="button" @click="goToCatalog">{{ t('home.start') }}</button>
+=======
+      <!--
+        Hero layout decision:
+        Two columns on desktop to balance messaging (left) and visual proof (right).
+        Stacks on mobile for readability and progressive scanning.
+      -->
+      <section class="home-hero">
+        <div class="hero-content">
+          <h1>Create your wedding invitation in minutes</h1>
+          <p>Customize, pay and get your link instantly</p>
+
+          <div class="hero-actions">
+            <button class="btn btn-primary" type="button" @click="goToCatalog">Ver catálogo</button>
+>>>>>>> main
             <button class="btn btn-secondary" type="button" @click="goToHowItWorks">Cómo funciona</button>
           </div>
         </div>
 
+<<<<<<< HEAD
+=======
+        <!-- Right visual: phone mockup with invitation preview placeholder. -->
+>>>>>>> main
         <div class="hero-visual" aria-hidden="true">
           <div class="phone-mockup">
             <div class="phone-notch"></div>
@@ -56,6 +79,7 @@ const goToHowItWorks = () => {
         <h2>How it works</h2>
         <div class="steps-grid">
           <article class="step-card">
+<<<<<<< HEAD
             <h3>1. {{ t('home.steps.customize') }}</h3>
             <p>Fill your invitation details and choose your preferred style.</p>
           </article>
@@ -65,6 +89,17 @@ const goToHowItWorks = () => {
           </article>
           <article class="step-card">
             <h3>3. {{ t('home.steps.link') }}</h3>
+=======
+            <h3>1. Customize</h3>
+            <p>Fill your invitation details and choose your preferred style.</p>
+          </article>
+          <article class="step-card">
+            <h3>2. Add extras</h3>
+            <p>Select optional features like gallery, map, or countdown.</p>
+          </article>
+          <article class="step-card">
+            <h3>3. Get your link</h3>
+>>>>>>> main
             <p>Review your invitation and share your public invitation link.</p>
           </article>
         </div>
