@@ -569,3 +569,17 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `message` (string)
   - `title` (string, default: `Nuestra historia`)
 - Presents story content in a romantic, clean, card-based paragraph layout designed for high readability across mobile and desktop.
+
+## Reusable RSVPBlock
+- Added reusable RSVP confirmation block:
+  - `src/modules/builder/blocks/RSVPBlock/RSVPBlock.vue`
+  - `src/modules/builder/blocks/RSVPBlock/config.js`
+- Props:
+  - `buttonLabel` (default: `Confirmar asistencia`)
+- Local state handles:
+  - full name input
+  - validation message
+  - confirmed state
+- Emits `confirm` event with payload:
+  - `{ fullName, response: "confirmed" }`
+- No backend connection yet; block is UI + emit-only by design for MVP integration.
