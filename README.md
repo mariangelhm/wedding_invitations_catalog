@@ -583,3 +583,13 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Emits `confirm` event with payload:
   - `{ fullName, response: "confirmed" }`
 - No backend connection yet; block is UI + emit-only by design for MVP integration.
+
+## Block registry
+- Added a central registry at `src/modules/builder/blocks/index.js`.
+- Registry maps each block type to both its Vue component and config metadata:
+  - `countdown`
+  - `map`
+  - `timeline`
+  - `story`
+  - `rsvp`
+- This structure prepares the builder for future drag-and-drop composition and dynamic block rendering by type inside templates/editor flows.
