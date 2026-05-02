@@ -593,3 +593,15 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `story`
   - `rsvp`
 - This structure prepares the builder for future drag-and-drop composition and dynamic block rendering by type inside templates/editor flows.
+
+## CountdownBlock
+- Reusable countdown component at `src/modules/builder/blocks/CountdownBlock/CountdownBlock.vue` with config at `src/modules/builder/blocks/CountdownBlock/config.js`.
+- Props:
+  - `targetDate` (ISO string, required)
+  - `label` (optional)
+- Behavior:
+  - calculates difference between `now` and `targetDate`
+  - updates every second via `setInterval`
+  - clears interval on unmount and when event reaches zero
+  - displays "El evento ha comenzado" when countdown finishes
+- This block is prepared for future drag-and-drop registration usage via block config metadata.
