@@ -38,10 +38,12 @@ export const useBuilderStore = defineStore('builderStore', {
         styles: {
           primaryColor: template?.previewStyle?.accentColor || '#C7355C',
           secondaryColor: template?.previewStyle?.background || '#FFF1F4',
-          backgroundTheme: template?.previewStyle?.background || '#FFFFFF',
+          backgroundTheme: 'blush',
           coupleFontFamily: 'Playfair Display',
           bodyFontFamily: 'Arial',
           textColor: template?.previewStyle?.textColor || '#111827',
+          accentShape: '#F7DCE5',
+          backgroundGradient: 'linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)',
         },
         addons: [],
         customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },

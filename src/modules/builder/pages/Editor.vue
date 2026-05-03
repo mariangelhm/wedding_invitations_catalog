@@ -8,6 +8,7 @@ import InvitationPreview from '../components/InvitationPreview.vue';
 import EditorPreviewModal from '../components/EditorPreviewModal.vue';
 import { useBuilderStore } from '../../../store/builder.store';
 import { templates } from '../../catalog/data/templates';
+import { themePresets } from '../data/themePresets';
 import { useI18n } from '../../../core/i18n';
 
 useAutosave();
@@ -56,6 +57,15 @@ watch(availableSections, (items) => {
 
 const isAddonEnabled = (type) => invitation.value?.addons?.some((addon) => addon.type === type) ?? false;
 const toggleBlockAddon = (item, checked) => builderStore.toggleAddon(item.type, item.label, item.price, checked);
+const applyThemePreset = (preset) => {
+  invitation.value.styles.backgroundTheme = preset.id;
+  invitation.value.styles.primaryColor = preset.primaryColor;
+  invitation.value.styles.secondaryColor = preset.secondaryColor;
+  invitation.value.styles.accentShape = preset.accentShape;
+  invitation.value.styles.backgroundGradient = preset.background;
+  if (preset.textColor) invitation.value.styles.textColor = preset.textColor;
+};
+
 </script>
 
 <template>
@@ -79,10 +89,16 @@ const toggleBlockAddon = (item, checked) => builderStore.toggleAddon(item.type, 
       <aside class="settings-panel">
         <div v-if="selectedSection === 'background'" class="settings-block">
           <div class="tab-row"><button class="tab-btn" :class="{ active: selectedBackgroundTab==='gallery' }" @click="selectedBackgroundTab='gallery'">Galería</button><button class="tab-btn" :class="{ active: selectedBackgroundTab==='colors' }" @click="selectedBackgroundTab='colors'">Colores</button></div>
-          <div v-if="selectedBackgroundTab==='colors'" class="swatch-grid">
-            <button v-for="color in backgroundSwatches" :key="color" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation?.styles?.backgroundColor===color }" @click="invitation.styles.backgroundColor = color" />
+          <div v-if="selectedBackgroundTab==='gallery'" class="theme-grid">
+            <!-- Theme system: presets apply coordinated color + background decisions for reusable templates. -->
+            <button v-for="preset in themePresets" :key="preset.id" class="theme-card" :class="{ selected: invitation.styles.backgroundTheme===preset.id }" @click="applyThemePreset(preset)">
+              <span class="theme-preview" :style="{ background: preset.background }"></span>
+              <strong>{{ preset.name }}</strong>
+            </button>
           </div>
-          <div v-else class="placeholder-stack"><div class="placeholder-card">Fondo romántico suave</div><div class="placeholder-card">Textura elegante</div><div class="placeholder-card">Upload disponible próximamente</div></div>
+          <div v-else class="swatch-grid">
+            <button v-for="color in backgroundSwatches" :key="color" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation?.styles?.secondaryColor===color }" @click="invitation.styles.secondaryColor = color" />
+          </div>
         </div>
 
                 <div v-else-if="selectedSection === 'card'" class="settings-block"><BasicEditorForm /></div>

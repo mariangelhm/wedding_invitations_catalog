@@ -702,3 +702,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se agregaron opciones: Playfair Display, Cormorant Garamond, Poppins, Georgia, Patrick Hand y Arial.
 - En el store, `styles` ahora soporta `coupleFontFamily` y `bodyFontFamily` junto con `textColor`, `primaryColor`, `secondaryColor` y `backgroundTheme`.
 - `RomanticMotionTemplate` aplica `coupleFontFamily` exclusivamente al nombre de la pareja y `bodyFontFamily` al resto del contenido, con fallback serif/sans-serif local.
+
+## Visual theme presets
+- Se agregó `src/modules/builder/data/themePresets.js` con presets reutilizables (blush, ivory, darkLuxury, sage) para aplicar decisiones visuales consistentes.
+- En el editor, la sección **Fondo** ahora prioriza selección de tema como control principal (no sólo color plano).
+- Al seleccionar un tema se actualizan `backgroundTheme`, `primaryColor`, `secondaryColor`, `backgroundGradient`, `accentShape` y `textColor` (si el preset lo define).
+- `RomanticMotionTemplate` consume estas variables para fondo, acentos y contraste (incluyendo escenarios oscuros), y este enfoque queda preparado para templates futuros.

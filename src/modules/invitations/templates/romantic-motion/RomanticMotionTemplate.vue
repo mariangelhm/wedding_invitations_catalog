@@ -45,6 +45,8 @@ const templateVars = computed(() => ({
   '--color-primary': styles.value.primaryColor || '#C7355C',
   '--color-primary-dark': '#9F1F46',
   '--color-primary-light': styles.value.secondaryColor || '#FFF1F4',
+  '--theme-background': styles.value.backgroundGradient || 'linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)',
+  '--theme-accent-shape': styles.value.accentShape || '#F7DCE5',
   '--color-text-main': '#111827',
   '--color-text-muted': '#6B7280',
   '--color-surface': '#FFFFFF',
