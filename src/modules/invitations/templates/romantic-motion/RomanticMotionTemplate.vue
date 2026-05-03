@@ -67,15 +67,24 @@ const formattedDate = computed(() => {
 const fontStacks = {
   'Playfair Display': "'Playfair Display', Georgia, serif",
   'Cormorant Garamond': "'Cormorant Garamond', Georgia, serif",
+  'Libre Baskerville': "'Libre Baskerville', Georgia, serif",
+  Merriweather: "'Merriweather', Georgia, serif",
+  Lora: "'Lora', Georgia, serif",
   Poppins: "'Poppins', Arial, sans-serif",
+  Montserrat: "'Montserrat', Arial, sans-serif",
+  Raleway: "'Raleway', Arial, sans-serif",
+  Nunito: "'Nunito', Arial, sans-serif",
   Georgia: 'Georgia, serif',
   'Patrick Hand': "'Patrick Hand', cursive",
+  'Dancing Script': "'Dancing Script', cursive",
+  'Great Vibes': "'Great Vibes', cursive",
   Arial: 'Arial, sans-serif',
 };
 
 const templateVars = computed(() => ({
   '--color-primary': styles.value.primaryColor || '#C7355C',
   '--color-primary-dark': styles.value.titleColor || '#9F1F46',
+  '--section-heading-color': styles.value.titleColor || '#9F1F46',
   '--color-primary-light': styles.value.secondaryColor || '#FFF1F4',
   '--theme-background': styles.value.backgroundGradient || 'linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)',
   '--theme-accent-shape': styles.value.accentShape || '#F7DCE5',

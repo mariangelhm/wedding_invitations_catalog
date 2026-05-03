@@ -17,6 +17,7 @@ const { t } = useI18n();
 const selectedSection = ref('background');
 const selectedPreviewDevice = ref('desktop');
 const selectedBackgroundTab = ref('themes');
+const selectedTypographyTab = ref('names');
 const isPreviewOpen = ref(false);
 
 const sectionCatalog = [
@@ -37,9 +38,24 @@ const blockOptions = [
 ];
 
 const backgroundSwatches = ['#C7355C', '#F97316', '#2563EB', '#16A34A', '#7C3AED', '#111827', '#FBE8EE', '#FFFFFF'];
-const titleColorSwatches = ['#111827', '#374151', '#C7355C', '#FFFFFF', '#2E2A24'];
-const bodyColorSwatches = ['#111827', '#374151', '#6B7280', '#E5E7EB', '#5F574B'];
-const fontStacks = { 'Playfair Display': "'Playfair Display', Georgia, serif", 'Cormorant Garamond': "'Cormorant Garamond', Georgia, serif", Poppins: "'Poppins', Arial, sans-serif", Georgia: 'Georgia, serif', 'Patrick Hand': "'Patrick Hand', cursive", Arial: 'Arial, sans-serif' };
+const titleColorSwatches = ['#111827', '#374151', '#4B5563', '#6B7280', '#C7355C', '#B76E79', '#9A6B4F', '#B88A44', '#D4AF37', '#FFFFFF', '#F8FAFC', '#1F2937'];
+const bodyColorSwatches = ['#111827', '#374151', '#4B5563', '#6B7280', '#C7355C', '#B76E79', '#9A6B4F', '#B88A44', '#D4AF37', '#FFFFFF', '#F8FAFC', '#1F2937'];
+const fontStacks = {
+  'Playfair Display': "'Playfair Display', Georgia, serif",
+  'Cormorant Garamond': "'Cormorant Garamond', Georgia, serif",
+  'Libre Baskerville': "'Libre Baskerville', Georgia, serif",
+  Merriweather: "'Merriweather', Georgia, serif",
+  Lora: "'Lora', Georgia, serif",
+  Poppins: "'Poppins', Arial, sans-serif",
+  Montserrat: "'Montserrat', Arial, sans-serif",
+  Raleway: "'Raleway', Arial, sans-serif",
+  Nunito: "'Nunito', Arial, sans-serif",
+  Georgia: 'Georgia, serif',
+  'Patrick Hand': "'Patrick Hand', cursive",
+  'Dancing Script': "'Dancing Script', cursive",
+  'Great Vibes': "'Great Vibes', cursive",
+  Arial: 'Arial, sans-serif',
+};
 const fontOptions = Object.keys(fontStacks);
 
 const selectedTemplate = computed(() => templates.find((item) => item.id === route.query.templateId) || null);
@@ -90,14 +106,19 @@ const applyThemePreset = (preset) => {
         </div>
         <div v-else-if="selectedSection === 'card'" class="settings-block"><BasicEditorForm /></div>
         <div v-else-if="selectedSection === 'style'" class="settings-block">
-          <h4>Fuente para nombres</h4>
-          <div class="font-card-list"><button v-for="font in fontOptions" :key="`couple-${font}`" class="font-card" :class="{ selected: invitation.styles.coupleFontFamily===font }" :style="{ fontFamily: fontStacks[font] }" @click="invitation.styles.coupleFontFamily = font">{{ font }}</button></div>
-          <h4>Fuente general</h4>
-          <div class="font-card-list"><button v-for="font in fontOptions" :key="`body-${font}`" class="font-card" :class="{ selected: invitation.styles.bodyFontFamily===font }" :style="{ fontFamily: fontStacks[font] }" @click="invitation.styles.bodyFontFamily = font">{{ font }}</button></div>
-          <h4>Color de nombres/títulos</h4>
-          <div class="swatch-grid text-swatches"><button v-for="color in titleColorSwatches" :key="`title-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.titleColor===color }" @click="invitation.styles.titleColor = color" /></div>
-          <h4>Color de texto general</h4>
-          <div class="swatch-grid text-swatches"><button v-for="color in bodyColorSwatches" :key="`body-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.bodyTextColor===color }" @click="invitation.styles.bodyTextColor = color; invitation.styles.textColor = color" /></div>
+          <div class="tab-row"><button class="tab-btn" :class="{ active: selectedTypographyTab==='names' }" @click="selectedTypographyTab='names'">Nombres</button><button class="tab-btn" :class="{ active: selectedTypographyTab==='general' }" @click="selectedTypographyTab='general'">General</button></div>
+          <template v-if="selectedTypographyTab==='names'">
+            <h4>Fuente para nombres</h4>
+            <div class="font-card-list"><button v-for="font in fontOptions" :key="`couple-${font}`" class="font-card" :class="{ selected: invitation.styles.coupleFontFamily===font }" :style="{ fontFamily: fontStacks[font] }" @click="invitation.styles.coupleFontFamily = font">{{ font }}</button></div>
+            <h4>Color de nombres/títulos</h4>
+            <div class="swatch-grid text-swatches"><button v-for="color in titleColorSwatches" :key="`title-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.titleColor===color }" @click="invitation.styles.titleColor = color" /></div>
+          </template>
+          <template v-else>
+            <h4>Fuente general</h4>
+            <div class="font-card-list"><button v-for="font in fontOptions" :key="`body-${font}`" class="font-card" :class="{ selected: invitation.styles.bodyFontFamily===font }" :style="{ fontFamily: fontStacks[font] }" @click="invitation.styles.bodyFontFamily = font">{{ font }}</button></div>
+            <h4>Color de texto general</h4>
+            <div class="swatch-grid text-swatches"><button v-for="color in bodyColorSwatches" :key="`body-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.bodyTextColor===color }" @click="invitation.styles.bodyTextColor = color; invitation.styles.textColor = color" /></div>
+          </template>
         </div>
         <div v-else class="block-list">
           <!-- This is the base for future drag-and-drop ordering in all templates. -->

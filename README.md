@@ -823,3 +823,11 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - El template Romantic Motion renderiza dinámicamente solo bloques habilitados (`enabled`) ordenados por `order`.
 - El hero siempre permanece fijo arriba y el resto de secciones se pintan según los bloques activos.
 - La configuración del mapa vive dentro de Extras y se muestra solo cuando el extra mapa está activo.
+
+## Typography tabs and separated text colors
+- La sección **Letras** ahora tiene tabs: **Nombres** y **General**.
+- **Nombres** controla `styles.coupleFontFamily` y `styles.titleColor`.
+- **General** controla `styles.bodyFontFamily` y `styles.bodyTextColor`.
+- `titleColor` aplica a nombres de novios y encabezados de sección.
+- `bodyTextColor` aplica al contenido general (fecha, ubicación, mensajes y textos de bloques).
+- Se amplió el catálogo de tipografías y paleta de colores para personalización más fina.
