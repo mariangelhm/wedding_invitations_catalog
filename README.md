@@ -754,3 +754,8 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Cada `themePreset` ahora define explícitamente: `primaryColor`, `secondaryColor`, `background`, `accentShape`, `textColor`, `titleColor`, `bodyTextColor`.
 - Al seleccionar tema en editor, se escriben siempre todos esos tokens en `styles` para evitar herencia accidental del tema previo.
 - Esto corrige el caso oscuro→claro donde el texto podía quedar blanco sobre fondo claro.
+
+
+## Nuevos temas elegantes
+- Se agregaron presets visuales adicionales: Rosa viejo, Terracota champagne, Verde eucalipto, Azul medianoche, Lavanda gris, Gris carbón y Marfil dorado.
+- Todos se muestran como tarjetas visuales en **Fondo > Temas** y aplican tokens completos de color/tipografía de contraste para evitar herencias visuales no deseadas.

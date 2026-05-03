@@ -17,7 +17,7 @@ const builderStore = useBuilderStore();
 const { t } = useI18n();
 const selectedSection = ref('background');
 const selectedPreviewDevice = ref('desktop');
-const selectedBackgroundTab = ref('colors');
+const selectedBackgroundTab = ref('themes');
 const isPreviewOpen = ref(false);
 
 const sectionCatalog = [
@@ -103,8 +103,8 @@ const applyThemePreset = (preset) => {
 
       <aside class="settings-panel">
         <div v-if="selectedSection === 'background'" class="settings-block">
-          <div class="tab-row"><button class="tab-btn" :class="{ active: selectedBackgroundTab==='gallery' }" @click="selectedBackgroundTab='gallery'">Galería</button><button class="tab-btn" :class="{ active: selectedBackgroundTab==='colors' }" @click="selectedBackgroundTab='colors'">Colores</button></div>
-          <div v-if="selectedBackgroundTab==='gallery'" class="theme-grid">
+          <div class="tab-row"><button class="tab-btn" :class="{ active: selectedBackgroundTab==='themes' }" @click="selectedBackgroundTab='gallery'">Temas</button><button class="tab-btn" :class="{ active: selectedBackgroundTab==='colors' }" @click="selectedBackgroundTab='colors'">Colores</button></div>
+          <div v-if="selectedBackgroundTab==='themes'" class="theme-grid">
             <!-- Theme system: presets apply coordinated color + background decisions for reusable templates. -->
             <button v-for="preset in themePresets" :key="preset.id" class="theme-card" :class="{ selected: invitation.styles.backgroundTheme===preset.id }" @click="applyThemePreset(preset)">
               <span class="theme-preview" :style="{ background: preset.background }"></span>
