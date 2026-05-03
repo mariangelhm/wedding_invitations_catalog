@@ -5,8 +5,8 @@ import StoryBlock from './StoryBlock/StoryBlock.vue';
 import RSVPBlock from './RSVPBlock/RSVPBlock.vue';
 import GalleryBlock from './GalleryBlock/GalleryBlock.vue';
 
-// Central registry to reuse block components across invitation templates.
-// This registry is designed to support future drag & drop assembly flows.
+// Extras are reusable blocks that can be enabled/ordered across templates.
+// This registry is the base for future drag & drop assembly flows in the editor.
 // Each block declares which props are configurable from editor interfaces.
 export const blockRegistry = {
   countdown_wedding: {
