@@ -15,7 +15,8 @@ onMounted(() => { if (!builderStore.invitation) builderStore.createDraftInvitati
       <Input v-model="builderStore.invitation.base.names" label="Nombres" />
       <Input v-model="builderStore.invitation.base.date" label="Fecha" />
       <Input v-model="builderStore.invitation.base.location" label="Ubicación" />
-      <TextArea v-model="builderStore.invitation.base.message" label="Mensaje" :rows="4" />
+      <TextArea v-model="builderStore.invitation.base.heroMessage" label="Mensaje principal" :rows="3" />
+      <TextArea v-model="builderStore.invitation.base.storyMessage" label="Historia de los novios" :rows="5" />
     </div>
   </section>
 </template>

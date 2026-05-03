@@ -75,7 +75,8 @@ const names = computed(() => base.value.names || 'María & Carlos');
 const locationName = computed(() => mapAddon.value?.settings?.locationName || base.value.location || 'Rose Garden Hall');
 const locationAddress = computed(() => mapAddon.value?.settings?.address || 'Santiago, Chile');
 const locationMapUrl = computed(() => mapAddon.value?.settings?.mapUrl || 'https://maps.google.com');
-const storyMessage = computed(() => base.value.message || 'Nos encantaría que seas parte de este momento tan especial.');
+const heroMessage = computed(() => base.value.heroMessage || 'Nos encantaría que seas parte de este día especial.');
+const storyMessage = computed(() => base.value.storyMessage || 'Nuestra historia está llena de momentos simples, valientes y hermosos que queremos celebrar contigo.');
 const orderedBlocks = computed(() => (props.invitationData?.blocks || []).filter((b) => b.enabled).slice().sort((a,b) => a.order - b.order));
 
 
@@ -110,7 +111,7 @@ const onRsvpConfirm = (payload) => {
       <h1 class="romantic-motion__couple-names">{{ names }}</h1>
       <p class="hero-date">{{ formattedDate }}</p>
       <p class="hero-location">{{ locationName }}</p>
-      <p class="hero-message">{{ storyMessage }}</p>
+      <p class="hero-message">{{ heroMessage }}</p>
     </section>
 
     <template v-for="block in orderedBlocks" :key="block.id">

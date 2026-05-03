@@ -771,3 +771,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se agregó la clase `.romantic-motion__couple-names` para controlar el título principal con `clamp(2.4rem, 8vw, 5rem)`.
 - Para nombres largos se habilitó ajuste elegante con `text-wrap: balance`, `overflow-wrap` y `line-height` optimizado.
 - En mobile se redujo padding del hero y se ajustó el clamp para evitar overflow horizontal sin perder jerarquía visual.
+
+
+## Mensajes separados: hero vs historia
+- El modelo `base` ahora separa `heroMessage` y `storyMessage` para evitar reutilizar el mismo texto en dos contextos distintos.
+- `heroMessage` se renderiza debajo de la ubicación en el hero.
+- `storyMessage` alimenta el `StoryBlock` en la sección de historia.
+- En Tarjeta se agregaron campos independientes: **Mensaje principal** y **Historia de los novios** con fallbacks elegantes si están vacíos.
