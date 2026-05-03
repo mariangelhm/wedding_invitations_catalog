@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import wedding1 from '../../../assets/sample-gallery/wedding-1.jpg';
+import wedding2 from '../../../assets/sample-gallery/wedding-2.jpg';
+import wedding3 from '../../../assets/sample-gallery/wedding-3.jpg';
+import wedding4 from '../../../assets/sample-gallery/wedding-4.jpg';
 import './galleryBlock.css';
 
 const props = withDefaults(defineProps<{
@@ -10,33 +14,33 @@ const props = withDefaults(defineProps<{
   images: () => [],
 });
 
-// Fallback behavior:
-// - invalid/empty image sources render graceful placeholders (never broken images)
-// - if no valid images are provided, a full default placeholder set is rendered
-const defaultImages = [
-  { src: '', alt: 'Foto principal' },
-  { src: '', alt: 'Momento especial' },
-  { src: '', alt: 'Nuestra historia' },
+const localSampleImages = [
+  { src: wedding1, alt: 'Foto principal' },
+  { src: wedding2, alt: 'Momento especial' },
+  { src: wedding3, alt: 'Nuestra historia' },
+  { src: wedding4, alt: 'Celebración' },
 ];
 
 const normalizedItems = computed(() => {
-  const safeItems = (props.images || []).map((item, index) => {
-    const src = (item?.src || '').trim();
-    return {
-      src,
-      alt: item?.alt || `Imagen ${index + 1}`,
-      isRealImage: src.length > 0,
-    };
-  });
+  const customItems = (props.images || [])
+    .map((item, index) => {
+      const src = (item?.src || '').trim();
+      return {
+        src,
+        alt: item?.alt || `Imagen ${index + 1}`,
+        isRealImage: src.length > 0,
+      };
+    })
+    .filter((item) => item.isRealImage);
 
-  const hasAtLeastOneImage = safeItems.some((item) => item.isRealImage);
-  if (!hasAtLeastOneImage) {
-    return defaultImages.map((item) => ({ ...item, isRealImage: false }));
+  if (customItems.length > 0) {
+    return customItems;
   }
 
-  return safeItems.map((item, index) => item.isRealImage
-    ? item
-    : { src: '', alt: item.alt || defaultImages[index % defaultImages.length].alt, isRealImage: false });
+  return localSampleImages.map((item) => ({
+    ...item,
+    isRealImage: Boolean(item.src),
+  }));
 });
 
 const rootEl = ref<HTMLElement | null>(null);

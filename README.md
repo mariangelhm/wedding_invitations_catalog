@@ -804,3 +804,14 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - La barra superior queda fija y el área inferior usa `calc(100vh - toolbarHeight)`.
 - Sidebar izquierda, panel de configuración y canvas central ahora gestionan su propio `overflow-y`, evitando scroll vertical de toda la página.
 - Resultado: experiencia tipo Canva/Wix con scroll interno por panel.
+
+## Imágenes de ejemplo para galería
+- El template usa imágenes locales de muestra cuando no hay fotos personalizadas.
+- Debes colocar/reemplazar tus imágenes en esta carpeta:
+  - `src/assets/sample-gallery/`
+- Nombres esperados:
+  - `wedding-1.jpg`
+  - `wedding-2.jpg`
+  - `wedding-3.jpg`
+  - `wedding-4.jpg`
+- Si esos archivos no contienen una foto válida todavía, la app mantiene placeholders visuales elegantes y no se rompe.
