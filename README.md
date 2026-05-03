@@ -658,3 +658,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `invitation.templateId === "romantic-01"`
   - o `invitation.templateComponent === "romantic-motion"`
 - El preview toma `invitation` desde `builderStore.invitation`, muestra `No invitation selected` si no existe y mantiene el fallback para templates no `romantic-motion`.
+
+## Fix Vue template ref warning
+- Se corrigió el warning `Template ref "setSectionRef" used on a non-ref value` en `RomanticMotionTemplate.vue`.
+- Se cambió `ref="setSectionRef"` por `:ref="setSectionRef"` para usar correctamente function refs en Vue.
+- `setSectionRef` ahora evita duplicados y recolecta nodos para IntersectionObserver.
+- Se agregó `onUnmounted` con `disconnect()` para limpiar el observer sin remover animaciones.

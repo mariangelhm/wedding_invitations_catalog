@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import CountdownBlock from '../../../../components/blocks/CountdownBlock/CountdownBlock.vue';
 import GalleryBlock from '../../../../components/blocks/GalleryBlock/GalleryBlock.vue';
 import MapBlock from '../../../../components/blocks/MapBlock/MapBlock.vue';
@@ -10,8 +10,15 @@ import './romanticMotionTemplate.css';
 
 const props = defineProps({ invitationData: { type: Object, default: () => ({}) } });
 
-const sectionRefs = ref([]);
-const setSectionRef = (el) => { if (el) sectionRefs.value.push(el); };
+// Function refs must use :ref in template; this collects multiple section nodes safely.
+const sectionRefs = [];
+function setSectionRef(el) {
+  if (el && !sectionRefs.includes(el)) {
+    sectionRefs.push(el);
+  }
+}
+
+let sectionObserver = null;
 
 const base = computed(() => props.invitationData?.base || {});
 const styles = computed(() => props.invitationData?.styles || {});
@@ -52,16 +59,20 @@ const locationMapUrl = computed(() => mapAddon.value?.settings?.mapUrl || 'https
 const storyMessage = computed(() => base.value.message || 'Nos encantaría que seas parte de este momento tan especial.');
 
 onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
+  sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target);
+        sectionObserver?.unobserve(entry.target);
       }
     });
   }, { threshold: 0.15 });
 
-  sectionRefs.value.forEach((el) => observer.observe(el));
+  sectionRefs.forEach((el) => sectionObserver?.observe(el));
+});
+
+onUnmounted(() => {
+  sectionObserver?.disconnect();
 });
 
 const onRsvpConfirm = (payload) => {
@@ -71,7 +82,7 @@ const onRsvpConfirm = (payload) => {
 
 <template>
   <article class="romantic-motion-template" :style="templateVars">
-    <section ref="setSectionRef" class="hero motion-section">
+    <section :ref="setSectionRef" class="hero motion-section">
       <div class="hero-decor hero-decor--one" aria-hidden="true"></div>
       <div class="hero-decor hero-decor--two" aria-hidden="true"></div>
       <p class="hero-kicker">Nuestra boda</p>
@@ -81,31 +92,31 @@ const onRsvpConfirm = (payload) => {
       <p class="hero-message">{{ storyMessage }}</p>
     </section>
 
-    <section ref="setSectionRef" class="motion-section card-layer">
+    <section :ref="setSectionRef" class="motion-section card-layer">
       <CountdownBlock :target-date="weddingDate" title="Faltan para nuestra boda" variant="primary" />
     </section>
 
-    <section ref="setSectionRef" class="motion-section card-layer">
+    <section :ref="setSectionRef" class="motion-section card-layer">
       <StoryBlock title="Nuestra historia" :message="storyMessage" />
     </section>
 
-    <section ref="setSectionRef" class="motion-section card-layer">
+    <section :ref="setSectionRef" class="motion-section card-layer">
       <GalleryBlock title="Nuestros momentos" :images="gallery" />
     </section>
 
-    <section ref="setSectionRef" class="motion-section card-layer">
+    <section :ref="setSectionRef" class="motion-section card-layer">
       <TimelineBlock title="Bitácora del evento" :items="timeline" />
     </section>
 
-    <section ref="setSectionRef" class="motion-section card-layer">
+    <section :ref="setSectionRef" class="motion-section card-layer">
       <MapBlock :location-name="locationName" :address="locationAddress" :map-url="locationMapUrl" />
     </section>
 
-    <section ref="setSectionRef" class="motion-section card-layer">
+    <section :ref="setSectionRef" class="motion-section card-layer">
       <CountdownBlock :target-date="rsvpDate" title="Tiempo para confirmar" variant="minimal" />
     </section>
 
-    <section ref="setSectionRef" class="motion-section card-layer">
+    <section :ref="setSectionRef" class="motion-section card-layer">
       <RSVPBlock @confirm="onRsvpConfirm" />
     </section>
   </article>
