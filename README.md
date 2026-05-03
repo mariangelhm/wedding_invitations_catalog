@@ -625,3 +625,29 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - listar bloques disponibles
   - validar qué props puede modificar cada bloque
   - mantener una única fuente de verdad para metadatos de bloques
+
+## Romantic Motion Template
+- Es el primer template real de invitación premium con enfoque moderno, minimalista y romántico, usando composición por bloques reutilizables.
+- Archivos del template:
+  - `src/modules/invitations/templates/romantic-motion/RomanticMotionTemplate.vue`
+  - `src/modules/invitations/templates/romantic-motion/romanticMotionTemplate.css`
+  - `src/modules/invitations/templates/romantic-motion/README.md`
+- Bloques reutilizables usados:
+  - `CountdownBlock` (boda y RSVP)
+  - `StoryBlock`
+  - `GalleryBlock`
+  - `TimelineBlock`
+  - `MapBlock`
+  - `RSVPBlock`
+- Estructura de data esperada: `invitationData` con `base`, `styles`, `timeline`, `gallery` y `addons`; el template incluye fallbacks para mantener compatibilidad con el editor actual.
+- Animaciones incluidas:
+  - `fadeUp`
+  - `reveal`
+  - `softScale`
+  - activación por `IntersectionObserver` con animación una sola vez por sección (`motion-section` + `is-visible`).
+- Responsive:
+  - mobile-first en una columna, sin scroll horizontal
+  - desktop centrado con `max-width: 780px` y aire visual entre secciones
+- Render desde `InvitationPreview`:
+  - si `builderStore.invitation.templateId` es `romantic-01` o `romantic-motion`, se renderiza `RomanticMotionTemplate`
+  - en otros casos mantiene el template fallback existente

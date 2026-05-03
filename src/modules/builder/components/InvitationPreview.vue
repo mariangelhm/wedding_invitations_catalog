@@ -10,15 +10,16 @@ import { useBuilderStore } from '../../../store/builder.store';
 
 const builderStore = useBuilderStore();
 
-// Ensure there is always an invitation object to preview.
 onMounted(() => {
   if (!builderStore.invitation) {
     builderStore.createDraftInvitation();
   }
 });
 
-// Dynamic rendering helpers:
-// These computed flags update automatically when addons are changed in store.
+const selectedTemplateId = computed(() => builderStore.invitation?.templateId || '');
+const isRomanticMotion = computed(() => ['romantic-01', 'romantic-motion'].includes(selectedTemplateId.value));
+const hasSelectedTemplate = computed(() => Boolean(selectedTemplateId.value));
+
 const hasCountdownAddon = computed(() =>
   builderStore.invitation?.addons.some((addon) => addon.type === 'countdown_wedding') ?? false,
 );
@@ -32,23 +33,22 @@ const hasMapAddon = computed(() =>
   <section>
     <h2>Invitation Preview</h2>
 
-    <!--
-      Template rendering decision:
-      InvitationPreview acts as orchestration layer and passes store data
-      into the selected presentation template component.
-    -->
+    <RomanticMotionTemplate
+      v-if="isRomanticMotion"
+      :invitation-data="builderStore.invitation"
+    />
+
     <RomanticTemplate
+      v-else
       :names="builderStore.invitation?.base.names"
       :date="builderStore.invitation?.base.date"
       :location="builderStore.invitation?.base.location"
       :message="builderStore.invitation?.base.message"
     />
 
-    <!--
-      Conditional addon placeholders:
-      Render only when matching addon types exist in invitation.addons.
-    -->
-    <p v-if="hasCountdownAddon">Countdown enabled</p>
-    <p v-if="hasMapAddon">Map enabled</p>
+    <template v-if="!hasSelectedTemplate">
+      <p v-if="hasCountdownAddon">Countdown enabled</p>
+      <p v-if="hasMapAddon">Map enabled</p>
+    </template>
   </section>
 </template>

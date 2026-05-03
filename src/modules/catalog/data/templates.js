@@ -1,6 +1,30 @@
 // Shared mock catalog data reused by catalog listing and detail page.
 export const templates = [
-  { id: 'romantic-01', name: 'Romántica Clásica', category: 'romantic', level: 'medium', basePrice: 20000, popular: true, shortDescription: 'Diseño delicado y elegante para bodas románticas.', previewStyle: { background: '#FFF7FA', accentColor: '#C7355C', textColor: '#111827' }, customizableOptions: { colors: true, fonts: true, photos: true, music: true, map: true, countdown: true, rsvp: true } },
+  {
+    id: 'romantic-01',
+    templateComponent: 'romantic-motion',
+    name: 'Romántica Motion',
+    category: 'Románticas',
+    level: 'Media',
+    basePrice: 20000,
+    popular: true,
+    shortDescription: 'Una invitación moderna, romántica y animada con storytelling.',
+    previewStyle: {
+      background: '#FFF7FA',
+      accentColor: '#C7355C',
+      textColor: '#111827',
+    },
+    customizableOptions: {
+      colors: true,
+      fonts: true,
+      photos: true,
+      music: false,
+      map: true,
+      countdown: true,
+      timeline: true,
+      rsvp: true,
+    },
+  },
   { id: 'elegant-01', name: 'Elegancia Dorada', category: 'elegant', level: 'full', basePrice: 29000, popular: true, shortDescription: 'Estilo premium con acentos sobrios y gran presencia visual.', previewStyle: { background: '#FFFDF7', accentColor: '#9A7B31', textColor: '#1F2937' }, customizableOptions: { colors: true, fonts: true, photos: true, music: true, map: true, countdown: true, rsvp: true } },
   { id: 'modern-01', name: 'Moderna Urbana', category: 'modern', level: 'medium', basePrice: 21000, popular: true, shortDescription: 'Tipografías limpias y composición actual para parejas modernas.', previewStyle: { background: '#F3F8FF', accentColor: '#315E9A', textColor: '#0F172A' }, customizableOptions: { colors: true, fonts: true, photos: true, music: false, map: true, countdown: true, rsvp: true } },
   { id: 'minimal-01', name: 'Minimal Blanca', category: 'minimal', level: 'basic', basePrice: 16000, popular: false, shortDescription: 'Diseño simple, armonioso y centrado en la información clave.', previewStyle: { background: '#FFFFFF', accentColor: '#6B7280', textColor: '#111827' }, customizableOptions: { colors: true, fonts: true, photos: false, music: false, map: true, countdown: true, rsvp: true } },
