@@ -33,15 +33,3 @@
   .flow-section{padding:16px 2px}
   .flow-section--gallery{margin-bottom:0}
 }
-
-/* Block contrast system: keeps cards/text readable across light and dark themes. */
-.flow-section :is(.countdown-block,.story-block,.gallery-block,.timeline-block,.map-block,.rsvp-block){
-  --surface-color: var(--block-surface);
-  --muted-color: var(--block-muted-color);
-  --color-surface: var(--block-surface);
-  --color-text-main: var(--block-text-color);
-  color: var(--block-text-color);
-}
-.flow-section :is(.countdown-block,.story-block,.gallery-block,.timeline-block,.map-block,.rsvp-block) :is(p,li,small,label,span,input,button){
-  color: var(--block-text-color);
-}

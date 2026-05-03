@@ -845,3 +845,12 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se añadieron efectos de storytelling en scroll: `fade up`, desplazamiento sutil tipo parallax y bandas de sección para guiar la lectura.
 - La galería usa composición en capas (desktop: una imagen grande + pequeñas superpuestas; mobile: tarjetas apiladas), con overlap sutil hacia la siguiente sección.
 - Se ajustó la integración visual de Countdown/Story/Timeline/Map/RSVP para evitar sensación de tarjetas aisladas y mantener contraste consistente.
+
+## Compact full-height editor layout
+- El editor usa viewport completo (`height: 100vh`) con `overflow: hidden` para evitar scroll global.
+- Toolbar compacta con altura fija de `64px`.
+- Área principal con `height: calc(100vh - 64px)` en grid.
+- Desktop layout: `88px 330px 1fr` (menú, panel de ajustes, canvas).
+- Menú lateral y panel de ajustes con espaciado compacto y scroll interno.
+- Canvas maximiza el preview con padding `24px` desktop y `12px` mobile.
+- Mientras la ruta `/editor` está activa, el `body` bloquea su scroll; solo los paneles internos hacen scroll.

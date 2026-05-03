@@ -1,11 +1,20 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from './Header.vue';
 import Footer from './Footer.vue';
 
 const route = useRoute();
 const isEditorRoute = computed(() => route.path.startsWith('/editor'));
+
+watch(isEditorRoute, (active) => {
+  // Prevent page-level scroll while editor is open; panels handle their own scroll.
+  document.body.style.overflow = active ? 'hidden' : '';
+}, { immediate: true });
+
+onUnmounted(() => {
+  document.body.style.overflow = '';
+});
 </script>
 
 <template>
