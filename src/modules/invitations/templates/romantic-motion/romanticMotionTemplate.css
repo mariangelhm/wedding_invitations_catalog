@@ -1,0 +1,59 @@
+.romantic-motion-template {
+  --color-primary: #C7355C;
+  --color-primary-dark: #9F1F46;
+  --color-primary-light: #FFF1F4;
+  --color-text-main: #111827;
+  --color-text-muted: #6B7280;
+  --color-surface: #FFFFFF;
+  --color-border: #F4DCE3;
+
+  position: relative;
+  overflow: hidden;
+  background: var(--theme-background, linear-gradient(180deg, #fff 0%, #fff7fa 50%, #fff 100%));
+  color: var(--template-text-color, var(--color-text-main));
+  font-family: var(--body-font-family, Arial, sans-serif);
+  margin-inline: auto;
+  max-width: 780px;
+  padding: 24px 14px 56px;
+}
+.romantic-motion-template::before,
+.romantic-motion-template::after { content: ''; position: absolute; border-radius: 999px; pointer-events: none; z-index: 0; }
+.romantic-motion-template::before { width: 260px; height: 260px; right: -120px; top: 160px; background: color-mix(in srgb, var(--theme-accent-shape, #F7DCE5) 70%, transparent); }
+.romantic-motion-template::after { width: 200px; height: 200px; left: -90px; bottom: 240px; background: color-mix(in srgb, var(--color-primary-light) 65%, transparent); }
+.romantic-motion-template > * { position: relative; z-index: 1; }
+
+.hero { position: relative; overflow: hidden; min-height: 56vh; display: grid; place-content: center; text-align: center; background: color-mix(in srgb, var(--color-primary-light) 80%, transparent); border-radius: 24px; padding: 40px 20px 36px; }
+.hero-kicker { letter-spacing: .2em; text-transform: uppercase; color: var(--color-primary-dark); font-size: .75rem; }
+.hero h1 { font-family: var(--couple-font-family, 'Playfair Display', serif); margin: 8px 0; }
+.romantic-motion__couple-names {
+  font-size: clamp(2.4rem, 8vw, 5rem);
+  line-height: 1.08;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.hero-date,.hero-location { color: var(--color-text-muted); margin: 2px 0; }
+.hero-message { max-width: 50ch; margin: 12px auto 0; }
+.hero-decor { position: absolute; border-radius: 999px; filter: blur(1px); }
+.hero-decor--one { width: 190px; height: 190px; background: var(--theme-accent-shape, rgba(199,53,92,.15)); opacity:.55; top: -40px; right: -30px; animation: softScale 7s ease-in-out infinite; }
+.hero-decor--two { width: 120px; height: 120px; background: color-mix(in srgb, var(--color-primary-dark) 24%, transparent); bottom: -20px; left: -10px; animation: softScale 8.5s ease-in-out infinite reverse; }
+
+.motion-section { opacity: 0; transform: translateY(30px); margin-top: 8px; }
+.motion-section + .motion-section { padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent); }
+.motion-section.is-visible { animation: fadeUp .65s ease forwards; }
+.flow-section { background: transparent; padding-inline: 2px; }
+.flow-section:nth-of-type(even) { background: color-mix(in srgb, var(--color-primary-light) 38%, transparent); border-radius: 14px; padding: 14px 8px; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes softScale { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+@media (min-width: 768px) {
+  .romantic-motion-template { padding: 34px 20px 64px; }
+  .motion-section + .motion-section { padding-top: 24px; }
+  .flow-section:nth-of-type(even) { padding: 16px 10px; }
+}
+
+@media (max-width: 640px) {
+  .hero { padding: 28px 14px 26px; }
+  .romantic-motion__couple-names { font-size: clamp(2rem, 9vw, 3rem); }
+}
