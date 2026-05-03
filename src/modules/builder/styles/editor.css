@@ -1,0 +1,16 @@
+.builder-editor-page { min-height: 100vh; background: #F4F5F7; display: grid; grid-template-rows: auto 1fr; }
+.builder-toolbar { height: 56px; display:flex; align-items:center; padding: 0 16px; background:#111827; color:#fff; font-weight:700; }
+.builder-layout { display:grid; grid-template-columns: 90px 340px 1fr; gap: 14px; padding: 14px; min-height: calc(100vh - 56px); }
+.icon-menu,.settings-panel,.canvas-panel { background:#fff; border:1px solid #E5E7EB; border-radius: 14px; box-shadow: 0 8px 18px rgba(15,23,42,.08); }
+.icon-menu { padding: 10px; display:grid; gap: 8px; align-content: start; }
+.icon-menu-item { border:1px solid #E5E7EB; border-radius: 10px; background:#fff; padding: 10px 8px; font-size:.8rem; cursor:pointer; }
+.icon-menu-item.active { background: var(--color-primary-light); border-color: var(--color-primary); color: var(--color-primary-dark); }
+.settings-panel { padding: 14px; overflow: auto; }
+.canvas-panel { padding: 14px; display:grid; place-items:center; overflow:auto; }
+.preview-canvas { width: min(780px, 100%); background:#fff; border:1px solid #E5E7EB; border-radius: 12px; padding: 10px; }
+.settings-block { display:grid; gap: 12px; margin-bottom: 12px; }
+.settings-block input,.settings-block select { border:1px solid #E5E7EB; border-radius: 10px; padding:9px; width:100%; }
+.placeholder-card { border:1px dashed #D1D5DB; border-radius: 12px; padding: 12px; color:#6B7280; }
+.summary-block { display:grid; gap: 10px; }
+.btn { border-radius: 999px; padding: 9px 14px; border: 1px solid var(--color-primary); color: var(--color-primary); background:#fff; cursor:pointer; }
+@media (max-width: 1024px) { .builder-layout { grid-template-columns: 1fr; } .icon-menu { display:flex; overflow:auto; } .icon-menu-item { white-space: nowrap; } }
