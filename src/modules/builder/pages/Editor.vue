@@ -70,12 +70,15 @@ const toggleBlockAddon = (item) => {
   if (item.type === 'map') builderStore.toggleAddon('map', item.label, item.price, !invitation.value.addons.some((a)=>a.type==='map'));
 };
 const applyThemePreset = (preset) => {
+  // Always write the full theme token set to avoid inherited colors from previous theme.
   invitation.value.styles.backgroundTheme = preset.id;
   invitation.value.styles.primaryColor = preset.primaryColor;
   invitation.value.styles.secondaryColor = preset.secondaryColor;
+  invitation.value.styles.textColor = preset.textColor;
+  invitation.value.styles.titleColor = preset.titleColor;
+  invitation.value.styles.bodyTextColor = preset.bodyTextColor;
   invitation.value.styles.accentShape = preset.accentShape;
   invitation.value.styles.backgroundGradient = preset.background;
-  if (preset.textColor) invitation.value.styles.textColor = preset.textColor;
 };
 
 </script>
