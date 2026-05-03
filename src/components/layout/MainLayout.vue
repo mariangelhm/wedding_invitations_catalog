@@ -11,7 +11,7 @@ const isEditorRoute = computed(() => route.path.startsWith('/editor'));
 <template>
   <div class="app-layout">
     <Header v-if="!isEditorRoute" />
-    <main class="app-main">
+    <main class="app-main" :class="{ 'app-main--editor': isEditorRoute }">
       <router-view />
     </main>
     <Footer v-if="!isEditorRoute" />
@@ -20,4 +20,6 @@ const isEditorRoute = computed(() => route.path.startsWith('/editor'));
 
 <style scoped>
 .app-layout { min-height: 100vh; display: grid; grid-template-rows: 1fr; }
+.app-main { min-height: 0; }
+.app-main--editor { height: 100vh; overflow: hidden; }
 </style>

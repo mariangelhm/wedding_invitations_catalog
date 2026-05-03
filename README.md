@@ -784,3 +784,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Si `embedUrl` existe, renderiza un `<iframe>` responsivo con `loading="lazy"`, `allowfullscreen` y `referrerpolicy="no-referrer-when-downgrade"`.
 - Si no hay `embedUrl` y existe `mapUrl`, muestra botón `Ver en Google Maps`.
 - En `Detalles` se agregaron campos separados para enlace normal e incrustado, con helper para ambos formatos.
+
+## Editor fullscreen con scroll interno
+- En `/editor` se ocultan header/footer globales y el contenedor principal trabaja en altura de viewport (`100vh`) con `overflow: hidden`.
+- La barra superior queda fija y el área inferior usa `calc(100vh - toolbarHeight)`.
+- Sidebar izquierda, panel de configuración y canvas central ahora gestionan su propio `overflow-y`, evitando scroll vertical de toda la página.
+- Resultado: experiencia tipo Canva/Wix con scroll interno por panel.
