@@ -34,7 +34,6 @@ const gallery = computed(() => props.invitationData?.gallery || [
   { src: wedding3, alt: 'Nuestra historia' },
   { src: wedding4, alt: 'Celebración' },
 ]);
-const addons = computed(() => props.invitationData?.addons || []);
 const fallbackBlocks = [
   { id: 'block-countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, settings: {} },
   { id: 'block-story', type: 'story', enabled: true, order: 2, settings: {} },
@@ -44,12 +43,6 @@ const fallbackBlocks = [
   { id: 'block-countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, settings: {} },
   { id: 'block-rsvp', type: 'rsvp', enabled: true, order: 7, settings: {} },
 ];
-
-const getAddon = (type) => addons.value.find((addon) => addon.type === type && addon.enabled !== false);
-
-const weddingCountdownAddon = computed(() => getAddon('countdown_wedding'));
-const rsvpCountdownAddon = computed(() => getAddon('countdown_rsvp'));
-const mapAddon = computed(() => getAddon('map'));
 
 const orderedBlocks = computed(() => {
   const source = Array.isArray(props.invitationData?.blocks) && props.invitationData.blocks.length
@@ -62,8 +55,8 @@ const weddingCountdownBlock = computed(() => getEnabledBlock('countdown_wedding'
 const rsvpCountdownBlock = computed(() => getEnabledBlock('countdown_rsvp'));
 const mapBlock = computed(() => getEnabledBlock('map'));
 
-const weddingDate = computed(() => weddingCountdownBlock.value?.settings?.targetDate || weddingCountdownAddon.value?.settings?.targetDate || base.value.date || '2027-06-14T18:00:00');
-const rsvpDate = computed(() => rsvpCountdownBlock.value?.settings?.targetDate || rsvpCountdownAddon.value?.settings?.targetDate || '2027-05-20T23:59:59');
+const weddingDate = computed(() => weddingCountdownBlock.value?.settings?.targetDate || base.value.date || '2027-06-14T18:00:00');
+const rsvpDate = computed(() => rsvpCountdownBlock.value?.settings?.targetDate || '2027-05-20T23:59:59');
 const formattedDate = computed(() => {
   const rawDate = base.value.date || weddingDate.value;
   const date = new Date(rawDate);
@@ -97,10 +90,10 @@ const templateVars = computed(() => ({
 }));
 
 const names = computed(() => base.value.names || 'María & Carlos');
-const locationName = computed(() => mapBlock.value?.settings?.locationName || mapAddon.value?.settings?.locationName || base.value.location || 'Rose Garden Hall');
-const locationAddress = computed(() => mapBlock.value?.settings?.address || mapAddon.value?.settings?.address || 'Santiago, Chile');
-const locationMapUrl = computed(() => mapBlock.value?.settings?.mapUrl || mapAddon.value?.settings?.mapUrl || 'https://maps.google.com');
-const locationEmbedUrl = computed(() => mapBlock.value?.settings?.embedUrl || mapAddon.value?.settings?.embedUrl || '');
+const locationName = computed(() => mapBlock.value?.settings?.locationName || props.invitationData?.mapSettings?.locationName || base.value.location || 'Rose Garden Hall');
+const locationAddress = computed(() => mapBlock.value?.settings?.address || props.invitationData?.mapSettings?.address || 'Santiago, Chile');
+const locationMapUrl = computed(() => mapBlock.value?.settings?.mapUrl || props.invitationData?.mapSettings?.mapUrl || 'https://maps.google.com');
+const locationEmbedUrl = computed(() => mapBlock.value?.settings?.embedUrl || props.invitationData?.mapSettings?.embedUrl || '');
 const heroMessage = computed(() => base.value.heroMessage || 'Nos encantaría que seas parte de este día especial.');
 const storyMessage = computed(() => base.value.storyMessage || 'Nuestra historia está llena de momentos simples, valientes y hermosos que queremos celebrar contigo.');
 onMounted(() => {

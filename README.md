@@ -815,3 +815,11 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `wedding-3.jpg`
   - `wedding-4.jpg`
 - Si esos archivos no contienen una foto válida todavía, la app mantiene placeholders visuales elegantes y no se rompe.
+
+## Extras section and dynamic block rendering
+- El menú lateral del editor usa: **Fondo, Tarjeta, Letras, Extras**.
+- La sección **Extras** administra bloques reutilizables (activar/desactivar y orden).
+- Al activar/desactivar un extra se actualiza `invitation.blocks` preservando el orden.
+- El template Romantic Motion renderiza dinámicamente solo bloques habilitados (`enabled`) ordenados por `order`.
+- El hero siempre permanece fijo arriba y el resto de secciones se pintan según los bloques activos.
+- La configuración del mapa vive dentro de Extras y se muestra solo cuando el extra mapa está activo.
