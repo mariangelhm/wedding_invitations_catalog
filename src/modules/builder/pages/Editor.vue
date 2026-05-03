@@ -132,9 +132,14 @@ const applyThemePreset = (preset) => {
               <small>Incluye ciudad y referencias importantes.</small>
             </div>
             <div class="details-field">
-              <label for="mapUrl">URL de Google Maps</label>
+              <label for="mapUrl">URL normal de Google Maps</label>
               <input id="mapUrl" v-model="invitation.mapSettings.mapUrl" type="text" placeholder="https://maps.google.com/..." />
               <small>Pega aquí el enlace de compartir de Google Maps.</small>
+            </div>
+            <div class="details-field">
+              <label for="mapEmbedUrl">URL de incorporar mapa</label>
+              <input id="mapEmbedUrl" v-model="invitation.mapSettings.embedUrl" type="text" placeholder="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3329.1789740216627!2d-70.65865812458385!3d-33.44464339721427!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662c5a7b81bab67%3A0x7cf5cd1956dd49f7!2sTorre%20Entel!5e0!3m2!1ses-419!2scl!4v1777782339212!5m2!1ses-419!2scl" />
+              <small>Puedes pegar el enlace normal o el enlace de Insertar mapa de Google Maps.</small>
             </div>
             <div class="help-box">
               <h5>¿Cómo obtener el link?</h5>

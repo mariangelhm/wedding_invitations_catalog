@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 import './mapBlock.css';
 
-const props = defineProps<{ locationName: string; address: string; mapUrl: string }>();
+const props = defineProps<{ locationName: string; address: string; mapUrl: string; embedUrl?: string }>();
 
 const rootEl = ref<HTMLElement | null>(null);
 const isVisible = ref(false);
@@ -32,6 +32,15 @@ onMounted(() => {
 
     <p class="map-location">{{ locationName }}</p>
     <p class="map-address">{{ address }}</p>
-    <a class="map-btn" :href="mapUrl" target="_blank" rel="noopener noreferrer">Ver en Google Maps</a>
+    <div v-if="embedUrl" class="map-embed-wrap">
+      <iframe
+        class="map-embed"
+        :src="embedUrl"
+        loading="lazy"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+    <a v-else-if="mapUrl" class="map-btn" :href="mapUrl" target="_blank" rel="noopener noreferrer">Ver en Google Maps</a>
   </section>
 </template>

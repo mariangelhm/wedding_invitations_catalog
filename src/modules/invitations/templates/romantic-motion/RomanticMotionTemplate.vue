@@ -75,6 +75,7 @@ const names = computed(() => base.value.names || 'María & Carlos');
 const locationName = computed(() => mapAddon.value?.settings?.locationName || base.value.location || 'Rose Garden Hall');
 const locationAddress = computed(() => mapAddon.value?.settings?.address || 'Santiago, Chile');
 const locationMapUrl = computed(() => mapAddon.value?.settings?.mapUrl || 'https://maps.google.com');
+const locationEmbedUrl = computed(() => mapAddon.value?.settings?.embedUrl || '');
 const heroMessage = computed(() => base.value.heroMessage || 'Nos encantaría que seas parte de este día especial.');
 const storyMessage = computed(() => base.value.storyMessage || 'Nuestra historia está llena de momentos simples, valientes y hermosos que queremos celebrar contigo.');
 const orderedBlocks = computed(() => (props.invitationData?.blocks || []).filter((b) => b.enabled).slice().sort((a,b) => a.order - b.order));
@@ -119,7 +120,7 @@ const onRsvpConfirm = (payload) => {
     <section v-else-if="block.type === 'story'" :ref="setSectionRef" class="motion-section flow-section"><StoryBlock title="Nuestra historia" :message="storyMessage" /></section>
     <section v-else-if="block.type === 'gallery'" :ref="setSectionRef" class="motion-section flow-section"><GalleryBlock title="Nuestros momentos" :images="gallery" /></section>
     <section v-else-if="block.type === 'timeline'" :ref="setSectionRef" class="motion-section flow-section"><TimelineBlock title="Bitácora del evento" :items="timeline" /></section>
-    <section v-else-if="block.type === 'map' && mapAddon" :ref="setSectionRef" class="motion-section flow-section"><MapBlock :location-name="locationName" :address="locationAddress" :map-url="locationMapUrl" /></section>
+    <section v-else-if="block.type === 'map' && mapAddon" :ref="setSectionRef" class="motion-section flow-section"><MapBlock :location-name="locationName" :address="locationAddress" :map-url="locationMapUrl" :embed-url="locationEmbedUrl" /></section>
     <section v-else-if="block.type === 'countdown_rsvp'" :ref="setSectionRef" class="motion-section flow-section"><CountdownBlock :target-date="rsvpDate" title="Tiempo para confirmar" variant="minimal" /></section>
     <section v-else-if="block.type === 'rsvp'" :ref="setSectionRef" class="motion-section flow-section"><RSVPBlock @confirm="onRsvpConfirm" /></section>
     </template>

@@ -778,3 +778,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - `heroMessage` se renderiza debajo de la ubicación en el hero.
 - `storyMessage` alimenta el `StoryBlock` en la sección de historia.
 - En Tarjeta se agregaron campos independientes: **Mensaje principal** y **Historia de los novios** con fallbacks elegantes si están vacíos.
+
+## MapBlock: URL normal o embed
+- `MapBlock` ahora acepta `mapUrl` y `embedUrl`.
+- Si `embedUrl` existe, renderiza un `<iframe>` responsivo con `loading="lazy"`, `allowfullscreen` y `referrerpolicy="no-referrer-when-downgrade"`.
+- Si no hay `embedUrl` y existe `mapUrl`, muestra botón `Ver en Google Maps`.
+- En `Detalles` se agregaron campos separados para enlace normal e incrustado, con helper para ambos formatos.
