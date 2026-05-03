@@ -6,7 +6,6 @@
 import { computed, onMounted } from 'vue';
 
 import RomanticTemplate from '../../invitations/templates/romantic/Template.vue';
-import RomanticMotionTemplate from '../../invitations/templates/romantic-motion/RomanticMotionTemplate.vue';
 import { useBuilderStore } from '../../../store/builder.store';
 
 const builderStore = useBuilderStore();
