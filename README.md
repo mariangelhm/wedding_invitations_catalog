@@ -708,3 +708,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - En el editor, la sección **Fondo** ahora prioriza selección de tema como control principal (no sólo color plano).
 - Al seleccionar un tema se actualizan `backgroundTheme`, `primaryColor`, `secondaryColor`, `backgroundGradient`, `accentShape` y `textColor` (si el preset lo define).
 - `RomanticMotionTemplate` consume estas variables para fondo, acentos y contraste (incluyendo escenarios oscuros), y este enfoque queda preparado para templates futuros.
+
+
+## Continuous invitation layout
+- `RomanticMotionTemplate` fue refactorizado para sentirse como una sola invitación digital continua, en lugar de una pila de cards independientes.
+- Se mantiene semántica por secciones, pero ahora comparten fondo, ritmo vertical consistente y separadores suaves.
+- Se añadieron capas decorativas (gradientes y círculos sutiles) en el contenedor principal para dar profundidad sin romper continuidad.
+- Hero, countdown, story, gallery, timeline, map y RSVP conservan sus bloques reutilizables y bindings, pero con estilo visual unificado.

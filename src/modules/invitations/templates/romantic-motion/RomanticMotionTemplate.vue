@@ -97,31 +97,38 @@ const onRsvpConfirm = (payload) => {
       <p class="hero-message">{{ storyMessage }}</p>
     </section>
 
-    <section :ref="setSectionRef" class="motion-section card-layer">
+    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
+    <section :ref="setSectionRef" class="motion-section flow-section">
       <CountdownBlock :target-date="weddingDate" title="Faltan para nuestra boda" variant="primary" />
     </section>
 
-    <section :ref="setSectionRef" class="motion-section card-layer">
+    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
+    <section :ref="setSectionRef" class="motion-section flow-section">
       <StoryBlock title="Nuestra historia" :message="storyMessage" />
     </section>
 
-    <section :ref="setSectionRef" class="motion-section card-layer">
+    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
+    <section :ref="setSectionRef" class="motion-section flow-section">
       <GalleryBlock title="Nuestros momentos" :images="gallery" />
     </section>
 
-    <section :ref="setSectionRef" class="motion-section card-layer">
+    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
+    <section :ref="setSectionRef" class="motion-section flow-section">
       <TimelineBlock title="Bitácora del evento" :items="timeline" />
     </section>
 
-    <section :ref="setSectionRef" class="motion-section card-layer">
+    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
+    <section :ref="setSectionRef" class="motion-section flow-section">
       <MapBlock :location-name="locationName" :address="locationAddress" :map-url="locationMapUrl" />
     </section>
 
-    <section :ref="setSectionRef" class="motion-section card-layer">
+    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
+    <section :ref="setSectionRef" class="motion-section flow-section">
       <CountdownBlock :target-date="rsvpDate" title="Tiempo para confirmar" variant="minimal" />
     </section>
 
-    <section :ref="setSectionRef" class="motion-section card-layer">
+    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
+    <section :ref="setSectionRef" class="motion-section flow-section">
       <RSVPBlock @confirm="onRsvpConfirm" />
     </section>
   </article>
