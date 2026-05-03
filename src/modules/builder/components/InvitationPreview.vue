@@ -5,7 +5,7 @@
 <script setup>
 import { computed, onMounted } from 'vue';
 
-import RomanticTemplate from '../../../invitations/templates/romantic/Template.vue';
+import RomanticTemplate from '../../invitations/templates/romantic/Template.vue';
 import { useBuilderStore } from '../../../store/builder.store';
 
 const builderStore = useBuilderStore();
