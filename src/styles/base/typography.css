@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Patrick+Hand&family=Playfair+Display:wght@400;600;700&family=Poppins:wght@400;500;700&display=swap');
+
+/*
+  Typography stylesheet:
+  Loads supported template/editor font families and keeps readable global defaults.
+  Invitation templates still use fallback stacks when a web font cannot be loaded.
+*/
+body {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+}
