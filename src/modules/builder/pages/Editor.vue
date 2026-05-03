@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
+import { RouterLink } from 'vue-router';
 import { useRoute } from 'vue-router';
 import { useAutosave } from '../composables/useAutosave';
 import BasicEditorForm from '../components/BasicEditorForm.vue';
@@ -7,22 +8,23 @@ import InvitationPreview from '../components/InvitationPreview.vue';
 import EditorPreviewModal from '../components/EditorPreviewModal.vue';
 import { useBuilderStore } from '../../../store/builder.store';
 import { templates } from '../../catalog/data/templates';
+import { useI18n } from '../../../core/i18n';
 
 useAutosave();
 const route = useRoute();
 const builderStore = useBuilderStore();
+const { t } = useI18n();
 const selectedSection = ref('background');
 const selectedPreviewDevice = ref('desktop');
 const selectedBackgroundTab = ref('colors');
 const isPreviewOpen = ref(false);
 
 const sectionCatalog = [
-  { id: 'background', label: 'Fondo', icon: '🎨', always: true },
-  { id: 'envelope', label: 'Sobre', icon: '✉️', always: true },
-  { id: 'card', label: 'Tarjeta', icon: '▣', always: true },
-  { id: 'details', label: 'Detalles', icon: '⚙️', option: 'map' },
-  { id: 'style', label: 'Estilo', icon: '✒️', option: 'fonts' },
-  { id: 'blocks', label: 'Bloques', icon: '⧉', always: true },
+  { id: 'background', icon: '🎨', always: true },
+  { id: 'card', icon: '▣', always: true },
+  { id: 'details', icon: '⚙️', option: 'map' },
+  { id: 'style', icon: '✒️', option: 'fonts' },
+  { id: 'blocks', icon: '⧉', always: true },
 ];
 
 const backgroundSwatches = ['#C7355C', '#F97316', '#2563EB', '#16A34A', '#7C3AED', '#111827', '#FBE8EE', '#FFFFFF'];
@@ -48,6 +50,7 @@ const availableSections = computed(() => {
   return sectionCatalog.filter((item) => item.always || options[item.option] === true);
 });
 watch(availableSections, (items) => {
+  if (['sobre', 'envelope'].includes(selectedSection.value)) selectedSection.value = 'background';
   if (!items.some((item) => item.id === selectedSection.value)) selectedSection.value = items[0]?.id || 'background';
 }, { immediate: true });
 
@@ -58,6 +61,7 @@ const toggleBlockAddon = (item, checked) => builderStore.toggleAddon(item.type, 
 <template>
   <section class="builder-editor-page">
     <header class="builder-toolbar">
+      <RouterLink to="/catalog" class="back-link">← {{ t('editor.backToCatalog') }}</RouterLink>
       <div class="toolbar-title">Visual Builder · {{ invitation?.templateName || 'Sin template' }}</div>
       <div class="device-switch" role="group" aria-label="Vista de dispositivo">
         <button class="device-btn" :class="{ active: selectedPreviewDevice === 'desktop' }" @click="selectedPreviewDevice = 'desktop'">🖥️ Desktop</button>
@@ -68,7 +72,7 @@ const toggleBlockAddon = (item, checked) => builderStore.toggleAddon(item.type, 
     <div class="builder-layout">
       <aside class="icon-menu">
         <button v-for="item in availableSections" :key="item.id" class="icon-menu-item" :class="{ active: selectedSection === item.id }" @click="selectedSection = item.id">
-          <span class="menu-icon">{{ item.icon }}</span><span class="menu-label">{{ item.label }}</span>
+          <span class="menu-icon">{{ item.icon }}</span><span class="menu-label">{{ t(`editor.sections.${item.id}`) }}</span>
         </button>
       </aside>
 
@@ -81,8 +85,7 @@ const toggleBlockAddon = (item, checked) => builderStore.toggleAddon(item.type, 
           <div v-else class="placeholder-stack"><div class="placeholder-card">Fondo romántico suave</div><div class="placeholder-card">Textura elegante</div><div class="placeholder-card">Upload disponible próximamente</div></div>
         </div>
 
-        <div v-else-if="selectedSection === 'envelope'" class="placeholder-card">Configuración del sobre disponible próximamente</div>
-        <div v-else-if="selectedSection === 'card'" class="settings-block"><BasicEditorForm /></div>
+                <div v-else-if="selectedSection === 'card'" class="settings-block"><BasicEditorForm /></div>
 
         <div v-else-if="selectedSection === 'details'" class="settings-block">
           <label>Nombre del lugar <input v-model="invitation.mapSettings.locationName" type="text" /></label>

@@ -689,3 +689,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se implementó sistema de swatches para color de fondo y color de texto.
 - Se incorporaron tarjetas tipográficas seleccionables para `fontFamily`.
 - Se removió `PriceSummary` y `ExpirationBanner` del panel del editor para priorizar una UX de edición visual limpia; esos datos quedan para checkout/resumen dedicado.
+
+
+## Editor navigation cleanup
+- Se eliminó la sección **Sobre** del menú lateral para simplificar el flujo y priorizar secciones de edición con impacto real en el resultado visual.
+- La navegación superior ahora incluye **← Volver al catálogo** con acceso directo a `/catalog` (visible en desktop y mobile).
+- El menú del editor queda en: Fondo, Tarjeta, Detalles, Estilo y Bloques; si el estado previo era `sobre`/`envelope`, se normaliza automáticamente a `fondo`.
