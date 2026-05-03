@@ -7,6 +7,10 @@ import RSVPBlock from '../../../../components/blocks/RSVPBlock/RSVPBlock.vue';
 import StoryBlock from '../../../../components/blocks/StoryBlock/StoryBlock.vue';
 import TimelineBlock from '../../../../components/blocks/TimelineBlock/TimelineBlock.vue';
 import './romanticMotionTemplate.css';
+import wedding1 from '../../../../assets/sample-gallery/wedding-1.jpg';
+import wedding2 from '../../../../assets/sample-gallery/wedding-2.jpg';
+import wedding3 from '../../../../assets/sample-gallery/wedding-3.jpg';
+import wedding4 from '../../../../assets/sample-gallery/wedding-4.jpg';
 
 const props = defineProps({ invitationData: { type: Object, default: () => ({}) } });
 
@@ -25,9 +29,10 @@ const styles = computed(() => props.invitationData?.styles || {});
 const timeline = computed(() => props.invitationData?.timeline || []);
 // Gallery can rely on block-level fallback placeholders when custom images are missing.
 const gallery = computed(() => props.invitationData?.gallery || [
-  { src: '', alt: 'Foto principal' },
-  { src: '', alt: 'Momento especial' },
-  { src: '', alt: 'Nuestra historia' },
+  { src: wedding1, alt: 'Foto principal' },
+  { src: wedding2, alt: 'Momento especial' },
+  { src: wedding3, alt: 'Nuestra historia' },
+  { src: wedding4, alt: 'Celebración' },
 ]);
 const addons = computed(() => props.invitationData?.addons || []);
 const fallbackBlocks = [
