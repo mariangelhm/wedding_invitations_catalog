@@ -30,6 +30,15 @@ const gallery = computed(() => props.invitationData?.gallery || [
   { src: '', alt: 'Nuestra historia' },
 ]);
 const addons = computed(() => props.invitationData?.addons || []);
+const fallbackBlocks = [
+  { id: 'block-countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, settings: {} },
+  { id: 'block-story', type: 'story', enabled: true, order: 2, settings: {} },
+  { id: 'block-gallery', type: 'gallery', enabled: true, order: 3, settings: {} },
+  { id: 'block-timeline', type: 'timeline', enabled: true, order: 4, settings: {} },
+  { id: 'block-map', type: 'map', enabled: false, order: 5, settings: {} },
+  { id: 'block-countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, settings: {} },
+  { id: 'block-rsvp', type: 'rsvp', enabled: true, order: 7, settings: {} },
+];
 
 const getAddon = (type) => addons.value.find((addon) => addon.type === type && addon.enabled !== false);
 
@@ -37,8 +46,19 @@ const weddingCountdownAddon = computed(() => getAddon('countdown_wedding'));
 const rsvpCountdownAddon = computed(() => getAddon('countdown_rsvp'));
 const mapAddon = computed(() => getAddon('map'));
 
-const weddingDate = computed(() => weddingCountdownAddon.value?.settings?.targetDate || base.value.date || '2027-06-14T18:00:00');
-const rsvpDate = computed(() => rsvpCountdownAddon.value?.settings?.targetDate || '2027-05-20T23:59:59');
+const orderedBlocks = computed(() => {
+  const source = Array.isArray(props.invitationData?.blocks) && props.invitationData.blocks.length
+    ? props.invitationData.blocks
+    : fallbackBlocks;
+  return source.filter((b) => b.enabled !== false).slice().sort((a, b) => a.order - b.order);
+});
+const getEnabledBlock = (type) => orderedBlocks.value.find((block) => block.type === type);
+const weddingCountdownBlock = computed(() => getEnabledBlock('countdown_wedding'));
+const rsvpCountdownBlock = computed(() => getEnabledBlock('countdown_rsvp'));
+const mapBlock = computed(() => getEnabledBlock('map'));
+
+const weddingDate = computed(() => weddingCountdownBlock.value?.settings?.targetDate || weddingCountdownAddon.value?.settings?.targetDate || base.value.date || '2027-06-14T18:00:00');
+const rsvpDate = computed(() => rsvpCountdownBlock.value?.settings?.targetDate || rsvpCountdownAddon.value?.settings?.targetDate || '2027-05-20T23:59:59');
 const formattedDate = computed(() => {
   const rawDate = base.value.date || weddingDate.value;
   const date = new Date(rawDate);
@@ -72,15 +92,12 @@ const templateVars = computed(() => ({
 }));
 
 const names = computed(() => base.value.names || 'María & Carlos');
-const locationName = computed(() => mapAddon.value?.settings?.locationName || base.value.location || 'Rose Garden Hall');
-const locationAddress = computed(() => mapAddon.value?.settings?.address || 'Santiago, Chile');
-const locationMapUrl = computed(() => mapAddon.value?.settings?.mapUrl || 'https://maps.google.com');
-const locationEmbedUrl = computed(() => mapAddon.value?.settings?.embedUrl || '');
+const locationName = computed(() => mapBlock.value?.settings?.locationName || mapAddon.value?.settings?.locationName || base.value.location || 'Rose Garden Hall');
+const locationAddress = computed(() => mapBlock.value?.settings?.address || mapAddon.value?.settings?.address || 'Santiago, Chile');
+const locationMapUrl = computed(() => mapBlock.value?.settings?.mapUrl || mapAddon.value?.settings?.mapUrl || 'https://maps.google.com');
+const locationEmbedUrl = computed(() => mapBlock.value?.settings?.embedUrl || mapAddon.value?.settings?.embedUrl || '');
 const heroMessage = computed(() => base.value.heroMessage || 'Nos encantaría que seas parte de este día especial.');
 const storyMessage = computed(() => base.value.storyMessage || 'Nuestra historia está llena de momentos simples, valientes y hermosos que queremos celebrar contigo.');
-const orderedBlocks = computed(() => (props.invitationData?.blocks || []).filter((b) => b.enabled).slice().sort((a,b) => a.order - b.order));
-
-
 onMounted(() => {
   sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -120,7 +137,7 @@ const onRsvpConfirm = (payload) => {
     <section v-else-if="block.type === 'story'" :ref="setSectionRef" class="motion-section flow-section"><StoryBlock title="Nuestra historia" :message="storyMessage" /></section>
     <section v-else-if="block.type === 'gallery'" :ref="setSectionRef" class="motion-section flow-section"><GalleryBlock title="Nuestros momentos" :images="gallery" /></section>
     <section v-else-if="block.type === 'timeline'" :ref="setSectionRef" class="motion-section flow-section"><TimelineBlock title="Bitácora del evento" :items="timeline" /></section>
-    <section v-else-if="block.type === 'map' && mapAddon" :ref="setSectionRef" class="motion-section flow-section"><MapBlock :location-name="locationName" :address="locationAddress" :map-url="locationMapUrl" :embed-url="locationEmbedUrl" /></section>
+    <section v-else-if="block.type === 'map'" :ref="setSectionRef" class="motion-section flow-section"><MapBlock :location-name="locationName" :address="locationAddress" :map-url="locationMapUrl" :embed-url="locationEmbedUrl" /></section>
     <section v-else-if="block.type === 'countdown_rsvp'" :ref="setSectionRef" class="motion-section flow-section"><CountdownBlock :target-date="rsvpDate" title="Tiempo para confirmar" variant="minimal" /></section>
     <section v-else-if="block.type === 'rsvp'" :ref="setSectionRef" class="motion-section flow-section"><RSVPBlock @confirm="onRsvpConfirm" /></section>
     </template>

@@ -66,9 +66,9 @@ watch(availableSections, (items) => {
 
 const orderedBlocks = computed(() => (invitation.value?.blocks || []).slice().sort((a,b)=>a.order-b.order));
 const isMapAddonEnabled = computed(() => orderedBlocks.value.some((b)=>b.type==='map' && b.enabled));
-const toggleBlockAddon = (item) => {
-  builderStore.toggleBlock(item.type);
-  if (item.type === 'map') builderStore.toggleAddon('map', item.label, item.price, !invitation.value.addons.some((a)=>a.type==='map'));
+const toggleBlockAddon = (item, checked) => {
+  builderStore.toggleBlock(item.type, checked);
+  if (item.type === 'map') builderStore.toggleAddon('map', item.label, item.price, checked);
 };
 const applyThemePreset = (preset) => {
   // Always write the full theme token set to avoid inherited colors from previous theme.
@@ -170,7 +170,7 @@ const applyThemePreset = (preset) => {
             <div class="toggle-wrap">
               <button class="mini-btn" @click="builderStore.moveBlockUp(block.id)">↑</button>
               <button class="mini-btn" @click="builderStore.moveBlockDown(block.id)">↓</button>
-              <label><input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block)" /> Activar</label>
+              <label><input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block, $event.target.checked)" /> Activar</label>
             </div>
           </article>
         </div>

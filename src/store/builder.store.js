@@ -12,6 +12,7 @@ const defaultBlocks = [
   { id: 'block-countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, price: 2500, settings: {} },
   { id: 'block-rsvp', type: 'rsvp', enabled: true, order: 7, price: 2000, settings: {} },
 ];
+const getDefaultBlocks = () => defaultBlocks.map((b) => ({ ...b }));
 
 export const useBuilderStore = defineStore('builderStore', {
   state: () => ({ basePrice: 20000, invitation: null }),
@@ -24,14 +25,24 @@ export const useBuilderStore = defineStore('builderStore', {
         templateName: template?.name || 'Invitación base', category: template?.category || 'general', level: template?.level || 'basic', basePrice: template?.basePrice || this.basePrice,
         base: { names: '', date: '', location: '', heroMessage: '', storyMessage: '' },
         styles: { primaryColor: template?.previewStyle?.accentColor || '#C7355C', secondaryColor: template?.previewStyle?.background || '#FFF1F4', backgroundTheme: 'blush', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#111827', titleColor: '#9F1F46', bodyTextColor: '#6B7280', accentShape: '#F7DCE5', backgroundGradient: 'linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)' },
-        addons: [], blocks: defaultBlocks.map((b) => ({ ...b })), customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
+        addons: [], blocks: getDefaultBlocks(), customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
         timeline: [], gallery: [], mapSettings: { locationName: '', address: '', mapUrl: '' }, expiresAt, createdAt,
       };
       this.basePrice = invitation.basePrice; this.invitation = invitation; return invitation;
     },
     toggleAddon(type, label, price, checked) { if (!this.invitation) return; const exists = this.invitation.addons.some((a) => a.type === type); if (checked && !exists) this.invitation.addons.push(type === 'map' ? { type, label, price, enabled: true, settings: { ...this.invitation.mapSettings } } : { type, label, price, enabled: true }); if (!checked) this.invitation.addons = this.invitation.addons.filter((a) => a.type !== type); },
+    ensureBlocks() {
+      if (!this.invitation) return [];
+      if (!Array.isArray(this.invitation.blocks) || this.invitation.blocks.length === 0) this.invitation.blocks = getDefaultBlocks();
+      return this.invitation.blocks;
+    },
     // Ordered blocks API (first step before full drag&drop).
-    toggleBlock(blockType) { const b = this.invitation?.blocks?.find((it) => it.type === blockType); if (b) b.enabled = !b.enabled; },
+    toggleBlock(blockType, enabled = null) {
+      const blocks = this.ensureBlocks();
+      const b = blocks.find((it) => it.type === blockType);
+      if (!b) return;
+      b.enabled = typeof enabled === 'boolean' ? enabled : !b.enabled;
+    },
     moveBlockUp(blockId) { const items = this.invitation?.blocks; if (!items) return; items.sort((a,b)=>a.order-b.order); const i = items.findIndex((b)=>b.id===blockId); if (i<=0) return; [items[i-1].order, items[i].order] = [items[i].order, items[i-1].order]; },
     moveBlockDown(blockId) { const items = this.invitation?.blocks; if (!items) return; items.sort((a,b)=>a.order-b.order); const i = items.findIndex((b)=>b.id===blockId); if (i<0 || i===items.length-1) return; [items[i+1].order, items[i].order] = [items[i].order, items[i+1].order]; },
   },

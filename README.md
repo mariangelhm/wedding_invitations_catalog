@@ -514,6 +514,20 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - close from modal close action or overlay click
 - Mobile mode uses a phone mockup frame to preview responsive invitation appearance.
 
+## Bloques sincronizados con preview (Romantic Motion)
+- La sección **Bloques** del editor y el preview comparten la misma fuente de verdad: `invitation.blocks`.
+- Al activar/desactivar un bloque desde el editor se actualiza `enabled` en `invitation.blocks` y el preview responde inmediatamente.
+- `RomanticMotionTemplate` ahora renderiza los bloques dinámicamente desde `invitationData.blocks` (ordenados por `order`), manteniendo el Hero fijo arriba.
+- Si `invitationData.blocks` no existe, el template genera un fallback base de bloques para no romper el render.
+- Mapeo dinámico soportado:
+  - `countdown_wedding` → `CountdownBlock`
+  - `countdown_rsvp` → `CountdownBlock`
+  - `story` → `StoryBlock`
+  - `gallery` → `GalleryBlock`
+  - `timeline` → `TimelineBlock`
+  - `map` → `MapBlock`
+  - `rsvp` → `RSVPBlock`
+
 ## Romantic wedding template
 - Added new invitation template at `src/modules/invitations/templates/romantic-wedding/`:
   - `Template.vue`

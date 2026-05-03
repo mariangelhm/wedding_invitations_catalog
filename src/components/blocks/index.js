@@ -9,6 +9,20 @@ import GalleryBlock from './GalleryBlock/GalleryBlock.vue';
 // This registry is designed to support future drag & drop assembly flows.
 // Each block declares which props are configurable from editor interfaces.
 export const blockRegistry = {
+  countdown_wedding: {
+    component: CountdownBlock,
+    label: 'Cuenta regresiva boda',
+    previewType: 'countdown',
+    draggable: true,
+    configurableProps: ['targetDate', 'title', 'variant'],
+  },
+  countdown_rsvp: {
+    component: CountdownBlock,
+    label: 'Cuenta regresiva confirmación',
+    previewType: 'countdown',
+    draggable: true,
+    configurableProps: ['targetDate', 'title', 'variant'],
+  },
   countdown: {
     component: CountdownBlock,
     label: 'Cuenta regresiva',
