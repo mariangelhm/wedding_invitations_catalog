@@ -35,7 +35,7 @@ const blockOptions = [
   { type: 'countdown_wedding', label: 'Cuenta regresiva boda', description: 'Cuenta regresiva al evento principal.', price: 3000 },
   { type: 'countdown_rsvp', label: 'Cuenta regresiva confirmación', description: 'Límite de confirmación RSVP.', price: 2500 },
   { type: 'gallery', label: 'Galería', description: 'Sección de fotos destacadas.', price: 5000 },
-  { type: 'map', label: 'Mapa', description: 'Ubicación y acceso al evento.', price: 3000 },
+  { type: 'map', label: 'Mapa', description: 'Agrega un botón directo a Google Maps.', price: 3000 },
   { type: 'timeline', label: 'Bitácora', description: 'Agenda de momentos del evento.', price: 2000 },
   { type: 'rsvp', label: 'RSVP', description: 'Confirmación de asistencia.', price: 2000 },
 ];
@@ -55,8 +55,12 @@ watch(availableSections, (items) => {
   if (!items.some((item) => item.id === selectedSection.value)) selectedSection.value = items[0]?.id || 'background';
 }, { immediate: true });
 
-const isAddonEnabled = (type) => invitation.value?.addons?.some((addon) => addon.type === type) ?? false;
-const toggleBlockAddon = (item, checked) => builderStore.toggleAddon(item.type, item.label, item.price, checked);
+const isAddonEnabled = (type) => invitation.value?.addons?.some((addon) => addon.type === type && addon.enabled !== false) ?? false;
+const isMapAddonEnabled = computed(() => isAddonEnabled('map'));
+const toggleBlockAddon = (item, checked) => {
+  // For map addon we persist latest settings snapshot in addon settings on enable/toggle.
+  builderStore.toggleAddon(item.type, item.label, item.price, checked);
+};
 const applyThemePreset = (preset) => {
   invitation.value.styles.backgroundTheme = preset.id;
   invitation.value.styles.primaryColor = preset.primaryColor;
@@ -104,10 +108,13 @@ const applyThemePreset = (preset) => {
                 <div v-else-if="selectedSection === 'card'" class="settings-block"><BasicEditorForm /></div>
 
         <div v-else-if="selectedSection === 'details'" class="settings-block">
-          <label>Nombre del lugar <input v-model="invitation.mapSettings.locationName" type="text" /></label>
-          <label>Dirección <input v-model="invitation.mapSettings.address" type="text" /></label>
-          <label>URL de Google Maps <input v-model="invitation.mapSettings.mapUrl" type="text" placeholder="https://maps.google.com/..." /></label>
-          <p class="hint">Tip: abre Google Maps → Compartir → Copiar enlace.</p>
+          <template v-if="isMapAddonEnabled">
+            <label>Nombre del lugar <input v-model="invitation.mapSettings.locationName" type="text" /></label>
+            <label>Dirección <input v-model="invitation.mapSettings.address" type="text" /></label>
+            <label>URL de Google Maps <input v-model="invitation.mapSettings.mapUrl" type="text" placeholder="https://maps.google.com/..." /></label>
+            <p class="hint">Tip: abre Google Maps → Compartir → Copiar enlace.</p>
+          </template>
+          <p v-else class="placeholder-card">Activa el bloque Mapa desde la sección Bloques para configurarlo.</p>
         </div>
 
         <div v-else-if="selectedSection === 'style'" class="settings-block">

@@ -63,10 +63,31 @@ export const useBuilderStore = defineStore('builderStore', {
       return invitation;
     },
 
+    // Map addon stores settings snapshot so templates can render location CTA only when enabled.
     toggleAddon(type, label, price, checked) {
       if (!this.invitation) return;
       const exists = this.invitation.addons.some((addon) => addon.type === type);
-      if (checked && !exists) this.invitation.addons.push({ type, label, price });
+
+      if (checked && !exists) {
+        if (type === 'map') {
+          this.invitation.addons.push({
+            type,
+            label,
+            price,
+            enabled: true,
+            settings: { ...this.invitation.mapSettings },
+          });
+        } else {
+          this.invitation.addons.push({ type, label, price, enabled: true });
+        }
+      }
+
+      if (checked && exists && type === 'map') {
+        this.invitation.addons = this.invitation.addons.map((addon) => addon.type === 'map'
+          ? { ...addon, enabled: true, settings: { ...this.invitation.mapSettings } }
+          : addon);
+      }
+
       if (!checked) this.invitation.addons = this.invitation.addons.filter((addon) => addon.type !== type);
     },
   },

@@ -123,7 +123,8 @@ const onRsvpConfirm = (payload) => {
     </section>
 
     <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
-    <section :ref="setSectionRef" class="motion-section flow-section">
+    <!-- Map block is rendered only when map addon is enabled in builder settings. -->
+    <section v-if="mapAddon" :ref="setSectionRef" class="motion-section flow-section">
       <MapBlock :location-name="locationName" :address="locationAddress" :map-url="locationMapUrl" />
     </section>
 

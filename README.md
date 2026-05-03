@@ -724,3 +724,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - Nuestra historia
 - Si una entrada específica tiene `src` vacío, sólo esa celda se transforma en placeholder (las imágenes válidas mantienen zoom en hover).
 - `RomanticMotionTemplate` deja lista data de muestra mínima, pero el fallback principal vive dentro de `GalleryBlock` para reutilización global.
+
+
+## Map addon
+- El bloque **Mapa** ahora se maneja como addon con precio (`3000`) en la sección **Bloques** del editor.
+- Al activar, se guarda como addon `type: "map"`, `enabled: true`, `price` y `settings` (`locationName`, `address`, `mapUrl`).
+- En la sección **Detalles**, los campos del mapa sólo aparecen si el addon está activo; de lo contrario se muestra una guía para activarlo.
+- `RomanticMotionTemplate` renderiza `MapBlock` únicamente cuando el addon de mapa está habilitado.
