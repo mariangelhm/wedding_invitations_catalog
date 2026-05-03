@@ -804,3 +804,30 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - La barra superior queda fija y el área inferior usa `calc(100vh - toolbarHeight)`.
 - Sidebar izquierda, panel de configuración y canvas central ahora gestionan su propio `overflow-y`, evitando scroll vertical de toda la página.
 - Resultado: experiencia tipo Canva/Wix con scroll interno por panel.
+
+## Imágenes de ejemplo para galería
+- El template usa imágenes locales de muestra cuando no hay fotos personalizadas.
+- Debes colocar/reemplazar tus imágenes en esta carpeta:
+  - `src/assets/sample-gallery/`
+- Nombres esperados:
+  - `wedding-1.jpg`
+  - `wedding-2.jpg`
+  - `wedding-3.jpg`
+  - `wedding-4.jpg`
+- Si esos archivos no contienen una foto válida todavía, la app mantiene placeholders visuales elegantes y no se rompe.
+
+## Extras section and dynamic block rendering
+- El menú lateral del editor usa: **Fondo, Tarjeta, Letras, Extras**.
+- La sección **Extras** administra bloques reutilizables (activar/desactivar y orden).
+- Al activar/desactivar un extra se actualiza `invitation.blocks` preservando el orden.
+- El template Romantic Motion renderiza dinámicamente solo bloques habilitados (`enabled`) ordenados por `order`.
+- El hero siempre permanece fijo arriba y el resto de secciones se pintan según los bloques activos.
+- La configuración del mapa vive dentro de Extras y se muestra solo cuando el extra mapa está activo.
+
+## Typography tabs and separated text colors
+- La sección **Letras** ahora tiene tabs: **Nombres** y **General**.
+- **Nombres** controla `styles.coupleFontFamily` y `styles.titleColor`.
+- **General** controla `styles.bodyFontFamily` y `styles.bodyTextColor`.
+- `titleColor` aplica a nombres de novios y encabezados de sección.
+- `bodyTextColor` aplica al contenido general (fecha, ubicación, mensajes y textos de bloques).
+- Se amplió el catálogo de tipografías y paleta de colores para personalización más fina.

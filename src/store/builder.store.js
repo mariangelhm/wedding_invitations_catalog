@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 
 const defaultCustomizableOptions = { colors: true, fonts: true, photos: true, music: false, map: true, components: true };
-// Typography values are stored as font labels; template maps labels to CSS font stacks with fallbacks.
+// Typography values are stored as font labels; template maps labels to CSS stacks.
+// titleColor styles couple names/headings, while bodyTextColor styles general body text.
 
 const defaultBlocks = [
   { id: 'block-countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, price: 3000, settings: {} },
@@ -26,7 +27,7 @@ export const useBuilderStore = defineStore('builderStore', {
         base: { names: '', date: '', location: '', heroMessage: '', storyMessage: '' },
         styles: { primaryColor: template?.previewStyle?.accentColor || '#C7355C', secondaryColor: template?.previewStyle?.background || '#FFF1F4', backgroundTheme: 'blush', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#111827', titleColor: '#9F1F46', bodyTextColor: '#6B7280', accentShape: '#F7DCE5', backgroundGradient: 'linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)' },
         addons: [], blocks: getDefaultBlocks(), customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
-        timeline: [], gallery: [], mapSettings: { locationName: '', address: '', mapUrl: '' }, expiresAt, createdAt,
+        timeline: [], gallery: [], mapSettings: { locationName: '', address: '', mapUrl: '', embedUrl: '' }, expiresAt, createdAt,
       };
       this.basePrice = invitation.basePrice; this.invitation = invitation; return invitation;
     },
@@ -36,7 +37,8 @@ export const useBuilderStore = defineStore('builderStore', {
       if (!Array.isArray(this.invitation.blocks) || this.invitation.blocks.length === 0) this.invitation.blocks = getDefaultBlocks();
       return this.invitation.blocks;
     },
-    // Ordered blocks API (first step before full drag&drop).
+    // Extras are reusable blocks shared by templates.
+    // This ordered blocks API is the base for future drag & drop support.
     toggleBlock(blockType, enabled = null) {
       const blocks = this.ensureBlocks();
       const b = blocks.find((it) => it.type === blockType);
