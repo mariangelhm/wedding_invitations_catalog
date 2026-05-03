@@ -90,12 +90,15 @@ const templateVars = computed(() => ({
   '--theme-accent-shape': styles.value.accentShape || '#F7DCE5',
   '--color-text-main': styles.value.bodyTextColor || '#111827',
   '--color-text-muted': styles.value.bodyTextColor || '#6B7280',
-  '--color-surface': '#FFFFFF',
+  '--color-surface': styles.value.surfaceColor || '#FFFFFF',
   '--color-border': '#F4DCE3',
   // Typography application: map selected labels to real CSS stacks so preview changes are always visible.
   '--couple-font-family': fontStacks[styles.value.coupleFontFamily] || "'Playfair Display', Georgia, serif",
   '--body-font-family': fontStacks[styles.value.bodyFontFamily] || 'Arial, sans-serif',
   '--template-text-color': styles.value.bodyTextColor || styles.value.textColor || '#111827',
+  '--block-surface': styles.value.surfaceColor || '#FFFFFF',
+  '--block-text-color': styles.value.surfaceTextColor || styles.value.bodyTextColor || '#1F2937',
+  '--block-muted-color': styles.value.bodyTextColor || '#6B7280',
 }));
 
 const names = computed(() => base.value.names || 'María & Carlos');

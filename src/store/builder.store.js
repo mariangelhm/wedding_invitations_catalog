@@ -25,7 +25,7 @@ export const useBuilderStore = defineStore('builderStore', {
         id: Date.now(), status: 'draft', templateId: template?.id || null, templateComponent: template?.templateComponent || null,
         templateName: template?.name || 'Invitación base', category: template?.category || 'general', level: template?.level || 'basic', basePrice: template?.basePrice || this.basePrice,
         base: { names: '', date: '', location: '', heroMessage: '', storyMessage: '' },
-        styles: { primaryColor: template?.previewStyle?.accentColor || '#C7355C', secondaryColor: template?.previewStyle?.background || '#FFF1F4', backgroundTheme: 'blush', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#111827', titleColor: '#9F1F46', bodyTextColor: '#6B7280', accentShape: '#F7DCE5', backgroundGradient: 'linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)' },
+        styles: { primaryColor: template?.previewStyle?.accentColor || '#C7355C', secondaryColor: template?.previewStyle?.background || '#FFF1F4', backgroundTheme: 'blush', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#111827', titleColor: '#9F1F46', bodyTextColor: '#6B7280', accentShape: '#F7DCE5', backgroundGradient: 'linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)', surfaceColor: '#FFFFFF', surfaceTextColor: '#1F2937' },
         addons: [], blocks: getDefaultBlocks(), customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
         timeline: [], gallery: [], mapSettings: { locationName: '', address: '', mapUrl: '', embedUrl: '' }, expiresAt, createdAt,
       };

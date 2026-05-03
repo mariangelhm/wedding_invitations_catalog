@@ -831,3 +831,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - `titleColor` aplica a nombres de novios y encabezados de sección.
 - `bodyTextColor` aplica al contenido general (fecha, ubicación, mensajes y textos de bloques).
 - Se amplió el catálogo de tipografías y paleta de colores para personalización más fina.
+
+## Theme panel and contrast fixes
+- En **Fondo** se mantienen tabs controlados por estado local: `Temas` y `Colores`.
+- Cambiar a `Colores` no bloquea el regreso a `Temas` (`backgroundTab` local).
+- Cada tema define explícitamente: `primaryColor`, `secondaryColor`, `background`, `accentShape`, `titleColor`, `bodyTextColor`, `surfaceColor`, `surfaceTextColor`.
+- Al seleccionar un tema se sobreescriben todos los tokens de color para evitar herencias incorrectas al cambiar entre tema oscuro y claro.
+- Se agregó sistema de contraste para bloques (`--block-surface`, `--block-text-color`, `--block-muted-color`) para asegurar legibilidad en todos los themes.

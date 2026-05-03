@@ -60,3 +60,15 @@
   .hero { padding: 28px 14px 26px; }
   .romantic-motion__couple-names { font-size: clamp(2rem, 9vw, 3rem); }
 }
+
+/* Block contrast system: keeps cards/text readable across light and dark themes. */
+.flow-section :is(.countdown-block,.story-block,.gallery-block,.timeline-block,.map-block,.rsvp-block){
+  --surface-color: var(--block-surface);
+  --muted-color: var(--block-muted-color);
+  --color-surface: var(--block-surface);
+  --color-text-main: var(--block-text-color);
+  color: var(--block-text-color);
+}
+.flow-section :is(.countdown-block,.story-block,.gallery-block,.timeline-block,.map-block,.rsvp-block) :is(p,li,small,label,span,input,button){
+  color: var(--block-text-color);
+}

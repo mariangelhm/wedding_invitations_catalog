@@ -16,7 +16,7 @@ const builderStore = useBuilderStore();
 const { t } = useI18n();
 const selectedSection = ref('background');
 const selectedPreviewDevice = ref('desktop');
-const selectedBackgroundTab = ref('themes');
+const backgroundTab = ref('themes');
 const selectedTypographyTab = ref('names');
 const isPreviewOpen = ref(false);
 
@@ -76,11 +76,14 @@ const applyThemePreset = (preset) => {
   invitation.value.styles.backgroundTheme = preset.id;
   invitation.value.styles.primaryColor = preset.primaryColor;
   invitation.value.styles.secondaryColor = preset.secondaryColor;
-  invitation.value.styles.textColor = preset.textColor;
   invitation.value.styles.titleColor = preset.titleColor;
   invitation.value.styles.bodyTextColor = preset.bodyTextColor;
   invitation.value.styles.accentShape = preset.accentShape;
   invitation.value.styles.backgroundGradient = preset.background;
+  invitation.value.styles.surfaceColor = preset.surfaceColor;
+  invitation.value.styles.surfaceTextColor = preset.surfaceTextColor;
+  // Keep legacy key synced for components still reading textColor.
+  invitation.value.styles.textColor = preset.bodyTextColor;
 };
 </script>
 
@@ -100,8 +103,8 @@ const applyThemePreset = (preset) => {
 
       <aside class="settings-panel">
         <div v-if="selectedSection === 'background'" class="settings-block">
-          <div class="tab-row"><button class="tab-btn" :class="{ active: selectedBackgroundTab==='themes' }" @click="selectedBackgroundTab='themes'">Temas</button><button class="tab-btn" :class="{ active: selectedBackgroundTab==='colors' }" @click="selectedBackgroundTab='colors'">Colores</button></div>
-          <div v-if="selectedBackgroundTab==='themes'" class="theme-grid"><button v-for="preset in themePresets" :key="preset.id" class="theme-card" :class="{ selected: invitation.styles.backgroundTheme===preset.id }" @click="applyThemePreset(preset)"><span class="theme-preview" :style="{ background: preset.background }"></span><strong>{{ preset.name }}</strong></button></div>
+          <div class="tab-row"><button class="tab-btn" :class="{ active: backgroundTab==='themes' }" @click="backgroundTab='themes'">Temas</button><button class="tab-btn" :class="{ active: backgroundTab==='colors' }" @click="backgroundTab='colors'">Colores</button></div>
+          <div v-if="backgroundTab==='themes'" class="theme-grid"><button v-for="preset in themePresets" :key="preset.id" class="theme-card" :class="{ selected: invitation.styles.backgroundTheme===preset.id }" @click="applyThemePreset(preset)"><span class="theme-preview" :style="{ background: preset.background }"></span><strong>{{ preset.name }}</strong></button></div>
           <div v-else class="swatch-grid"><button v-for="color in backgroundSwatches" :key="color" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation?.styles?.secondaryColor===color }" @click="invitation.styles.secondaryColor = color" /></div>
         </div>
         <div v-else-if="selectedSection === 'card'" class="settings-block"><BasicEditorForm /></div>
