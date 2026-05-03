@@ -1,0 +1,49 @@
+.romantic-motion-template {
+  --color-primary: #C7355C;
+  --color-primary-dark: #9F1F46;
+  --color-primary-light: #FFF1F4;
+  --color-text-main: #111827;
+  --color-text-muted: #6B7280;
+  --color-surface: #FFFFFF;
+  --color-border: #F4DCE3;
+
+  background: linear-gradient(180deg, #fff 0%, #fff7fa 50%, #fff 100%);
+  color: var(--color-text-main);
+  font-family: var(--template-font-family, 'Playfair Display', serif);
+  margin-inline: auto;
+  max-width: 780px;
+  padding: 20px 14px 48px;
+}
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 58vh;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  padding: 32px 20px;
+}
+.hero-kicker { letter-spacing: .2em; text-transform: uppercase; color: var(--color-primary-dark); font-size: .75rem; }
+.hero h1 { font-size: clamp(2rem, 8vw, 3.5rem); margin: 8px 0; }
+.hero-date,.hero-location { color: var(--color-text-muted); margin: 2px 0; }
+.hero-message { max-width: 50ch; margin: 12px auto 0; }
+.hero-decor { position: absolute; border-radius: 999px; filter: blur(1px); }
+.hero-decor--one { width: 190px; height: 190px; background: rgba(199,53,92,.15); top: -40px; right: -30px; animation: softScale 7s ease-in-out infinite; }
+.hero-decor--two { width: 120px; height: 120px; background: rgba(159,31,70,.1); bottom: -20px; left: -10px; animation: softScale 8.5s ease-in-out infinite reverse; }
+
+.motion-section { opacity: 0; transform: translateY(30px); margin-top: 18px; }
+.motion-section.is-visible { animation: fadeUp .65s ease forwards; }
+.card-layer { background: var(--color-surface); border-radius: 18px; border: 1px solid var(--color-border); box-shadow: 0 12px 26px rgba(17,24,39,.06); padding: 8px; }
+.card-layer.is-visible { animation: reveal .7s ease forwards; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes reveal { 0% { opacity: 0; transform: translateY(24px) scale(.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes softScale { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+@media (min-width: 768px) {
+  .romantic-motion-template { padding: 30px 20px 60px; }
+  .motion-section { margin-top: 22px; }
+}
