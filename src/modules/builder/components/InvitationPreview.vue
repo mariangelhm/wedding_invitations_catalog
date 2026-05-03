@@ -1,11 +1,14 @@
 <!--
   Invitation preview component.
-  Delegates rendering to a concrete invitation template.
+  We import template components here so this file can act as the single
+  orchestration layer that chooses which invitation experience to render.
 -->
 <script setup>
 import { computed, onMounted } from 'vue';
 
 import RomanticTemplate from '../../invitations/templates/romantic/Template.vue';
+// Explicit import avoids runtime unresolved-component warnings in preview rendering.
+import RomanticMotionTemplate from '../../invitations/templates/romantic-motion/RomanticMotionTemplate.vue';
 import { useBuilderStore } from '../../../store/builder.store';
 
 const builderStore = useBuilderStore();
@@ -16,16 +19,23 @@ onMounted(() => {
   }
 });
 
-const selectedTemplateId = computed(() => builderStore.invitation?.templateId || '');
-const isRomanticMotion = computed(() => ['romantic-01', 'romantic-motion'].includes(selectedTemplateId.value));
-const hasSelectedTemplate = computed(() => Boolean(selectedTemplateId.value));
+const invitation = computed(() => builderStore.invitation || null);
+
+const isRomanticMotionTemplate = computed(() => {
+  if (!invitation.value) return false;
+
+  return invitation.value.templateId === 'romantic-01'
+    || invitation.value.templateComponent === 'romantic-motion';
+});
+
+const hasSelectedTemplate = computed(() => Boolean(invitation.value?.templateId || invitation.value?.templateComponent));
 
 const hasCountdownAddon = computed(() =>
-  builderStore.invitation?.addons.some((addon) => addon.type === 'countdown_wedding') ?? false,
+  invitation.value?.addons.some((addon) => addon.type === 'countdown_wedding') ?? false,
 );
 
 const hasMapAddon = computed(() =>
-  builderStore.invitation?.addons.some((addon) => addon.type === 'map') ?? false,
+  invitation.value?.addons.some((addon) => addon.type === 'map') ?? false,
 );
 </script>
 
@@ -33,22 +43,26 @@ const hasMapAddon = computed(() =>
   <section>
     <h2>Invitation Preview</h2>
 
-    <RomanticMotionTemplate
-      v-if="isRomanticMotion"
-      :invitation-data="builderStore.invitation"
-    />
+    <p v-if="!invitation">No invitation selected</p>
 
-    <RomanticTemplate
-      v-else
-      :names="builderStore.invitation?.base.names"
-      :date="builderStore.invitation?.base.date"
-      :location="builderStore.invitation?.base.location"
-      :message="builderStore.invitation?.base.message"
-    />
+    <template v-else>
+      <RomanticMotionTemplate
+        v-if="isRomanticMotionTemplate"
+        :invitationData="invitation"
+      />
 
-    <template v-if="!hasSelectedTemplate">
-      <p v-if="hasCountdownAddon">Countdown enabled</p>
-      <p v-if="hasMapAddon">Map enabled</p>
+      <RomanticTemplate
+        v-else
+        :names="invitation?.base.names"
+        :date="invitation?.base.date"
+        :location="invitation?.base.location"
+        :message="invitation?.base.message"
+      />
+
+      <template v-if="!hasSelectedTemplate">
+        <p v-if="hasCountdownAddon">Countdown enabled</p>
+        <p v-if="hasMapAddon">Map enabled</p>
+      </template>
     </template>
   </section>
 </template>

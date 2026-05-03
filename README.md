@@ -651,3 +651,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Render desde `InvitationPreview`:
   - si `builderStore.invitation.templateId` es `romantic-01` o `romantic-motion`, se renderiza `RomanticMotionTemplate`
   - en otros casos mantiene el template fallback existente
+
+## Fix RomanticMotionTemplate rendering
+- Se ajustó `InvitationPreview.vue` para importar explícitamente `RomanticMotionTemplate` y evitar el warning `Failed to resolve component: RomanticMotionTemplate`.
+- La condición `isRomanticMotionTemplate` ahora valida:
+  - `invitation.templateId === "romantic-01"`
+  - o `invitation.templateComponent === "romantic-motion"`
+- El preview toma `invitation` desde `builderStore.invitation`, muestra `No invitation selected` si no existe y mantiene el fallback para templates no `romantic-motion`.
