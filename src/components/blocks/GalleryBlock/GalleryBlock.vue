@@ -2,11 +2,6 @@
 import { computed, onMounted, ref } from 'vue';
 import './galleryBlock.css';
 
-/**
- * Reusable gallery block props.
- * - title: optional heading
- * - images: optional photo collection
- */
 const props = withDefaults(defineProps<{
   title?: string;
   images?: Array<{ src: string; alt?: string }>;
@@ -15,19 +10,39 @@ const props = withDefaults(defineProps<{
   images: () => [],
 });
 
-// Fallback: render elegant placeholders when no image data exists.
-const hasImages = computed(() => props.images.length > 0);
-const displayItems = computed(() => (hasImages.value ? props.images : [
-  { src: '', alt: 'Placeholder 1' },
-  { src: '', alt: 'Placeholder 2' },
-  { src: '', alt: 'Placeholder 3' },
-]));
+// Fallback behavior:
+// - invalid/empty image sources render graceful placeholders (never broken images)
+// - if no valid images are provided, a full default placeholder set is rendered
+const defaultImages = [
+  { src: '', alt: 'Foto principal' },
+  { src: '', alt: 'Momento especial' },
+  { src: '', alt: 'Nuestra historia' },
+];
+
+const normalizedItems = computed(() => {
+  const safeItems = (props.images || []).map((item, index) => {
+    const src = (item?.src || '').trim();
+    return {
+      src,
+      alt: item?.alt || `Imagen ${index + 1}`,
+      isRealImage: src.length > 0,
+    };
+  });
+
+  const hasAtLeastOneImage = safeItems.some((item) => item.isRealImage);
+  if (!hasAtLeastOneImage) {
+    return defaultImages.map((item) => ({ ...item, isRealImage: false }));
+  }
+
+  return safeItems.map((item, index) => item.isRealImage
+    ? item
+    : { src: '', alt: item.alt || defaultImages[index % defaultImages.length].alt, isRealImage: false });
+});
 
 const rootEl = ref<HTMLElement | null>(null);
 const isVisible = ref(false);
 
 onMounted(() => {
-  // One-time reveal animation for reusable drag/drop-rendered blocks.
   const observer = new IntersectionObserver((entries) => {
     const [entry] = entries;
     if (entry.isIntersecting) {
@@ -44,16 +59,19 @@ onMounted(() => {
   <section ref="rootEl" class="gallery-block" :class="{ 'is-visible': isVisible }">
     <h3 class="gallery-title">{{ title }}</h3>
 
-    <div class="gallery-grid" :class="{ 'is-placeholder': !hasImages }">
+    <div class="gallery-grid">
       <article
-        v-for="(image, index) in displayItems"
+        v-for="(image, index) in normalizedItems"
         :key="`${image.alt}-${index}`"
         class="gallery-item"
-        :class="{ 'gallery-item--main': index === 0 }"
+        :class="[{ 'gallery-item--main': index === 0 }, { 'gallery-item--placeholder': !image.isRealImage }]"
         :style="{ transitionDelay: `${index * 80}ms` }"
       >
-        <img v-if="hasImages" :src="image.src" :alt="image.alt || `Imagen ${index + 1}`" />
-        <div v-else class="placeholder-card">{{ image.alt }}</div>
+        <img v-if="image.isRealImage" :src="image.src" :alt="image.alt" />
+        <div v-else class="placeholder-card">
+          <span class="placeholder-icon">✦</span>
+          <span>{{ image.alt }}</span>
+        </div>
       </article>
     </div>
   </section>

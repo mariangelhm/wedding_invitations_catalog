@@ -23,7 +23,12 @@ let sectionObserver = null;
 const base = computed(() => props.invitationData?.base || {});
 const styles = computed(() => props.invitationData?.styles || {});
 const timeline = computed(() => props.invitationData?.timeline || []);
-const gallery = computed(() => props.invitationData?.gallery || []);
+// Gallery can rely on block-level fallback placeholders when custom images are missing.
+const gallery = computed(() => props.invitationData?.gallery || [
+  { src: '', alt: 'Foto principal' },
+  { src: '', alt: 'Momento especial' },
+  { src: '', alt: 'Nuestra historia' },
+]);
 const addons = computed(() => props.invitationData?.addons || []);
 
 const getAddon = (type) => addons.value.find((addon) => addon.type === type && addon.enabled !== false);

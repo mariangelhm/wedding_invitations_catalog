@@ -715,3 +715,12 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se mantiene semántica por secciones, pero ahora comparten fondo, ritmo vertical consistente y separadores suaves.
 - Se añadieron capas decorativas (gradientes y círculos sutiles) en el contenedor principal para dar profundidad sin romper continuidad.
 - Hero, countdown, story, gallery, timeline, map y RSVP conservan sus bloques reutilizables y bindings, pero con estilo visual unificado.
+
+## Gallery default placeholders
+- `GalleryBlock` ahora evita imágenes rotas: cuando `images` viene vacío o con `src` inválido, renderiza placeholders visuales con gradiente y etiqueta.
+- Placeholders por defecto:
+  - Foto principal
+  - Momento especial
+  - Nuestra historia
+- Si una entrada específica tiene `src` vacío, sólo esa celda se transforma en placeholder (las imágenes válidas mantienen zoom en hover).
+- `RomanticMotionTemplate` deja lista data de muestra mínima, pero el fallback principal vive dentro de `GalleryBlock` para reutilización global.
