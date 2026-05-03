@@ -1,16 +1,24 @@
 import { defineStore } from 'pinia';
 
+const defaultCustomizableOptions = {
+  colors: true,
+  fonts: true,
+  photos: true,
+  music: false,
+  map: true,
+  components: true,
+};
+
 export const useBuilderStore = defineStore('builderStore', {
   state: () => ({ basePrice: 20000, invitation: null }),
   getters: {
     totalPrice: (state) => {
       if (!state.invitation) return state.basePrice;
-      const addonsTotal = state.invitation.addons.reduce((sum, addon) => sum + addon.price, 0);
+      const addonsTotal = state.invitation.addons.reduce((sum, addon) => sum + (addon.price || 0), 0);
       return state.basePrice + addonsTotal;
     },
   },
   actions: {
-    // Creates draft invitation with optional template metadata from catalog flow.
     createDraftInvitation(template = null) {
       const id = Date.now();
       const createdAt = new Date();
@@ -21,6 +29,7 @@ export const useBuilderStore = defineStore('builderStore', {
         id,
         status: 'draft',
         templateId: template?.id || null,
+        templateComponent: template?.templateComponent || null,
         templateName: template?.name || 'Invitación base',
         category: template?.category || 'general',
         level: template?.level || 'basic',
@@ -28,10 +37,13 @@ export const useBuilderStore = defineStore('builderStore', {
         base: { names: '', date: '', location: '', message: '' },
         styles: {
           primaryColor: template?.previewStyle?.accentColor || '#C7355C',
+          secondaryColor: template?.previewStyle?.background || '#FFF1F4',
           fontFamily: 'Arial',
         },
         addons: [],
-        customizableOptions: template?.customizableOptions || { colors: true, fonts: true, music: true, photos: true, map: true, countdown: true, rsvp: true },
+        customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
+        timeline: [],
+        gallery: [],
         expiresAt,
         createdAt,
       };
@@ -47,6 +59,5 @@ export const useBuilderStore = defineStore('builderStore', {
       if (checked && !exists) this.invitation.addons.push({ type, label, price });
       if (!checked) this.invitation.addons = this.invitation.addons.filter((addon) => addon.type !== type);
     },
-
   },
 });

@@ -664,3 +664,14 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se cambió `ref="setSectionRef"` por `:ref="setSectionRef"` para usar correctamente function refs en Vue.
 - `setSectionRef` ahora evita duplicados y recolecta nodos para IntersectionObserver.
 - Se agregó `onUnmounted` con `disconnect()` para limpiar el observer sin remover animaciones.
+
+## Generic visual builder editor
+- El flujo del editor ahora lee `templateId` desde `/editor?templateId={id}`.
+- `templates.js` actúa como fuente de verdad de catálogo; cada template define `id` + `templateComponent`.
+- Se agregó `src/modules/invitations/templates/index.js` como `templateRegistry` para resolver componentes por clave.
+- `InvitationPreview` renderiza dinámicamente con `<component :is="activeTemplateComponent" :invitationData="invitation" />`.
+- Si no existe componente registrado, se mantiene fallback preview.
+- Las secciones del editor se construyen desde `customizableOptions` del template:
+  - Siempre: Información
+  - Condicionales: Colores, Tipografías, Fotos, Música, Mapa, Componentes
+- `createDraftInvitation(template)` en store guarda metadata completa del template y campos genéricos para soportar templates futuros sin hardcode.
