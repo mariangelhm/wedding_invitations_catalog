@@ -46,6 +46,15 @@ const formattedDate = computed(() => {
   return date.toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
 });
 
+const fontStacks = {
+  'Playfair Display': "'Playfair Display', Georgia, serif",
+  'Cormorant Garamond': "'Cormorant Garamond', Georgia, serif",
+  Poppins: "'Poppins', Arial, sans-serif",
+  Georgia: 'Georgia, serif',
+  'Patrick Hand': "'Patrick Hand', cursive",
+  Arial: 'Arial, sans-serif',
+};
+
 const templateVars = computed(() => ({
   '--color-primary': styles.value.primaryColor || '#C7355C',
   '--color-primary-dark': '#9F1F46',
@@ -56,9 +65,9 @@ const templateVars = computed(() => ({
   '--color-text-muted': '#6B7280',
   '--color-surface': '#FFFFFF',
   '--color-border': '#F4DCE3',
-  // Separated typography: one family for couple names and another for general content.
-  '--couple-font-family': styles.value.coupleFontFamily ? `${styles.value.coupleFontFamily}, serif` : 'Playfair Display, serif',
-  '--body-font-family': styles.value.bodyFontFamily ? `${styles.value.bodyFontFamily}, sans-serif` : 'Arial, sans-serif',
+  // Typography application: map selected labels to real CSS stacks so preview changes are always visible.
+  '--couple-font-family': fontStacks[styles.value.coupleFontFamily] || "'Playfair Display', Georgia, serif",
+  '--body-font-family': fontStacks[styles.value.bodyFontFamily] || 'Arial, sans-serif',
   '--template-text-color': styles.value.textColor || '#111827',
 }));
 

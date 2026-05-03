@@ -737,3 +737,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - El editor ahora permite **Activar/Desactivar**, **Mover arriba** y **Mover abajo** cada bloque desde la sección Bloques.
 - `RomanticMotionTemplate` mantiene el hero fijo al inicio, y luego renderiza los bloques habilitados según su orden.
 - Este enfoque mantiene compatibilidad futura para migrar a drag & drop sin librerías externas.
+
+## Typography application
+- Se agregó un mapeo `fontStacks` para traducir cada tipografía seleccionada a un stack CSS real con fallback.
+- El editor aplica ese mapeo en las cards de selección para `coupleFontFamily` y `bodyFontFamily`, y el estado seleccionado refleja el valor guardado.
+- `RomanticMotionTemplate` aplica `--couple-font-family`, `--body-font-family` y `--template-text-color` usando ese mapeo para que el preview cambie visiblemente en cada selección.
+- `src/styles/base/typography.css` ahora importa Google Fonts para: Playfair Display, Cormorant Garamond, Poppins y Patrick Hand.

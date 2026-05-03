@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 
 const defaultCustomizableOptions = { colors: true, fonts: true, photos: true, music: false, map: true, components: true };
+// Typography values are stored as font labels; template maps labels to CSS font stacks with fallbacks.
 
 const defaultBlocks = [
   { id: 'block-countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, price: 3000, settings: {} },
