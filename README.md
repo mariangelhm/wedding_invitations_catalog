@@ -759,3 +759,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 ## Nuevos temas elegantes
 - Se agregaron presets visuales adicionales: Rosa viejo, Terracota champagne, Verde eucalipto, Azul medianoche, Lavanda gris, Gris carbón y Marfil dorado.
 - Todos se muestran como tarjetas visuales en **Fondo > Temas** y aplican tokens completos de color/tipografía de contraste para evitar herencias visuales no deseadas.
+
+
+## Separación de color tipográfico
+- La sección **Estilo** ahora incluye dos controles independientes: **Color de nombres/títulos** y **Color de texto general**.
+- `titleColor` controla nombres de novios y encabezados destacados; `bodyTextColor` controla fecha, ubicación, mensajes y textos de contenido.
+- Los temas siguen definiendo ambos por defecto, y cualquier cambio manual se refleja inmediatamente en el preview.
