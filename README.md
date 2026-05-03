@@ -743,3 +743,14 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - El editor aplica ese mapeo en las cards de selección para `coupleFontFamily` y `bodyFontFamily`, y el estado seleccionado refleja el valor guardado.
 - `RomanticMotionTemplate` aplica `--couple-font-family`, `--body-font-family` y `--template-text-color` usando ese mapeo para que el preview cambie visiblemente en cada selección.
 - `src/styles/base/typography.css` ahora importa Google Fonts para: Playfair Display, Cormorant Garamond, Poppins y Patrick Hand.
+
+
+## Details panel improvements
+- Se mejoró la sección **Detalles** con una card de configuración vertical para mapa (labels arriba, inputs full-width y ayudas por campo).
+- Se agregó una caja de ayuda: **¿Cómo obtener el link?** con pasos claros para copiar enlace desde Google Maps.
+- Si el bloque mapa está desactivado, ahora se muestra estado vacío con CTA **Ir a Bloques** para activarlo rápidamente.
+
+## Theme reset consistency
+- Cada `themePreset` ahora define explícitamente: `primaryColor`, `secondaryColor`, `background`, `accentShape`, `textColor`, `titleColor`, `bodyTextColor`.
+- Al seleccionar tema en editor, se escriben siempre todos esos tokens en `styles` para evitar herencia accidental del tema previo.
+- Esto corrige el caso oscuro→claro donde el texto podía quedar blanco sobre fondo claro.

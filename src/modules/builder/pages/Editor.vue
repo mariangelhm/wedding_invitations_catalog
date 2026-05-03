@@ -70,12 +70,15 @@ const toggleBlockAddon = (item) => {
   if (item.type === 'map') builderStore.toggleAddon('map', item.label, item.price, !invitation.value.addons.some((a)=>a.type==='map'));
 };
 const applyThemePreset = (preset) => {
+  // Always write the full theme token set to avoid inherited colors from previous theme.
   invitation.value.styles.backgroundTheme = preset.id;
   invitation.value.styles.primaryColor = preset.primaryColor;
   invitation.value.styles.secondaryColor = preset.secondaryColor;
+  invitation.value.styles.textColor = preset.textColor;
+  invitation.value.styles.titleColor = preset.titleColor;
+  invitation.value.styles.bodyTextColor = preset.bodyTextColor;
   invitation.value.styles.accentShape = preset.accentShape;
   invitation.value.styles.backgroundGradient = preset.background;
-  if (preset.textColor) invitation.value.styles.textColor = preset.textColor;
 };
 
 </script>
@@ -116,13 +119,32 @@ const applyThemePreset = (preset) => {
                 <div v-else-if="selectedSection === 'card'" class="settings-block"><BasicEditorForm /></div>
 
         <div v-else-if="selectedSection === 'details'" class="settings-block">
-          <template v-if="isMapAddonEnabled">
-            <label>Nombre del lugar <input v-model="invitation.mapSettings.locationName" type="text" /></label>
-            <label>Dirección <input v-model="invitation.mapSettings.address" type="text" /></label>
-            <label>URL de Google Maps <input v-model="invitation.mapSettings.mapUrl" type="text" placeholder="https://maps.google.com/..." /></label>
-            <p class="hint">Tip: abre Google Maps → Compartir → Copiar enlace.</p>
-          </template>
-          <p v-else class="placeholder-card">Activa el bloque Mapa desde la sección Bloques para configurarlo.</p>
+          <div v-if="isMapAddonEnabled" class="details-card">
+            <div class="details-field">
+              <label for="mapLocationName">Nombre del lugar</label>
+              <input id="mapLocationName" v-model="invitation.mapSettings.locationName" type="text" />
+              <small>Ejemplo: Rose Garden Hall</small>
+            </div>
+            <div class="details-field">
+              <label for="mapAddress">Dirección</label>
+              <input id="mapAddress" v-model="invitation.mapSettings.address" type="text" />
+              <small>Incluye ciudad y referencias importantes.</small>
+            </div>
+            <div class="details-field">
+              <label for="mapUrl">URL de Google Maps</label>
+              <input id="mapUrl" v-model="invitation.mapSettings.mapUrl" type="text" placeholder="https://maps.google.com/..." />
+              <small>Pega aquí el enlace de compartir de Google Maps.</small>
+            </div>
+            <div class="help-box">
+              <h5>¿Cómo obtener el link?</h5>
+              <p>Abre Google Maps, busca la ubicación, presiona Compartir y copia el enlace.</p>
+            </div>
+          </div>
+          <div v-else class="details-empty-card">
+            <p><strong>El mapa es un extra opcional.</strong></p>
+            <p>Actívalo desde la sección Bloques para configurarlo.</p>
+            <button class="btn" type="button" @click="selectedSection = 'blocks'">Ir a Bloques</button>
+          </div>
         </div>
 
         <div v-else-if="selectedSection === 'style'" class="settings-block">
