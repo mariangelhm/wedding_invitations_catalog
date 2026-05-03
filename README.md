@@ -605,3 +605,23 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - clears interval on unmount and when event reaches zero
   - displays "El evento ha comenzado" when countdown finishes
 - This block is prepared for future drag-and-drop registration usage via block config metadata.
+
+## Block Registry
+- `src/components/blocks/index.js` centraliza un registro de bloques reutilizables para renderizarlos de forma consistente en templates.
+- Bloques registrados actualmente:
+  - `countdown`
+  - `map`
+  - `timeline`
+  - `story`
+  - `rsvp`
+  - `gallery`
+- Cada entrada del registro define:
+  - `component`
+  - `label`
+  - `draggable`
+  - `configurableProps` (props que podrán editarse desde UI futuras)
+- En templates, este registro permitirá resolver bloques por `type` sin imports dispersos.
+- Para el futuro drag & drop del editor, el campo `draggable` y `configurableProps` facilitarán:
+  - listar bloques disponibles
+  - validar qué props puede modificar cada bloque
+  - mantener una única fuente de verdad para metadatos de bloques
