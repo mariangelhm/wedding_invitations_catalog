@@ -49,7 +49,10 @@ const templateVars = computed(() => ({
   '--color-text-muted': '#6B7280',
   '--color-surface': '#FFFFFF',
   '--color-border': '#F4DCE3',
-  '--template-font-family': styles.value.fontFamily || 'Playfair Display, serif',
+  // Separated typography: one family for couple names and another for general content.
+  '--couple-font-family': styles.value.coupleFontFamily ? `${styles.value.coupleFontFamily}, serif` : 'Playfair Display, serif',
+  '--body-font-family': styles.value.bodyFontFamily ? `${styles.value.bodyFontFamily}, sans-serif` : 'Arial, sans-serif',
+  '--template-text-color': styles.value.textColor || '#111827',
 }));
 
 const names = computed(() => base.value.names || 'María & Carlos');

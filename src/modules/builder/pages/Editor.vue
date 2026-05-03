@@ -29,7 +29,7 @@ const sectionCatalog = [
 
 const backgroundSwatches = ['#C7355C', '#F97316', '#2563EB', '#16A34A', '#7C3AED', '#111827', '#FBE8EE', '#FFFFFF'];
 const textSwatches = ['#111827', '#374151', '#C7355C', '#FFFFFF', '#6B7280'];
-const fontOptions = ['Cormorant', 'Playfair Display', 'Poppins', 'Georgia', 'Patrick Hand', 'Arial'];
+const fontOptions = ['Playfair Display', 'Cormorant Garamond', 'Poppins', 'Georgia', 'Patrick Hand', 'Arial'];
 const blockOptions = [
   { type: 'countdown_wedding', label: 'Cuenta regresiva boda', description: 'Cuenta regresiva al evento principal.', price: 3000 },
   { type: 'countdown_rsvp', label: 'Cuenta regresiva confirmación', description: 'Límite de confirmación RSVP.', price: 2500 },
@@ -95,7 +95,11 @@ const toggleBlockAddon = (item, checked) => builderStore.toggleAddon(item.type, 
         </div>
 
         <div v-else-if="selectedSection === 'style'" class="settings-block">
-          <div class="font-card-list"><button v-for="font in fontOptions" :key="font" class="font-card" :class="{ selected: invitation.styles.fontFamily===font }" :style="{ fontFamily: font }" @click="invitation.styles.fontFamily = font">{{ font }}</button></div>
+          <h4>Fuente para nombres</h4>
+          <div class="font-card-list"><button v-for="font in fontOptions" :key="`couple-${font}`" class="font-card" :class="{ selected: invitation.styles.coupleFontFamily===font }" :style="{ fontFamily: font }" @click="invitation.styles.coupleFontFamily = font">{{ font }}</button></div>
+          <h4>Fuente general</h4>
+          <div class="font-card-list"><button v-for="font in fontOptions" :key="`body-${font}`" class="font-card" :class="{ selected: invitation.styles.bodyFontFamily===font }" :style="{ fontFamily: font }" @click="invitation.styles.bodyFontFamily = font">{{ font }}</button></div>
+          <h4>Color de texto</h4>
           <div class="swatch-grid text-swatches"><button v-for="color in textSwatches" :key="color" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.textColor===color }" @click="invitation.styles.textColor = color" /></div>
         </div>
 

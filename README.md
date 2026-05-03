@@ -695,3 +695,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se eliminó la sección **Sobre** del menú lateral para simplificar el flujo y priorizar secciones de edición con impacto real en el resultado visual.
 - La navegación superior ahora incluye **← Volver al catálogo** con acceso directo a `/catalog` (visible en desktop y mobile).
 - El menú del editor queda en: Fondo, Tarjeta, Detalles, Estilo y Bloques; si el estado previo era `sobre`/`envelope`, se normaliza automáticamente a `fondo`.
+
+
+## Separated typography system
+- El editor en la sección **Estilo** ahora separa tipografías en dos controles: **Fuente para nombres** y **Fuente general**.
+- Se agregaron opciones: Playfair Display, Cormorant Garamond, Poppins, Georgia, Patrick Hand y Arial.
+- En el store, `styles` ahora soporta `coupleFontFamily` y `bodyFontFamily` junto con `textColor`, `primaryColor`, `secondaryColor` y `backgroundTheme`.
+- `RomanticMotionTemplate` aplica `coupleFontFamily` exclusivamente al nombre de la pareja y `bodyFontFamily` al resto del contenido, con fallback serif/sans-serif local.

@@ -12,12 +12,12 @@
 
       <section>
         <h3>Contacto</h3>
-        <a href="mailto:contacto@invitalo.cl">contacto@invitalo.cl</a>
+        <a href="mailto:contacto@invitalove.cl">contacto@invitalo.cl</a>
         <a href="#">Soporte</a>
       </section>
 
       <section>
-        <p>La plataforma completa para organizar eventos memorables</p>
+        <h3>La plataforma completa las mas innovadoras invitaciones de boda.</h3>
         <a href="#">¿Necesitas ayuda? Escríbenos por WhatsApp</a>
         <a href="#">Síguenos en Instagram</a>
         <a href="#">Síguenos en Facebook</a>

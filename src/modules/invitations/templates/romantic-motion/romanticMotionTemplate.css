@@ -8,8 +8,8 @@
   --color-border: #F4DCE3;
 
   background: linear-gradient(180deg, #fff 0%, #fff7fa 50%, #fff 100%);
-  color: var(--color-text-main);
-  font-family: var(--template-font-family, 'Playfair Display', serif);
+  color: var(--template-text-color, var(--color-text-main));
+  font-family: var(--body-font-family, Arial, sans-serif);
   margin-inline: auto;
   max-width: 780px;
   padding: 20px 14px 48px;
@@ -47,3 +47,5 @@
   .romantic-motion-template { padding: 30px 20px 60px; }
   .motion-section { margin-top: 22px; }
 }
+
+.hero h1 { font-family: var(--couple-font-family, 'Playfair Display', serif); }
