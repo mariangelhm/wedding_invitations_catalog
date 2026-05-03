@@ -731,3 +731,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Al activar, se guarda como addon `type: "map"`, `enabled: true`, `price` y `settings` (`locationName`, `address`, `mapUrl`).
 - En la sección **Detalles**, los campos del mapa sólo aparecen si el addon está activo; de lo contrario se muestra una guía para activarlo.
 - `RomanticMotionTemplate` renderiza `MapBlock` únicamente cuando el addon de mapa está habilitado.
+
+## Ordered blocks system
+- Se incorporó un sistema de bloques ordenados (`invitation.blocks`) con `enabled`, `order`, `price` y `settings` como paso inicial hacia drag & drop.
+- El editor ahora permite **Activar/Desactivar**, **Mover arriba** y **Mover abajo** cada bloque desde la sección Bloques.
+- `RomanticMotionTemplate` mantiene el hero fijo al inicio, y luego renderiza los bloques habilitados según su orden.
+- Este enfoque mantiene compatibilidad futura para migrar a drag & drop sin librerías externas.

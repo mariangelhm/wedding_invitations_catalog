@@ -55,11 +55,11 @@ watch(availableSections, (items) => {
   if (!items.some((item) => item.id === selectedSection.value)) selectedSection.value = items[0]?.id || 'background';
 }, { immediate: true });
 
-const isAddonEnabled = (type) => invitation.value?.addons?.some((addon) => addon.type === type && addon.enabled !== false) ?? false;
-const isMapAddonEnabled = computed(() => isAddonEnabled('map'));
-const toggleBlockAddon = (item, checked) => {
-  // For map addon we persist latest settings snapshot in addon settings on enable/toggle.
-  builderStore.toggleAddon(item.type, item.label, item.price, checked);
+const orderedBlocks = computed(() => (invitation.value?.blocks || []).slice().sort((a,b)=>a.order-b.order));
+const isMapAddonEnabled = computed(() => orderedBlocks.value.some((b)=>b.type==='map' && b.enabled));
+const toggleBlockAddon = (item) => {
+  builderStore.toggleBlock(item.type);
+  if (item.type === 'map') builderStore.toggleAddon('map', item.label, item.price, !invitation.value.addons.some((a)=>a.type==='map'));
 };
 const applyThemePreset = (preset) => {
   invitation.value.styles.backgroundTheme = preset.id;
@@ -127,7 +127,14 @@ const applyThemePreset = (preset) => {
         </div>
 
         <div v-else class="block-list">
-          <article v-for="item in blockOptions" :key="item.type" class="block-card"><div><h4>{{ item.label }}</h4><p>{{ item.description }}</p><small>${{ item.price }}</small></div><label class="toggle-wrap"><input type="checkbox" :checked="isAddonEnabled(item.type)" @change="toggleBlockAddon(item, $event.target.checked)" /><span>Activar</span></label></article>
+          <article v-for="block in orderedBlocks" :key="block.id" class="block-card">
+            <div><h4>{{ blockOptions.find((i)=>i.type===block.type)?.label || block.type }}</h4><p>{{ blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p><small v-if="block.price > 0">${{ block.price }}</small></div>
+            <div class="toggle-wrap">
+              <button class="mini-btn" @click="builderStore.moveBlockUp(block.id)">↑</button>
+              <button class="mini-btn" @click="builderStore.moveBlockDown(block.id)">↓</button>
+              <label><input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block)" /> Activar</label>
+            </div>
+          </article>
         </div>
       </aside>
 

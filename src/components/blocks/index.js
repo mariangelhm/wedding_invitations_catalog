@@ -48,5 +48,6 @@ export const blockRegistry = {
 };
 
 export function getBlockConfig(type) {
-  return blockRegistry[type] || null;
+  const aliases = { countdown_wedding: 'countdown', countdown_rsvp: 'countdown' };
+  return blockRegistry[aliases[type] || type] || null;
 }

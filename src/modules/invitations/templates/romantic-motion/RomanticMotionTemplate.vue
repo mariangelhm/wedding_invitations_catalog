@@ -67,6 +67,8 @@ const locationName = computed(() => mapAddon.value?.settings?.locationName || ba
 const locationAddress = computed(() => mapAddon.value?.settings?.address || 'Santiago, Chile');
 const locationMapUrl = computed(() => mapAddon.value?.settings?.mapUrl || 'https://maps.google.com');
 const storyMessage = computed(() => base.value.message || 'Nos encantaría que seas parte de este momento tan especial.');
+const orderedBlocks = computed(() => (props.invitationData?.blocks || []).filter((b) => b.enabled).slice().sort((a,b) => a.order - b.order));
+
 
 onMounted(() => {
   sectionObserver = new IntersectionObserver((entries) => {
@@ -102,40 +104,15 @@ const onRsvpConfirm = (payload) => {
       <p class="hero-message">{{ storyMessage }}</p>
     </section>
 
-    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
-    <section :ref="setSectionRef" class="motion-section flow-section">
-      <CountdownBlock :target-date="weddingDate" title="Faltan para nuestra boda" variant="primary" />
-    </section>
+    <template v-for="block in orderedBlocks" :key="block.id">
+    <section v-if="block.type === 'countdown_wedding'" :ref="setSectionRef" class="motion-section flow-section"><CountdownBlock :target-date="weddingDate" title="Faltan para nuestra boda" variant="primary" /></section>
+    <section v-else-if="block.type === 'story'" :ref="setSectionRef" class="motion-section flow-section"><StoryBlock title="Nuestra historia" :message="storyMessage" /></section>
+    <section v-else-if="block.type === 'gallery'" :ref="setSectionRef" class="motion-section flow-section"><GalleryBlock title="Nuestros momentos" :images="gallery" /></section>
+    <section v-else-if="block.type === 'timeline'" :ref="setSectionRef" class="motion-section flow-section"><TimelineBlock title="Bitácora del evento" :items="timeline" /></section>
+    <section v-else-if="block.type === 'map' && mapAddon" :ref="setSectionRef" class="motion-section flow-section"><MapBlock :location-name="locationName" :address="locationAddress" :map-url="locationMapUrl" /></section>
+    <section v-else-if="block.type === 'countdown_rsvp'" :ref="setSectionRef" class="motion-section flow-section"><CountdownBlock :target-date="rsvpDate" title="Tiempo para confirmar" variant="minimal" /></section>
+    <section v-else-if="block.type === 'rsvp'" :ref="setSectionRef" class="motion-section flow-section"><RSVPBlock @confirm="onRsvpConfirm" /></section>
+    </template>
 
-    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
-    <section :ref="setSectionRef" class="motion-section flow-section">
-      <StoryBlock title="Nuestra historia" :message="storyMessage" />
-    </section>
-
-    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
-    <section :ref="setSectionRef" class="motion-section flow-section">
-      <GalleryBlock title="Nuestros momentos" :images="gallery" />
-    </section>
-
-    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
-    <section :ref="setSectionRef" class="motion-section flow-section">
-      <TimelineBlock title="Bitácora del evento" :items="timeline" />
-    </section>
-
-    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
-    <!-- Map block is rendered only when map addon is enabled in builder settings. -->
-    <section v-if="mapAddon" :ref="setSectionRef" class="motion-section flow-section">
-      <MapBlock :location-name="locationName" :address="locationAddress" :map-url="locationMapUrl" />
-    </section>
-
-    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
-    <section :ref="setSectionRef" class="motion-section flow-section">
-      <CountdownBlock :target-date="rsvpDate" title="Tiempo para confirmar" variant="minimal" />
-    </section>
-
-    <!-- Continuous layout: sections remain semantic, but visual treatment blends into one invitation flow. -->
-    <section :ref="setSectionRef" class="motion-section flow-section">
-      <RSVPBlock @confirm="onRsvpConfirm" />
-    </section>
   </article>
 </template>
