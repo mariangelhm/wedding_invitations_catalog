@@ -675,3 +675,17 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - Siempre: Información
   - Condicionales: Colores, Tipografías, Fotos, Música, Mapa, Componentes
 - `createDraftInvitation(template)` en store guarda metadata completa del template y campos genéricos para soportar templates futuros sin hardcode.
+
+## Editor visual improvements
+- Se agregó switch de dispositivo en la barra superior (`🖥️ Desktop` / `📱 Mobile`) para escalar la vista previa sin alterar data del template.
+- El menú lateral fue rediseñado con secciones e íconos: Fondo, Sobre, Tarjeta, Detalles, Estilo y Bloques.
+- Cada sección tiene panel propio:
+  - Fondo: tabs Galería/Colores con swatches.
+  - Sobre: placeholder estilizado.
+  - Tarjeta: formulario base en español.
+  - Detalles: configuración de mapa con ayuda para obtener link de Google Maps.
+  - Estilo: tarjetas de tipografía + swatches de color de texto.
+  - Bloques: cards con toggle para addons reutilizables.
+- Se implementó sistema de swatches para color de fondo y color de texto.
+- Se incorporaron tarjetas tipográficas seleccionables para `fontFamily`.
+- Se removió `PriceSummary` y `ExpirationBanner` del panel del editor para priorizar una UX de edición visual limpia; esos datos quedan para checkout/resumen dedicado.

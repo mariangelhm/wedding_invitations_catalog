@@ -38,12 +38,19 @@ export const useBuilderStore = defineStore('builderStore', {
         styles: {
           primaryColor: template?.previewStyle?.accentColor || '#C7355C',
           secondaryColor: template?.previewStyle?.background || '#FFF1F4',
+          backgroundColor: template?.previewStyle?.background || '#FFFFFF',
+          textColor: template?.previewStyle?.textColor || '#111827',
           fontFamily: 'Arial',
         },
         addons: [],
         customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
         timeline: [],
         gallery: [],
+        mapSettings: {
+          locationName: '',
+          address: '',
+          mapUrl: '',
+        },
         expiresAt,
         createdAt,
       };
