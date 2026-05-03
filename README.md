@@ -765,3 +765,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - La sección **Estilo** ahora incluye dos controles independientes: **Color de nombres/títulos** y **Color de texto general**.
 - `titleColor` controla nombres de novios y encabezados destacados; `bodyTextColor` controla fecha, ubicación, mensajes y textos de contenido.
 - Los temas siguen definiendo ambos por defecto, y cualquier cambio manual se refleja inmediatamente en el preview.
+
+
+## Tamaño del nombre de novios
+- Se agregó la clase `.romantic-motion__couple-names` para controlar el título principal con `clamp(2.4rem, 8vw, 5rem)`.
+- Para nombres largos se habilitó ajuste elegante con `text-wrap: balance`, `overflow-wrap` y `line-height` optimizado.
+- En mobile se redujo padding del hero y se ajustó el clamp para evitar overflow horizontal sin perder jerarquía visual.

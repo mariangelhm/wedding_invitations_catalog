@@ -107,7 +107,7 @@ const onRsvpConfirm = (payload) => {
       <div class="hero-decor hero-decor--one" aria-hidden="true"></div>
       <div class="hero-decor hero-decor--two" aria-hidden="true"></div>
       <p class="hero-kicker">Nuestra boda</p>
-      <h1>{{ names }}</h1>
+      <h1 class="romantic-motion__couple-names">{{ names }}</h1>
       <p class="hero-date">{{ formattedDate }}</p>
       <p class="hero-location">{{ locationName }}</p>
       <p class="hero-message">{{ storyMessage }}</p>
