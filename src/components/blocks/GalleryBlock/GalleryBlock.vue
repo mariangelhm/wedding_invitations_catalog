@@ -8,10 +8,12 @@ import './galleryBlock.css';
 
 const props = withDefaults(defineProps<{
   title?: string;
-  images?: Array<{ src: string; alt?: string }>;
+  images?: Array<{ src: string; alt?: string }>
+  integrated?: boolean;
 }>(), {
   title: 'Nuestros momentos',
   images: () => [],
+  integrated: false,
 });
 
 const localSampleImages = [
@@ -60,7 +62,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section ref="rootEl" class="gallery-block" :class="{ 'is-visible': isVisible }">
+  <section ref="rootEl" class="gallery-block" :class="[{'gallery-block--integrated': integrated}, { 'is-visible': isVisible }]" >
     <h3 class="gallery-title">{{ title }}</h3>
 
     <div class="gallery-grid">
