@@ -150,15 +150,26 @@ const applyThemePreset = (preset) => {
         </div>
         <div v-else class="block-list">
           <!-- This is the base for future drag-and-drop ordering in all templates. -->
-          <article v-for="block in orderedBlocks" :key="block.id" class="block-card">
-            <div class="extra-preview" :class="`extra-preview--${blockOptions.find((i)=>i.type===block.type)?.preview}`"></div>
-            <div><h4>{{ blockOptions.find((i)=>i.type===block.type)?.label || block.type }}</h4><p>{{ blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p><small v-if="block.price > 0">${{ block.price }}</small></div>
-            <div class="toggle-wrap">
-              <label><input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block)" /> Activar</label>
-              <template v-if="block.enabled">
+          <article v-for="block in orderedBlocks" :key="block.id" class="block-card" :class="{ 'is-active': block.enabled, 'is-inactive': !block.enabled }">
+            <div class="block-head">
+              <div class="extra-preview" :class="`extra-preview--${blockOptions.find((i)=>i.type===block.type)?.preview}`"></div>
+              <div class="block-head-meta">
+                <h4>{{ blockOptions.find((i)=>i.type===block.type)?.label || block.type }}</h4>
+                <small v-if="block.price > 0" class="price-badge">${{ block.price }}</small>
+                <small v-else class="price-badge price-badge--free">Incluido</small>
+              </div>
+            </div>
+            <p class="block-description">{{ blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p>
+            <div class="block-footer">
+              <label class="switch" :aria-label="`Activar ${block.type}`">
+                <input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block)" />
+                <span class="switch-slider"></span>
+              </label>
+              <span class="status-label">{{ block.enabled ? 'Activo' : 'Inactivo' }}</span>
+              <div v-if="block.enabled" class="move-actions">
                 <button class="mini-btn" @click="builderStore.moveBlockUp(block.id)">↑</button>
                 <button class="mini-btn" @click="builderStore.moveBlockDown(block.id)">↓</button>
-              </template>
+              </div>
             </div>
           </article>
 

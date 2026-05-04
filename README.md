@@ -899,3 +899,15 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - total + Listo stay pinned to the bottom.
 - The **Listo** button keeps the current behavior (opens the invitation summary modal).
 - On mobile, the icon menu becomes horizontal and the total + Listo controls are shown inline after the menu actions for quick access.
+
+## Extras visual cards
+- The Extras section cards were redesigned to a compact professional layout with three clear zones:
+  - top row: mini visual preview + title + price badge,
+  - description row,
+  - bottom row: modern toggle switch, state label (`Activo` / `Inactivo`), and move up/down actions only when active.
+- Cards now have active/inactive visual states:
+  - active: primary border + soft pink background,
+  - inactive: white background + muted text.
+- Added subtle hover micro-interaction (`translateY(-2px)` + soft shadow).
+- Replaced checkbox with a modern switch control for better UX clarity.
+- Updated compact preview mini-UIs for countdown, story, gallery, timeline, map and RSVP blocks.
