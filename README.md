@@ -1124,3 +1124,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se agregó helper de contraste (`getReadableTextColor`) para fallback seguro cuando falta texto en tokens.
 - Hero y quote usan tokens dedicados (incluyendo botones del hero) para evitar texto ilegible.
 - El fallback de contraste prioriza `styles.themeTokens` y solo aplica color automático cuando un token de texto no está definido.
+
+
+### Template header containment
+- Los headers internos de plantillas renderizadas en el editor no deben usar posicionamiento fijo contra el viewport del navegador.
+- Para previews dentro del editor, usa `position: sticky` o `position: absolute` dentro del contenedor raíz de la plantilla.
+- El contenedor raíz de la plantilla debe aislar layout/overflow para que navegación, hamburguesa y overlays no se dibujen encima del toolbar del editor.
