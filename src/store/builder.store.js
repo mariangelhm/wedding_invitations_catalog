@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { themePresets } from '../modules/builder/data/themePresets';
 
 const defaultCustomizableOptions = { colors: true, fonts: true, photos: true, music: false, map: true, components: true };
 // Typography values are stored as font labels; template maps labels to CSS stacks.
@@ -23,6 +24,40 @@ const romanticDefaultBlocks = [
   { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, settings: {} },
 ];
 const getDefaultBlocks = () => defaultBlocks.map((b) => ({ ...b }));
+const editorialClassicTheme = themePresets.find((preset) => preset.id === 'editorialClassic') || {};
+const buildStylesFromTheme = (theme = {}) => ({
+  backgroundTheme: theme.id || 'editorialClassic',
+  primaryColor: theme.primaryColor || '#303030',
+  secondaryColor: theme.secondaryColor || '#F4F1EA',
+  accentShape: theme.accentShape || '#E6E2D8',
+  heroBackground: theme.heroBackground || 'linear-gradient(rgba(0,0,0,0.10), rgba(0,0,0,0.10)), linear-gradient(135deg, #4D4A43 0%, #303030 100%)',
+  heroTextColor: theme.heroTextColor || '#FFFFFF',
+  countdownBackground: theme.countdownBackground || '#F4F1EA',
+  countdownNumberColor: theme.countdownNumberColor || '#303030',
+  countdownLabelColor: theme.countdownLabelColor || '#757575',
+  storyBackground: theme.storyBackground || '#FFFFFF',
+  galleryBackground: theme.galleryBackground || '#F4F1EA',
+  eventBackground: theme.eventBackground || '#FFFFFF',
+  registryBackground: theme.registryBackground || '#E6E2D8',
+  rsvpBackground: theme.rsvpBackground || '#1A1A1A',
+  titleColor: theme.titleColor || '#303030',
+  bodyTextColor: theme.bodyTextColor || '#575757',
+  mutedTextColor: theme.mutedTextColor || '#757575',
+  surfaceColor: theme.surfaceColor || '#FFFFFF',
+  surfaceTextColor: theme.surfaceTextColor || '#303030',
+  linkColor: theme.linkColor || '#303030',
+  borderColor: theme.borderColor || '#E6E2D8',
+  rsvpTextColor: theme.rsvpTextColor || '#FFFFFF',
+  rsvpInputBorderColor: theme.rsvpInputBorderColor || '#FFFFFF',
+  rsvpButtonBackground: theme.rsvpButtonBackground || '#FFFFFF',
+  rsvpButtonTextColor: theme.rsvpButtonTextColor || '#1A1A1A',
+  palette: Array.isArray(theme.palette) ? [...theme.palette] : ['#F4F1EA', '#FFFFFF', '#E6E2D8', '#303030', '#757575', '#1A1A1A'],
+  background: theme.secondaryColor || '#F4F1EA',
+  backgroundGradient: theme.secondaryColor || '#F4F1EA',
+  textColor: theme.bodyTextColor || '#575757',
+  coupleFontFamily: 'Playfair Display',
+  bodyFontFamily: 'Arial',
+});
 const createDefaultBlock = (blockType, invitation = null) => {
   const baseDate = invitation?.base?.date || '2027-06-14T18:00:00';
   const storyMessage = invitation?.base?.storyMessage || '';
@@ -84,7 +119,7 @@ export const useBuilderStore = defineStore('builderStore', {
         id: Date.now(), status: 'draft', templateId: template?.id || null, templateComponent: template?.templateComponent || null,
         templateName: template?.name || 'Invitación base', category: template?.category || 'general', level: template?.level || 'basic', basePrice: template?.basePrice || this.basePrice,
         base: romanticDefaults?.base || { names: '', date: '', location: '', heroMessage: '', storyMessage: '' },
-        styles: { primaryColor: template?.previewStyle?.accentColor || '#303030', secondaryColor: template?.previewStyle?.background || '#F4F1EA', backgroundTheme: 'editorialClassic', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#575757', titleColor: '#303030', bodyTextColor: '#575757', accentShape: '#E6E2D8', background: '#F4F1EA', backgroundGradient: '#F4F1EA', surfaceColor: '#FFFFFF', surfaceTextColor: '#303030', mutedTextColor: '#757575' },
+        styles: romanticDefaults ? buildStylesFromTheme(editorialClassicTheme) : { primaryColor: template?.previewStyle?.accentColor || '#303030', secondaryColor: template?.previewStyle?.background || '#F4F1EA', backgroundTheme: 'editorialClassic', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#575757', titleColor: '#303030', bodyTextColor: '#575757', accentShape: '#E6E2D8', background: '#F4F1EA', backgroundGradient: '#F4F1EA', surfaceColor: '#FFFFFF', surfaceTextColor: '#303030', mutedTextColor: '#757575' },
         addons: [], blocks: romanticDefaults?.blocks || getDefaultBlocks(), customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
         timeline: romanticDefaults?.timeline || [], gallery: romanticDefaults?.gallery || [], mapSettings: romanticDefaults?.mapSettings || { locationName: '', address: '', mapUrl: '', embedUrl: '' }, expiresAt, createdAt,
       };

@@ -2,118 +2,35 @@
 import { computed, onMounted, onUnmounted, ref, watchEffect } from 'vue';
 import CountdownBlock from '../../../../components/blocks/CountdownBlock/CountdownBlock.vue';
 import './romanticMotionTemplate.css';
-
 const props = defineProps({ invitationData: { type: Object, default: () => ({}) } });
 const base = computed(() => props.invitationData?.base || {});
 const styles = computed(() => props.invitationData?.styles || {});
-const menuOpen = ref(false);
-const headerScrolled = ref(false);
-const lightboxOpen = ref(false);
-const lightboxIndex = ref(0);
-const sectionRefs = [];
-function setSectionRef(el){ if (el && !sectionRefs.includes(el)) sectionRefs.push(el); }
+const menuOpen = ref(false); const headerScrolled = ref(false); const lightboxOpen = ref(false); const lightboxIndex = ref(0);
+const sectionRefs = []; function setSectionRef(el){ if (el && !sectionRefs.includes(el)) sectionRefs.push(el); }
 let observer = null;
-
-const fallbackBlocks = [
-  { type:'countdown_wedding', enabled:true, order:1 },{ type:'story', enabled:true, order:2 },{ type:'gallery', enabled:true, order:3 },{ type:'timeline', enabled:true, order:4 },{ type:'map', enabled:true, order:5 },{ type:'rsvp', enabled:true, order:6 },
-];
-const enabledBlocks = computed(() => {
-  const blocks = props.invitationData?.blocks || [];
-  const source = blocks.length ? blocks : fallbackBlocks;
-  return source.filter((block) => block.enabled).sort((a, b) => a.order - b.order);
-});
+const themeVars = computed(() => ({ '--template-primary': styles.value.primaryColor || '#303030','--template-secondary': styles.value.secondaryColor || '#F4F1EA','--template-accent': styles.value.accentShape || '#E6E2D8','--template-hero-bg': styles.value.heroBackground || 'linear-gradient(rgba(0,0,0,0.10), rgba(0,0,0,0.10)), linear-gradient(135deg, #4D4A43 0%, #303030 100%)','--template-hero-text': styles.value.heroTextColor || '#FFFFFF','--template-countdown-bg': styles.value.countdownBackground || '#F4F1EA','--template-countdown-number': styles.value.countdownNumberColor || '#303030','--template-countdown-label': styles.value.countdownLabelColor || '#757575','--template-story-bg': styles.value.storyBackground || '#FFFFFF','--template-gallery-bg': styles.value.galleryBackground || '#F4F1EA','--template-event-bg': styles.value.eventBackground || '#FFFFFF','--template-registry-bg': styles.value.registryBackground || '#E6E2D8','--template-rsvp-bg': styles.value.rsvpBackground || '#1A1A1A','--template-title-color': styles.value.titleColor || '#303030','--template-body-color': styles.value.bodyTextColor || '#575757','--template-muted-color': styles.value.mutedTextColor || '#757575','--template-surface': styles.value.surfaceColor || '#FFFFFF','--template-surface-text': styles.value.surfaceTextColor || '#303030','--template-link-color': styles.value.linkColor || '#303030','--template-border-color': styles.value.borderColor || '#E6E2D8','--template-rsvp-text': styles.value.rsvpTextColor || '#FFFFFF','--template-rsvp-input-border': styles.value.rsvpInputBorderColor || '#FFFFFF','--template-rsvp-button-bg': styles.value.rsvpButtonBackground || '#FFFFFF','--template-rsvp-button-text': styles.value.rsvpButtonTextColor || '#1A1A1A'}));
+const fallbackBlocks = [{ type:'countdown_wedding', enabled:true, order:1 },{ type:'story', enabled:true, order:2 },{ type:'gallery', enabled:true, order:3 },{ type:'timeline', enabled:true, order:4 },{ type:'map', enabled:true, order:5 },{ type:'rsvp', enabled:true, order:6 }];
+const enabledBlocks = computed(() => { const blocks = props.invitationData?.blocks || []; const source = blocks.length ? blocks : fallbackBlocks; return source.filter((block) => block.enabled).sort((a, b) => a.order - b.order); });
 if (import.meta.env.DEV) watchEffect(() => console.log('enabled blocks', enabledBlocks.value.map((b) => b.type)));
-
-const names = computed(() => base.value.names || 'María & Carlos');
-const initials = computed(() => names.value.split('&').map((p) => p.trim()[0] || '').join(' & ').toUpperCase() || 'M & C');
+const names = computed(() => base.value.names || 'María & Carlos'); const initials = computed(() => names.value.split('&').map((p) => p.trim()[0] || '').join(' & ').toUpperCase() || 'M & C');
 const formattedDate = computed(() => new Date(base.value.date || '2027-06-14T18:00:00').toLocaleDateString('es-CL', { year:'numeric', month:'long', day:'numeric' }));
-const locationName = computed(() => props.invitationData?.mapSettings?.locationName || base.value.location || 'Rose Garden Hall');
-const locationAddress = computed(() => props.invitationData?.mapSettings?.address || 'Santiago, Chile');
-const mapUrl = computed(() => props.invitationData?.mapSettings?.mapUrl || 'https://maps.google.com');
-const embedUrl = computed(() => props.invitationData?.mapSettings?.embedUrl || '');
+const locationName = computed(() => props.invitationData?.mapSettings?.locationName || base.value.location || 'Rose Garden Hall'); const locationAddress = computed(() => props.invitationData?.mapSettings?.address || 'Santiago, Chile'); const mapUrl = computed(() => props.invitationData?.mapSettings?.mapUrl || 'https://maps.google.com'); const embedUrl = computed(() => props.invitationData?.mapSettings?.embedUrl || '');
 const timeline = computed(() => props.invitationData?.timeline?.length ? props.invitationData.timeline : [{ time:'17:00', title:'Ceremonia', place:'Jardín principal' },{ time:'19:00', title:'Celebración', place:'Salón principal' }]);
 const gallery = computed(() => props.invitationData?.gallery?.length ? props.invitationData.gallery : [{src:'',alt:'Editorial 1'},{src:'',alt:'Editorial 2'},{src:'',alt:'Editorial 3'},{src:'',alt:'Editorial 4'}]);
-
-const cssVars = computed(() => ({
-  '--template-bg': styles.value.background || styles.value.backgroundGradient || '#F4F1EA',
-  '--template-primary': styles.value.primaryColor || '#B88A44',
-  '--template-title-color': styles.value.titleColor || '#333333',
-  '--template-body-color': styles.value.bodyTextColor || '#333333',
-  '--template-surface': styles.value.surfaceColor || '#FFFFFF',
-  '--template-surface-text': styles.value.surfaceTextColor || '#333333',
-  '--template-muted-text': styles.value.mutedTextColor || '#6B7280',
-}));
-
-onMounted(() => {
-  // TODO: Optional future improvement: replace custom observer with AOS if desired.
-  observer = new IntersectionObserver((entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer?.unobserve(entry.target); } }); }, { threshold: 0.15 });
-  sectionRefs.forEach((el) => observer?.observe(el));
-  const onScroll = () => { headerScrolled.value = window.scrollY > 24; };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onUnmounted(() => window.removeEventListener('scroll', onScroll));
-});
-onUnmounted(() => observer?.disconnect());
-
-const openLightbox = (index) => { lightboxIndex.value = index; lightboxOpen.value = true; };
-const closeLightbox = () => { lightboxOpen.value = false; };
+onMounted(() => { observer = new IntersectionObserver((entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer?.unobserve(entry.target); } }); }, { threshold: 0.15 }); sectionRefs.forEach((el) => observer?.observe(el)); const onScroll = () => { headerScrolled.value = window.scrollY > 24; }; window.addEventListener('scroll', onScroll, { passive: true }); onUnmounted(() => window.removeEventListener('scroll', onScroll)); });
+onUnmounted(() => observer?.disconnect()); const openLightbox = (index) => { lightboxIndex.value = index; lightboxOpen.value = true; }; const closeLightbox = () => { lightboxOpen.value = false; };
 </script>
-
 <template>
-  <article class="romantic-motion-editorial" :style="cssVars">
-    <header class="editorial-header" :class="{ 'is-scrolled': headerScrolled }">
-      <div class="editorial-brand">{{ initials }}</div>
-      <button class="editorial-hamburger" @click="menuOpen = !menuOpen">☰</button>
-      <nav class="editorial-nav" :class="{ open: menuOpen }">
-        <a href="#story">NUESTRA HISTORIA</a><a href="#event-details">CUÁNDO Y DÓNDE</a><a href="#registry">REGISTRO</a><a href="#rsvp">RSVP</a>
-      </nav>
-    </header>
-
-    <section class="hero-editorial motion-section motion-fade" :ref="setSectionRef">
-      <div class="hero-overlay"></div>
-      <h1>{{ names }}</h1>
-      <p class="hero-sub">SE CASAN · {{ formattedDate }}</p>
-      <a href="#rsvp" class="hero-cta">RSVP</a>
-      <span class="scroll-indicator"></span>
-    </section>
-
-    <section v-if="enabledBlocks.some((b)=>b.type==='countdown_wedding')" class="countdown-editorial motion-section motion-fade" :ref="setSectionRef">
-      <CountdownBlock :target-date="base.date || '2027-06-14T18:00:00'" title="Cuenta regresiva" variant="editorial" />
-    </section>
-
-    <section id="story" v-if="enabledBlocks.some((b)=>b.type==='story')" class="story-editorial motion-section" :ref="setSectionRef">
-      <div class="story-image motion-left"></div>
-      <div class="motion-right"><h2>Nuestra Historia</h2><p>{{ base.storyMessage || 'Nuestra historia está llena de momentos simples, valientes y hermosos que queremos celebrar contigo.' }}</p></div>
-    </section>
-
-    <section id="event-details" v-if="enabledBlocks.some((b)=>b.type==='timeline')" class="details-editorial motion-section motion-fade" :ref="setSectionRef">
-      <h2>Cuándo y dónde</h2>
-      <div class="details-grid">
-        <article v-for="(item,idx) in timeline.slice(0,2)" :key="idx"><p class="detail-icon">◌</p><h3>{{ item.title }}</h3><p>{{ formattedDate }} · {{ item.time }}</p><p>{{ item.place }}</p><a :href="mapUrl" target="_blank" rel="noreferrer">VER MAPA</a></article>
-      </div>
-    </section>
-
-    <section id="gallery" v-if="enabledBlocks.some((b)=>b.type==='gallery')" class="gallery-editorial motion-section motion-fade" :ref="setSectionRef">
-      <div class="masonry">
-        <figure v-for="(item,index) in gallery" :key="index" @click="openLightbox(index)"><div v-if="!item.src" class="ph">{{ item.alt || `Foto ${index+1}` }}</div><img v-else :src="item.src" :alt="item.alt" /></figure>
-      </div>
-    </section>
-
-    <section id="registry" class="registry-editorial motion-section motion-fade" :ref="setSectionRef">
-      <p>Tu presencia es nuestro mejor regalo, pero si deseas tener un detalle...</p>
-      <div class="registry-grid"><article>Sobre</article><article>Lista de regalos</article><article>Transferencia</article></div>
-    </section>
-
-    <section v-if="enabledBlocks.some((b)=>b.type==='map')" class="map-editorial motion-section motion-fade" :ref="setSectionRef">
-      <h2>Ubicación</h2><p>{{ locationName }}</p><p>{{ locationAddress }}</p>
-      <div class="map-frame" v-if="embedUrl"><iframe :src="embedUrl" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
-      <a class="map-link" :href="mapUrl" target="_blank" rel="noreferrer">ABRIR EN GOOGLE MAPS</a>
-    </section>
-
-    <section id="rsvp" v-if="enabledBlocks.some((b)=>b.type==='rsvp')" class="rsvp-editorial motion-section motion-fade" :ref="setSectionRef">
-      <h2>Confirma tu asistencia</h2>
-      <form @submit.prevent="console.log('rsvp submit')"><input placeholder="Nombre y apellido" /><select><option>Sí</option><option>No</option></select><input type="number" min="0" placeholder="Número de acompañantes" /><input placeholder="Restricciones alimenticias" /><button type="submit">Enviar RSVP</button></form>
-    </section>
-
+<article class="romantic-motion-editorial" :style="themeVars">
+    <header class="editorial-header" :class="{ 'is-scrolled': headerScrolled }"><div class="editorial-brand">{{ initials }}</div><button class="editorial-hamburger" @click="menuOpen = !menuOpen">☰</button><nav class="editorial-nav" :class="{ open: menuOpen }"><a href="#story">NUESTRA HISTORIA</a><a href="#event-details">CUÁNDO Y DÓNDE</a><a href="#registry">REGISTRO</a><a href="#rsvp">RSVP</a></nav></header>
+    <section class="hero-editorial motion-section motion-fade" :ref="setSectionRef"><div class="hero-overlay"></div><h1>{{ names }}</h1><p class="hero-sub">SE CASAN · {{ formattedDate }}</p><a href="#rsvp" class="hero-cta">RSVP</a><span class="scroll-indicator"></span></section>
+    <section v-if="enabledBlocks.some((b)=>b.type==='countdown_wedding')" class="countdown-editorial motion-section motion-fade" :ref="setSectionRef"><CountdownBlock :target-date="base.date || '2027-06-14T18:00:00'" title="Cuenta regresiva" variant="editorial" /></section>
+    <section id="story" v-if="enabledBlocks.some((b)=>b.type==='story')" class="story-editorial motion-section" :ref="setSectionRef"><div class="story-image motion-left"></div><div class="motion-right"><h2>Nuestra Historia</h2><p>{{ base.storyMessage || 'Nuestra historia está llena de momentos simples, valientes y hermosos que queremos celebrar contigo.' }}</p></div></section>
+    <section id="event-details" v-if="enabledBlocks.some((b)=>b.type==='timeline')" class="details-editorial motion-section motion-fade" :ref="setSectionRef"><h2>Cuándo y dónde</h2><div class="details-grid"><article v-for="(item,idx) in timeline.slice(0,2)" :key="idx"><p class="detail-icon">◌</p><h3>{{ item.title }}</h3><p>{{ formattedDate }} · {{ item.time }}</p><p>{{ item.place }}</p><a :href="mapUrl" target="_blank" rel="noreferrer">VER MAPA</a></article></div></section>
+    <section id="gallery" v-if="enabledBlocks.some((b)=>b.type==='gallery')" class="gallery-editorial motion-section motion-fade" :ref="setSectionRef"><div class="masonry"><figure v-for="(item,index) in gallery" :key="index" @click="openLightbox(index)"><div v-if="!item.src" class="ph">{{ item.alt || `Foto ${index+1}` }}</div><img v-else :src="item.src" :alt="item.alt" /></figure></div></section>
+    <section id="registry" class="registry-editorial motion-section motion-fade" :ref="setSectionRef"><p>Tu presencia es nuestro mejor regalo, pero si deseas tener un detalle...</p><div class="registry-grid"><article>Sobre</article><article>Lista de regalos</article><article>Transferencia</article></div></section>
+    <section v-if="enabledBlocks.some((b)=>b.type==='map')" class="map-editorial motion-section motion-fade" :ref="setSectionRef"><h2>Ubicación</h2><p>{{ locationName }}</p><p>{{ locationAddress }}</p><div class="map-frame" v-if="embedUrl"><iframe :src="embedUrl" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div><a class="map-link" :href="mapUrl" target="_blank" rel="noreferrer">ABRIR EN GOOGLE MAPS</a></section>
+    <section id="rsvp" v-if="enabledBlocks.some((b)=>b.type==='rsvp')" class="rsvp-editorial motion-section motion-fade" :ref="setSectionRef"><h2>Confirma tu asistencia</h2><form @submit.prevent="console.log('rsvp submit')"><input placeholder="Nombre y apellido" /><select><option>Sí</option><option>No</option></select><input type="number" min="0" placeholder="Número de acompañantes" /><input placeholder="Restricciones alimenticias" /><button type="submit">Enviar RSVP</button></form></section>
     <div v-if="lightboxOpen" class="lightbox" @click="closeLightbox"><button @click.stop="closeLightbox">×</button><div class="lightbox-media">{{ gallery[lightboxIndex]?.alt || 'Imagen' }}</div></div>
   </article>
 </template>

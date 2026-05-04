@@ -1028,3 +1028,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - No AOS/external animation library is used yet.
 - Future option is documented in code comments for optional AOS migration.
 - Mobile behavior includes no horizontal overflow, stacked content, responsive map, and full-width RSVP controls.
+
+
+## HU-90 Global editorial theming
+- `editorialClassic` is now the default palette for `romantic-01` with cream/white/charcoal tokens and RSVP contrast-safe colors.
+- Romantic Motion exposes global CSS variables (`--template-*`) to theme hero, countdown, story, gallery, event, registry, map and RSVP surfaces/text consistently.
+- Reusable blocks inherit template variables via `--block-*` aliases to avoid hardcoded section colors and preserve readability across light/dark switches.
+- Theme switching now copies all color fields to `invitation.styles`, preventing stale values during dark↔light transitions.

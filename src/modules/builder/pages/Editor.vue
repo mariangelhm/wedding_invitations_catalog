@@ -107,7 +107,23 @@ const applyThemePreset = (preset) => {
   invitation.value.styles.surfaceColor = preset.surfaceColor;
   invitation.value.styles.surfaceTextColor = preset.surfaceTextColor;
   invitation.value.styles.mutedTextColor = preset.mutedTextColor;
-  // Keep legacy key synced for components still reading textColor.
+  invitation.value.styles.heroBackground = preset.heroBackground;
+  invitation.value.styles.heroTextColor = preset.heroTextColor;
+  invitation.value.styles.countdownBackground = preset.countdownBackground;
+  invitation.value.styles.countdownNumberColor = preset.countdownNumberColor;
+  invitation.value.styles.countdownLabelColor = preset.countdownLabelColor;
+  invitation.value.styles.storyBackground = preset.storyBackground;
+  invitation.value.styles.galleryBackground = preset.galleryBackground;
+  invitation.value.styles.eventBackground = preset.eventBackground;
+  invitation.value.styles.registryBackground = preset.registryBackground;
+  invitation.value.styles.rsvpBackground = preset.rsvpBackground;
+  invitation.value.styles.linkColor = preset.linkColor;
+  invitation.value.styles.borderColor = preset.borderColor;
+  invitation.value.styles.rsvpTextColor = preset.rsvpTextColor;
+  invitation.value.styles.rsvpInputBorderColor = preset.rsvpInputBorderColor;
+  invitation.value.styles.rsvpButtonBackground = preset.rsvpButtonBackground;
+  invitation.value.styles.rsvpButtonTextColor = preset.rsvpButtonTextColor;
+  invitation.value.styles.palette = Array.isArray(preset.palette) ? [...preset.palette] : [];
   invitation.value.styles.textColor = preset.bodyTextColor;
 };
 </script>
