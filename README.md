@@ -966,3 +966,22 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - preview canvas stays full width with `12px` padding and centered preview,
   - sticky bottom summary bar keeps **Total** and **Listo** always accessible.
 - Mobile layout blocks horizontal page scrolling and keeps interactions inside panels.
+
+## Theme card selector and IDE theme
+- The **Temas** panel now uses modern large theme cards with:
+  - theme name,
+  - short description,
+  - 4-color palette swatches,
+  - selected state with primary border and checkmark.
+- Theme presets were normalized to include full metadata:
+  - `id`, `name`, `description`, `primaryColor`, `secondaryColor`, `background`, `accentShape`, `titleColor`, `bodyTextColor`, `surfaceColor`, `surfaceTextColor`, `palette`.
+- Added curated themes:
+  - Editorial Marfil
+  - Boho Chic
+  - Noche Elegante
+  - Moderna Lavanda
+  - Gris Carbón
+  - IDE / Desarrollo
+- Added the new dark **IDE / Desarrollo** preset with the requested values for a technical, modern visual style.
+- Applying a theme now updates all key style tokens (including `backgroundTheme`, `primaryColor`, `secondaryColor`, `background`, `accentShape`, `titleColor`, `bodyTextColor`, `surfaceColor`, `surfaceTextColor`) so switching between dark/light themes restores proper text contrast.
+- The panel keeps tab switching between **Temas** and **Colores** fully functional.

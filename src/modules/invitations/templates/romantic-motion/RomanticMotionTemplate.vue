@@ -62,7 +62,7 @@ const templateVars = computed(() => ({
   '--color-primary-dark': styles.value.titleColor || '#9F1F46',
   '--color-primary-soft': styles.value.secondaryColor || '#FFF1F4',
   '--color-text-main': styles.value.bodyTextColor || '#1F2937',
-  '--inv-background': styles.value.backgroundGradient || 'linear-gradient(180deg, #fff6f9 0%, #fff 40%, #fff8fb 100%)',
+  '--inv-background': styles.value.background || styles.value.backgroundGradient || 'linear-gradient(180deg, #fff6f9 0%, #fff 40%, #fff8fb 100%)',
   '--couple-font-family': fontStacks[styles.value.coupleFontFamily] || "'Playfair Display', Georgia, serif",
   '--body-font-family': fontStacks[styles.value.bodyFontFamily] || 'Arial, sans-serif',
 }));
