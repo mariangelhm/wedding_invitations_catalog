@@ -854,3 +854,12 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Menú lateral y panel de ajustes con espaciado compacto y scroll interno.
 - Canvas maximiza el preview con padding `24px` desktop y `12px` mobile.
 - Mientras la ruta `/editor` está activa, el `body` bloquea su scroll; solo los paneles internos hacen scroll.
+
+
+## Romantic Motion premium template
+- The `romantic-01` template now ships with all default sections enabled in a continuous one-page storytelling flow: Hero, wedding countdown, story, gallery, event timeline, map, RSVP countdown, and final RSVP CTA/form.
+- `createDraftInvitation(template)` preloads premium default content data for `romantic-01` including base couple details, timeline milestones, gallery placeholders, and complete map settings with Google Maps embed support.
+- The template uses native `IntersectionObserver` reveal animations (no external libraries) with staggered item transitions for gallery and timeline entries.
+- The map section supports embedded iframes (`embedUrl`) and gracefully falls back to a Google Maps link card when only `mapUrl` is available.
+- Layout was redesigned as a connected invitation experience (shared background layers, soft bands, overlap, and depth) instead of isolated cards.
+- Responsive behavior was tuned for mobile: clamp-based hero typography, stacked split/gallery layouts, no horizontal scroll, responsive map height, and full-width RSVP form controls.
