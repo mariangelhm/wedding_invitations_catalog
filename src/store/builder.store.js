@@ -24,40 +24,53 @@ const romanticDefaultBlocks = [
   { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, settings: {} },
 ];
 const getDefaultBlocks = () => defaultBlocks.map((b) => ({ ...b }));
+const modernRusticTheme = themePresets.find((preset) => preset.id === 'modernRustic') || {};
 const editorialClassicTheme = themePresets.find((preset) => preset.id === 'editorialClassic') || {};
-const buildStylesFromTheme = (theme = {}) => ({
+const buildStylesFromTheme = (theme = {}) => {
+  const tokens = theme.tokens || {};
+  return {
   backgroundTheme: theme.id || 'editorialClassic',
-  primaryColor: theme.primaryColor || '#303030',
-  secondaryColor: theme.secondaryColor || '#F4F1EA',
+  themeTokens: { ...tokens },
+  primaryColor: tokens.accent || theme.primaryColor || '#303030',
+  secondaryColor: tokens.sectionAltBg || theme.secondaryColor || '#F4F1EA',
   accentShape: theme.accentShape || '#E6E2D8',
-  heroBackground: theme.heroBackground || 'linear-gradient(rgba(0,0,0,0.10), rgba(0,0,0,0.10)), linear-gradient(135deg, #4D4A43 0%, #303030 100%)',
-  heroTextColor: theme.heroTextColor || '#FFFFFF',
+  heroBackground: tokens.heroBg || theme.heroBackground || 'linear-gradient(135deg, #4D4A43 0%, #303030 100%)',
+  heroOverlay: tokens.heroOverlay || theme.heroOverlay || 'rgba(0,0,0,0.30)',
+  heroTextColor: tokens.heroText || theme.heroTextColor || '#FFFFFF',
+  heroAccentColor: tokens.accentContrast || theme.heroAccentColor || '#FFFFFF',
+  quoteBackground: tokens.quoteBg || tokens.quoteBackground || theme.quoteBackground || (tokens.heroBg || theme.heroBackground || 'linear-gradient(135deg, #4D4A43 0%, #303030 100%)'),
+  quoteOverlay: tokens.quoteOverlay || theme.quoteOverlay || 'rgba(0,0,0,0.25)',
+  quoteTextColor: tokens.quoteText || theme.quoteTextColor || (tokens.heroText || theme.heroTextColor || '#FFFFFF'),
+  heroButtonBorder: tokens.heroButtonBorder || (tokens.heroText || theme.heroTextColor || '#FFFFFF'),
+  heroButtonText: tokens.heroButtonText || (tokens.heroText || theme.heroTextColor || '#FFFFFF'),
+  heroButtonHoverBg: tokens.heroButtonHoverBg || (tokens.heroText || theme.heroTextColor || '#FFFFFF'),
+  heroButtonHoverText: tokens.heroButtonHoverText || (tokens.pageBg || theme.secondaryColor || '#F4F1EA'),
   countdownBackground: theme.countdownBackground || '#F4F1EA',
   countdownNumberColor: theme.countdownNumberColor || '#303030',
   countdownLabelColor: theme.countdownLabelColor || '#757575',
-  storyBackground: theme.storyBackground || '#FFFFFF',
-  galleryBackground: theme.galleryBackground || '#F4F1EA',
-  eventBackground: theme.eventBackground || '#F4F1EA',
+  storyBackground: tokens.sectionBg || theme.storyBackground || '#FFFFFF',
+  galleryBackground: tokens.sectionAltBg || theme.galleryBackground || '#F4F1EA',
+  eventBackground: tokens.sectionAltBg || theme.eventBackground || '#F4F1EA',
   registryBackground: theme.registryBackground || '#FFFFFF',
-  rsvpBackground: theme.rsvpBackground || '#EFEBE9',
-  titleColor: theme.titleColor || '#303030',
-  bodyTextColor: theme.bodyTextColor || '#575757',
-  mutedTextColor: theme.mutedTextColor || '#757575',
-  surfaceColor: theme.surfaceColor || '#FFFFFF',
-  surfaceTextColor: theme.surfaceTextColor || '#303030',
+  rsvpBackground: tokens.rsvpBg || theme.rsvpBackground || '#EFEBE9',
+  titleColor: tokens.titleText || theme.titleColor || '#303030',
+  bodyTextColor: tokens.bodyText || theme.bodyTextColor || '#575757',
+  mutedTextColor: tokens.mutedText || theme.mutedTextColor || '#757575',
+  surfaceColor: tokens.surfaceBg || theme.surfaceColor || '#FFFFFF',
+  surfaceTextColor: tokens.surfaceText || theme.surfaceTextColor || '#303030',
   linkColor: theme.linkColor || '#303030',
-  borderColor: theme.borderColor || '#E6E2D8',
-  rsvpTextColor: theme.rsvpTextColor || '#2F2E2E',
+  borderColor: tokens.border || theme.borderColor || '#E6E2D8',
+  rsvpTextColor: tokens.rsvpText || theme.rsvpTextColor || '#2F2E2E',
   rsvpInputBorderColor: theme.rsvpInputBorderColor || '#D8D2CA',
-  rsvpButtonBackground: theme.rsvpButtonBackground || '#2F2E2E',
-  rsvpButtonTextColor: theme.rsvpButtonTextColor || '#FFFFFF',
-  palette: Array.isArray(theme.palette) ? [...theme.palette] : ['#F4F1EA', '#FFFFFF', '#E6E2D8', '#303030', '#757575', '#1A1A1A'],
-  background: theme.secondaryColor || '#F4F1EA',
-  backgroundGradient: theme.secondaryColor || '#F4F1EA',
-  textColor: theme.bodyTextColor || '#575757',
-  coupleFontFamily: 'Playfair Display',
-  bodyFontFamily: 'Arial',
-});
+  rsvpButtonBackground: tokens.buttonBg || theme.rsvpButtonBackground || '#2F2E2E',
+  rsvpButtonTextColor: tokens.buttonText || theme.rsvpButtonTextColor || '#FFFFFF',
+  palette: Array.isArray(theme.palette) ? [...theme.palette] : ['#F4F1EA', '#FFFFFF', '#E6E2D8', '#303030'],
+  background: tokens.pageBg || theme.secondaryColor || '#F4F1EA',
+  backgroundGradient: tokens.pageBg || theme.secondaryColor || '#F4F1EA',
+  textColor: tokens.bodyText || theme.bodyTextColor || '#575757',
+  coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial',
+};
+};
 const createDefaultBlock = (blockType, invitation = null) => {
   const baseDate = invitation?.base?.date || '2027-06-14T18:00:00';
   const storyMessage = invitation?.base?.storyMessage || '';
@@ -112,6 +125,27 @@ export const useBuilderStore = defineStore('builderStore', {
     totalPrice() { return (this.invitation?.basePrice || this.basePrice) + this.enabledBlocksPrice; },
   },
   actions: {
+
+    applyTheme(themeId) {
+      if (!this.invitation) return;
+      const theme = themePresets.find((item) => item.id === themeId);
+      if (!theme?.tokens) return;
+      const tokens = structuredClone(theme.tokens);
+      this.invitation = {
+        ...this.invitation,
+        styles: {
+          ...(this.invitation.styles || {}),
+          backgroundTheme: theme.id,
+          themeTokens: tokens,
+          primaryColor: tokens.accent,
+          secondaryColor: tokens.sectionAltBg,
+          titleColor: tokens.titleText,
+          bodyTextColor: tokens.bodyText,
+          heroBackground: tokens.heroBg,
+          heroTextColor: tokens.heroText,
+        },
+      };
+    },
     createDraftInvitation(template = null) {
       const createdAt = new Date(); const expiresAt = new Date(createdAt); expiresAt.setDate(expiresAt.getDate() + 30);
       const romanticDefaults = template?.id === 'romantic-01' ? getRomanticDefaults() : null;
@@ -119,7 +153,7 @@ export const useBuilderStore = defineStore('builderStore', {
         id: Date.now(), status: 'draft', templateId: template?.id || null, templateComponent: template?.templateComponent || null,
         templateName: template?.name || 'Invitación base', category: template?.category || 'general', level: template?.level || 'basic', basePrice: template?.basePrice || this.basePrice,
         base: romanticDefaults?.base || { names: '', date: '', location: '', heroMessage: '', storyMessage: '' },
-        styles: romanticDefaults ? buildStylesFromTheme(editorialClassicTheme) : { primaryColor: template?.previewStyle?.accentColor || '#303030', secondaryColor: template?.previewStyle?.background || '#F4F1EA', backgroundTheme: 'editorialClassic', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#575757', titleColor: '#303030', bodyTextColor: '#575757', accentShape: '#E6E2D8', background: '#F4F1EA', backgroundGradient: '#F4F1EA', surfaceColor: '#FFFFFF', surfaceTextColor: '#303030', mutedTextColor: '#757575' },
+        styles: romanticDefaults ? buildStylesFromTheme(modernRusticTheme) : { primaryColor: template?.previewStyle?.accentColor || '#303030', secondaryColor: template?.previewStyle?.background || '#F4F1EA', backgroundTheme: 'editorialClassic', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#575757', titleColor: '#303030', bodyTextColor: '#575757', accentShape: '#E6E2D8', background: '#F4F1EA', backgroundGradient: '#F4F1EA', surfaceColor: '#FFFFFF', surfaceTextColor: '#303030', mutedTextColor: '#757575' },
         addons: [], blocks: romanticDefaults?.blocks || getDefaultBlocks(), customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
         timeline: romanticDefaults?.timeline || [], gallery: romanticDefaults?.gallery || [], mapSettings: romanticDefaults?.mapSettings || { locationName: '', address: '', mapUrl: '', embedUrl: '' }, expiresAt, createdAt,
       };

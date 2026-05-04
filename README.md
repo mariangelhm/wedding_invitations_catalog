@@ -1051,3 +1051,82 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se agregó sección intermedia parallax (desktop fixed, mobile scroll fallback) y acordeón de FAQ sin librerías externas.
 - El template usa `IntersectionObserver` para revelar secciones con `motion-section`, `motion-left`, `motion-right`.
 - Ajustes responsive: menú hamburguesa full-screen, columnas apiladas en móvil, hero adaptable y control estricto de overflow horizontal.
+
+### Hero refinement (Romantic Motion)
+- El hero se ajustó a estilo premium tipo Wix: altura completa `100vh` con `min-height` de `720px` desktop y `640px` móvil.
+- Fondo dinámico: usa `heroImage` cuando existe y cae a gradiente editorial si no hay imagen.
+- Overlay unificado por variable `--inv-hero-overlay` con opacidad cinematográfica.
+- Contenido principal optimizado: microcopy, nombres grandes serif (`clamp(4rem,10vw,8rem)`), fecha/lugar y CTA RSVP ghost.
+- Se agregó indicador de scroll animado para reforzar narrativa one-page.
+- Se cuidó wrapping y overflow en móvil para evitar scroll horizontal.
+
+### Countdown editorial style fix
+- `CountdownBlock` ahora usa estructura explícita con 4 unidades visibles siempre: Días, Horas, Minutos, Segundos.
+- En variante `editorial` se removió el look de tarjetas pesadas y se priorizó tipografía grande para números + labels pequeños en mayúscula.
+- Desktop usa 4 columnas y móvil cambia automáticamente a grilla 2x2.
+- El bloque toma colores desde variables de tema (`--template-countdown-number`, `--template-countdown-label`, `--template-title-color`) para mantener contraste consistente.
+
+### RSVPBlock premium editorial update
+- El bloque RSVP ahora usa estado local con `v-model` para: `fullName`, `attendance`, `guestsCount`, `foodRestrictions`.
+- Al enviar, emite el payload exacto `{ fullName, attendance, guestsCount, foodRestrictions }` sin integración backend.
+- Se aplicó estilo editorial premium: inputs limpios con borde inferior, espaciado consistente y botón personalizado sin apariencia nativa del navegador.
+- En Romantic Motion, fondo/texto del RSVP se controlan por `--template-rsvp-bg` y `--template-rsvp-text`.
+- Se muestra mensaje de éxito tras confirmar asistencia.
+
+### Map + FAQ section improvements (Romantic Motion)
+- La sección ahora usa layout de dos columnas en desktop: mapa a la izquierda y FAQ a la derecha.
+- En mobile, el contenido se apila en orden mapa → FAQ para mejor lectura.
+- `MapBlock` fue refinado con marco redondeado, sombra suave, nombre/dirección y CTA "Abrir en Google Maps" incluso cuando hay embed.
+- El acordeón FAQ usa iconos +/- y transición suave de apertura/cierre con bordes sutiles.
+- Todo el estilo usa variables de tema y controles sin apariencia nativa por defecto.
+
+
+### Gallery / Parallax refinement
+- Se añadió una sección parallax con cita central: "Cada historia de amor merece celebrarse", overlay suave y fallback responsive.
+- Desktop usa `background-attachment: fixed`; mobile usa `scroll` para compatibilidad iOS.
+- `GalleryBlock` ahora usa layout tipo masonry, placeholders elegantes, zoom hover y lightbox nativo (sin librerías externas).
+
+
+### Scroll reveal animations (Romantic Motion)
+- Se usa `IntersectionObserver` propio para revelar secciones una sola vez al entrar al viewport.
+- Clases activas: `motion-section`, `motion-left`, `motion-right`, `motion-fade`, `is-visible`.
+- Efectos: fade-up, entrada desde izquierda y entrada desde derecha con transición `all 0.6s cubic-bezier(0.4, 0, 0.2, 1)`.
+- Navegación interna mantiene desplazamiento suave (`scroll-behavior: smooth`).
+- TODO documentado en código: evaluar reemplazo por AOS en el futuro si se necesita.
+
+
+### Hero and quote theme binding
+- Hero usa variables dedicadas: `--template-hero-bg`, `--template-hero-overlay`, `--template-hero-text`, `--template-hero-accent`.
+- Parallax quote usa: `--template-quote-bg`, `--template-quote-overlay`, `--template-quote-text`.
+- Las presets incluyen esos campos para evitar fondos/textos fijos y respetar contraste (texto claro en fondos oscuros y texto oscuro en fondos claros).
+
+### Reusable semantic theme tokens
+- `themePresets` ahora define `tokens` semánticos (page, section, hero, quote, button, RSVP, footer, textos y bordes).
+- `builder.store` guarda `styles.themeTokens` al aplicar tema y además mantiene campos legacy por compatibilidad.
+- `RomanticMotionTemplate` consume tokens vía variables CSS (`--theme-*`) en vez de colores sueltos.
+- Este enfoque permite reutilizar el mismo contrato visual en futuros templates sin hardcodear colores por sección.
+
+
+### Theme switching repair
+- El selector de temas ahora llama al flujo del store (`applyTheme`) en lugar de mutar estado local parcial.
+- `applyTheme` reemplaza `themeTokens` completo y reasigna `invitation`/`styles` para garantizar reactividad en Vue/Pinia.
+- Romantic Motion consume variables raíz `--theme-*` derivadas de `styles.themeTokens`, evitando mezclas con valores viejos.
+
+
+### Default romantic-01 theme: Modern Rustic
+- `romantic-01` ahora inicia con `backgroundTheme: "modernRustic"` y tokens cálidos editoriales por defecto.
+- `editorialClassic` se mantiene disponible como alternativa, pero ya no es el preset inicial del draft romántico.
+
+
+### Modern Rustic default theme and contrast rules
+- `modernRustic` mantiene hero claro (`#F7F7F5`) con texto oscuro y alternancia de secciones claras/cálidas.
+- Regla global: fondos claros -> texto oscuro; fondos oscuros -> texto claro.
+- Se agregó helper de contraste (`getReadableTextColor`) para fallback seguro cuando falta texto en tokens.
+- Hero y quote usan tokens dedicados (incluyendo botones del hero) para evitar texto ilegible.
+- El fallback de contraste prioriza `styles.themeTokens` y solo aplica color automático cuando un token de texto no está definido.
+
+
+### Template header containment
+- Los headers internos de plantillas renderizadas en el editor no deben usar posicionamiento fijo contra el viewport del navegador.
+- Para previews dentro del editor, usa `position: sticky` o `position: absolute` dentro del contenedor raíz de la plantilla.
+- El contenedor raíz de la plantilla debe aislar layout/overflow para que navegación, hamburguesa y overlays no se dibujen encima del toolbar del editor.

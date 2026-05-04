@@ -96,35 +96,7 @@ const onDropBlock = (targetBlock) => {
 const onDragEnd = () => { draggingBlockId.value = null; dropTargetBlockId.value = null; };
 
 const applyThemePreset = (preset) => {
-  invitation.value.styles.backgroundTheme = preset.id;
-  invitation.value.styles.primaryColor = preset.primaryColor;
-  invitation.value.styles.secondaryColor = preset.secondaryColor;
-  invitation.value.styles.background = preset.background;
-  invitation.value.styles.titleColor = preset.titleColor;
-  invitation.value.styles.bodyTextColor = preset.bodyTextColor;
-  invitation.value.styles.accentShape = preset.accentShape;
-  invitation.value.styles.backgroundGradient = preset.background;
-  invitation.value.styles.surfaceColor = preset.surfaceColor;
-  invitation.value.styles.surfaceTextColor = preset.surfaceTextColor;
-  invitation.value.styles.mutedTextColor = preset.mutedTextColor;
-  invitation.value.styles.heroBackground = preset.heroBackground;
-  invitation.value.styles.heroTextColor = preset.heroTextColor;
-  invitation.value.styles.countdownBackground = preset.countdownBackground;
-  invitation.value.styles.countdownNumberColor = preset.countdownNumberColor;
-  invitation.value.styles.countdownLabelColor = preset.countdownLabelColor;
-  invitation.value.styles.storyBackground = preset.storyBackground;
-  invitation.value.styles.galleryBackground = preset.galleryBackground;
-  invitation.value.styles.eventBackground = preset.eventBackground;
-  invitation.value.styles.registryBackground = preset.registryBackground;
-  invitation.value.styles.rsvpBackground = preset.rsvpBackground;
-  invitation.value.styles.linkColor = preset.linkColor;
-  invitation.value.styles.borderColor = preset.borderColor;
-  invitation.value.styles.rsvpTextColor = preset.rsvpTextColor;
-  invitation.value.styles.rsvpInputBorderColor = preset.rsvpInputBorderColor;
-  invitation.value.styles.rsvpButtonBackground = preset.rsvpButtonBackground;
-  invitation.value.styles.rsvpButtonTextColor = preset.rsvpButtonTextColor;
-  invitation.value.styles.palette = Array.isArray(preset.palette) ? [...preset.palette] : [];
-  invitation.value.styles.textColor = preset.bodyTextColor;
+  builderStore.applyTheme(preset.id);
 };
 </script>
 
