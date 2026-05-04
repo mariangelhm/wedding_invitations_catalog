@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { useAutosave } from '../composables/useAutosave';
 import BasicEditorForm from '../components/BasicEditorForm.vue';
 import InvitationPreview from '../components/InvitationPreview.vue';
@@ -12,6 +12,7 @@ import { useI18n } from '../../../core/i18n';
 
 useAutosave();
 const route = useRoute();
+const router = useRouter();
 const builderStore = useBuilderStore();
 const { t } = useI18n();
 const selectedSection = ref('background');
@@ -19,6 +20,7 @@ const selectedPreviewDevice = ref('desktop');
 const backgroundTab = ref('themes');
 const selectedTypographyTab = ref('names');
 const isPreviewOpen = ref(false);
+const isCheckoutModalOpen = ref(false);
 
 const sectionCatalog = [
   { id: 'background', icon: '🎨', label: 'Fondo' },
@@ -66,6 +68,16 @@ watch(selectedTemplate, (template) => {
 const invitation = computed(() => builderStore.invitation);
 const orderedBlocks = computed(() => (invitation.value?.blocks || []).slice().sort((a, b) => a.order - b.order));
 const mapBlock = computed(() => orderedBlocks.value.find((block) => block.type === 'map'));
+const selectedExtras = computed(() => orderedBlocks.value.filter((block) => block.enabled && (block.price || 0) > 0));
+
+const formatPrice = (value = 0) => `$${Number(value || 0).toLocaleString('es-CL')}`;
+const goToCheckout = () => {
+  if (router.getRoutes().some((item) => item.path === '/checkout')) {
+    router.push('/checkout');
+    return;
+  }
+  console.log('go to checkout');
+};
 
 const toggleBlockAddon = (item, checked) => {
   // Extras are reusable blocks. Toggling here updates invitation.blocks directly.
@@ -92,6 +104,10 @@ const applyThemePreset = (preset) => {
     <header class="builder-toolbar">
       <RouterLink to="/catalog" class="back-link">← {{ t('editor.backToCatalog') }}</RouterLink>
       <div class="toolbar-title">Visual Builder · {{ invitation?.templateName || 'Sin template' }}</div>
+      <div class="device-switch">
+        <button class="device-btn" :class="{ active: selectedPreviewDevice === 'desktop' }" type="button" @click="selectedPreviewDevice = 'desktop'">🖥️ Web</button>
+        <button class="device-btn" :class="{ active: selectedPreviewDevice === 'mobile' }" type="button" @click="selectedPreviewDevice = 'mobile'">📱 Mobile</button>
+      </div>
     </header>
 
     <div class="builder-layout">
@@ -147,10 +163,36 @@ const applyThemePreset = (preset) => {
         </div>
       </aside>
 
+      <section class="checkout-summary-panel">
+        <div class="compact-total">
+          <span>Total</span>
+          <strong>{{ formatPrice(builderStore.totalPrice) }}</strong>
+        </div>
+        <button class="done-btn" type="button" @click="isCheckoutModalOpen = true">Listo</button>
+      </section>
+
       <main class="canvas-panel"><div class="preview-canvas" :class="selectedPreviewDevice === 'mobile' ? 'preview-canvas--mobile' : 'preview-canvas--desktop'"><InvitationPreview :showTitle="false" :device="selectedPreviewDevice" /></div></main>
     </div>
 
     <EditorPreviewModal :is-open="isPreviewOpen" @close="isPreviewOpen = false" />
+    <div v-if="isCheckoutModalOpen" class="checkout-modal-overlay" @click.self="isCheckoutModalOpen = false">
+      <article class="checkout-modal-card" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
+        <h3 id="checkout-modal-title">Resumen de tu invitación</h3>
+        <ul class="checkout-lines">
+          <li><span>Template</span><strong>{{ invitation?.templateName || 'Sin template' }}</strong></li>
+          <li><span>Precio base</span><strong>{{ formatPrice(invitation?.basePrice || builderStore.basePrice) }}</strong></li>
+          <li v-if="invitation?.duration"><span>Duración</span><strong>{{ invitation.duration }}</strong></li>
+          <li class="line-title">Extras seleccionados</li>
+          <li v-for="item in selectedExtras" :key="item.id"><span>{{ item.type }}</span><strong>{{ formatPrice(item.price) }}</strong></li>
+          <li v-if="selectedExtras.length === 0"><span>Sin extras con costo</span><strong>{{ formatPrice(0) }}</strong></li>
+          <li class="line-total"><span>Total</span><strong>{{ formatPrice(builderStore.totalPrice) }}</strong></li>
+        </ul>
+        <div class="checkout-actions">
+          <button type="button" class="checkout-cancel" @click="isCheckoutModalOpen = false">Cancelar</button>
+          <button type="button" class="checkout-primary" @click="goToCheckout">Ir a pagar</button>
+        </div>
+      </article>
+    </div>
   </section>
 </template>
 
