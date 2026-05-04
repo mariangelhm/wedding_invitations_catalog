@@ -23,15 +23,20 @@ const romanticDefaultBlocks = [
   { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, settings: {} },
 ];
 const getDefaultBlocks = () => defaultBlocks.map((b) => ({ ...b }));
-const createDefaultBlock = (blockType) => {
+const createDefaultBlock = (blockType, invitation = null) => {
+  const baseDate = invitation?.base?.date || '2027-06-14T18:00:00';
+  const storyMessage = invitation?.base?.storyMessage || '';
+  const gallery = invitation?.gallery || [];
+  const timeline = invitation?.timeline || [];
+  const mapSettings = invitation?.mapSettings || { locationName: '', address: '', mapUrl: '', embedUrl: '' };
   const blockCatalog = {
-    countdown_wedding: { id: 'countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, price: 3000, label: 'Cuenta regresiva boda', description: 'Cuenta regresiva al evento principal.', settings: { targetDate: '2027-06-14T18:00:00', title: 'Faltan para nuestra boda' } },
-    story: { id: 'story', type: 'story', enabled: true, order: 2, price: 0, label: 'Historia', description: 'Cuenta su historia de amor.', settings: {} },
-    gallery: { id: 'gallery', type: 'gallery', enabled: true, order: 3, price: 5000, label: 'Galería', description: 'Muestra fotos destacadas.', settings: {} },
-    timeline: { id: 'timeline', type: 'timeline', enabled: true, order: 4, price: 2000, label: 'Bitácora', description: 'Agenda de momentos del evento.', settings: {} },
-    map: { id: 'map', type: 'map', enabled: true, order: 5, price: 3000, label: 'Mapa', description: 'Ubicación y cómo llegar.', settings: {} },
-    countdown_rsvp: { id: 'countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, price: 2000, label: 'Cuenta regresiva RSVP', description: 'Límite de confirmación.', settings: { targetDate: '2027-05-20T23:59:59', title: 'Tiempo para confirmar' } },
-    rsvp: { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, label: 'RSVP', description: 'Confirmación de asistencia.', settings: {} },
+    countdown_wedding: { id: 'countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, price: 3000, label: 'Cuenta regresiva boda', description: 'Cuenta regresiva al evento principal.', settings: { targetDate: baseDate, title: 'Faltan para nuestra boda', variant: 'editorial' } },
+    story: { id: 'story', type: 'story', enabled: true, order: 2, price: 0, label: 'Historia', description: 'Cuenta su historia de amor.', settings: { title: 'Nuestra historia', message: storyMessage } },
+    gallery: { id: 'gallery', type: 'gallery', enabled: true, order: 3, price: 5000, label: 'Galería', description: 'Muestra fotos destacadas.', settings: { title: 'Nuestros momentos', images: gallery } },
+    timeline: { id: 'timeline', type: 'timeline', enabled: true, order: 4, price: 2000, label: 'Bitácora', description: 'Agenda del evento.', settings: { title: 'Cuándo y dónde', items: timeline } },
+    map: { id: 'map', type: 'map', enabled: true, order: 5, price: 3000, label: 'Mapa', description: 'Ubicación del evento.', settings: { ...mapSettings } },
+    countdown_rsvp: { id: 'countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, price: 2000, label: 'Cuenta regresiva confirmación', description: 'Tiempo restante para confirmar.', settings: { targetDate: '2027-05-20T23:59:59', title: 'Tiempo para confirmar', variant: 'editorial' } },
+    rsvp: { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, label: 'RSVP', description: 'Confirmación de asistencia.', settings: { title: 'Confirma tu asistencia', buttonLabel: 'Enviar confirmación' } },
   };
   if (!blockCatalog[blockType]) return null;
   const uniqueId = globalThis.crypto?.randomUUID?.() || `${blockType}-${Date.now()}`;
@@ -79,7 +84,7 @@ export const useBuilderStore = defineStore('builderStore', {
         id: Date.now(), status: 'draft', templateId: template?.id || null, templateComponent: template?.templateComponent || null,
         templateName: template?.name || 'Invitación base', category: template?.category || 'general', level: template?.level || 'basic', basePrice: template?.basePrice || this.basePrice,
         base: romanticDefaults?.base || { names: '', date: '', location: '', heroMessage: '', storyMessage: '' },
-        styles: { primaryColor: template?.previewStyle?.accentColor || '#C7355C', secondaryColor: template?.previewStyle?.background || '#FFF1F4', backgroundTheme: 'blush', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#111827', titleColor: '#9F1F46', bodyTextColor: '#6B7280', accentShape: '#F7DCE5', background: 'linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)', backgroundGradient: 'linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)', surfaceColor: '#FFFFFF', surfaceTextColor: '#1F2937' },
+        styles: { primaryColor: template?.previewStyle?.accentColor || '#303030', secondaryColor: template?.previewStyle?.background || '#F4F1EA', backgroundTheme: 'editorialClassic', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#575757', titleColor: '#303030', bodyTextColor: '#575757', accentShape: '#E6E2D8', background: '#F4F1EA', backgroundGradient: '#F4F1EA', surfaceColor: '#FFFFFF', surfaceTextColor: '#303030', mutedTextColor: '#757575' },
         addons: [], blocks: romanticDefaults?.blocks || getDefaultBlocks(), customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
         timeline: romanticDefaults?.timeline || [], gallery: romanticDefaults?.gallery || [], mapSettings: romanticDefaults?.mapSettings || { locationName: '', address: '', mapUrl: '', embedUrl: '' }, expiresAt, createdAt,
       };
@@ -109,7 +114,7 @@ export const useBuilderStore = defineStore('builderStore', {
         return;
       }
       // If a block is missing (legacy data), recreate from defaults instead of silently failing.
-      const recreated = createDefaultBlock(blockType);
+      const recreated = createDefaultBlock(blockType, this.invitation);
       if (!recreated) return;
       const lastOrder = blocks.length ? Math.max(...blocks.map((item) => item.order || 0)) : 0;
       recreated.order = lastOrder + 1;
