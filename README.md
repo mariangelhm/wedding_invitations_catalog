@@ -804,3 +804,71 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - La barra superior queda fija y el área inferior usa `calc(100vh - toolbarHeight)`.
 - Sidebar izquierda, panel de configuración y canvas central ahora gestionan su propio `overflow-y`, evitando scroll vertical de toda la página.
 - Resultado: experiencia tipo Canva/Wix con scroll interno por panel.
+
+## Imágenes de ejemplo para galería
+- El template usa imágenes locales de muestra cuando no hay fotos personalizadas.
+- Debes colocar/reemplazar tus imágenes en esta carpeta:
+  - `src/assets/sample-gallery/`
+- Nombres esperados:
+  - `wedding-1.jpg`
+  - `wedding-2.jpg`
+  - `wedding-3.jpg`
+  - `wedding-4.jpg`
+- Si esos archivos no contienen una foto válida todavía, la app mantiene placeholders visuales elegantes y no se rompe.
+
+## Extras section and dynamic block rendering
+- El menú lateral del editor usa: **Fondo, Tarjeta, Letras, Extras**.
+- La sección **Extras** administra bloques reutilizables (activar/desactivar y orden).
+- Al activar/desactivar un extra se actualiza `invitation.blocks` preservando el orden.
+- El template Romantic Motion renderiza dinámicamente solo bloques habilitados (`enabled`) ordenados por `order`.
+- El hero siempre permanece fijo arriba y el resto de secciones se pintan según los bloques activos.
+- La configuración del mapa vive dentro de Extras y se muestra solo cuando el extra mapa está activo.
+
+## Typography tabs and separated text colors
+- La sección **Letras** ahora tiene tabs: **Nombres** y **General**.
+- **Nombres** controla `styles.coupleFontFamily` y `styles.titleColor`.
+- **General** controla `styles.bodyFontFamily` y `styles.bodyTextColor`.
+- `titleColor` aplica a nombres de novios y encabezados de sección.
+- `bodyTextColor` aplica al contenido general (fecha, ubicación, mensajes y textos de bloques).
+- Se amplió el catálogo de tipografías y paleta de colores para personalización más fina.
+
+## Theme panel and contrast fixes
+- En **Fondo** se mantienen tabs controlados por estado local: `Temas` y `Colores`.
+- Cambiar a `Colores` no bloquea el regreso a `Temas` (`backgroundTab` local).
+- Cada tema define explícitamente: `primaryColor`, `secondaryColor`, `background`, `accentShape`, `titleColor`, `bodyTextColor`, `surfaceColor`, `surfaceTextColor`.
+- Al seleccionar un tema se sobreescriben todos los tokens de color para evitar herencias incorrectas al cambiar entre tema oscuro y claro.
+- Se agregó sistema de contraste para bloques (`--block-surface`, `--block-text-color`, `--block-muted-color`) para asegurar legibilidad en todos los themes.
+
+## Romantic Motion layered storytelling design
+- Romantic Motion ahora se renderiza como una sola experiencia continua (`.romantic-motion`) con capas decorativas compartidas y flujo narrativo vertical.
+- El hero queda como primera sección y los bloques habilitados se renderizan dinámicamente debajo sin perder la arquitectura reusable.
+- Se añadieron efectos de storytelling en scroll: `fade up`, desplazamiento sutil tipo parallax y bandas de sección para guiar la lectura.
+- La galería usa composición en capas (desktop: una imagen grande + pequeñas superpuestas; mobile: tarjetas apiladas), con overlap sutil hacia la siguiente sección.
+- Se ajustó la integración visual de Countdown/Story/Timeline/Map/RSVP para evitar sensación de tarjetas aisladas y mantener contraste consistente.
+
+## Compact full-height editor layout
+- El editor usa viewport completo (`height: 100vh`) con `overflow: hidden` para evitar scroll global.
+- Toolbar compacta con altura fija de `64px`.
+- Área principal con `height: calc(100vh - 64px)` en grid.
+- Desktop layout: `88px 330px 1fr` (menú, panel de ajustes, canvas).
+- Menú lateral y panel de ajustes con espaciado compacto y scroll interno.
+- Canvas maximiza el preview con padding `24px` desktop y `12px` mobile.
+- Mientras la ruta `/editor` está activa, el `body` bloquea su scroll; solo los paneles internos hacen scroll.
+
+## Sample gallery images
+- La galería usa assets locales de muestra desde `src/assets/sample-gallery/` cuando no hay fotos personalizadas.
+- Agrega estos archivos en esa carpeta:
+  - `wedding-1.jpg`
+  - `wedding-2.jpg`
+  - `wedding-3.jpg`
+  - `wedding-4.jpg`
+- Si los archivos faltan o fallan al cargar, `GalleryBlock` muestra placeholders elegantes y nunca deja iconos rotos.
+
+## Romantic Motion premium template
+- `romantic-01` ahora inicia con una experiencia premium continua tipo Wix: Hero, countdown boda, historia, galería, bitácora, mapa, countdown RSVP y RSVP final.
+- `builder.store` crea datos por defecto para romantic-01 (nombres, fecha, ubicación, mensajes, timeline, gallery, mapSettings y blocks habilitados).
+- El template usa scroll reveal con `IntersectionObserver` (fade + translateY) y lo anima una sola vez por sección.
+- El mapa soporta `embedUrl` con iframe responsivo (`loading="lazy"`, `allowfullscreen`, `referrerpolicy="no-referrer-when-downgrade"`) y fallback de enlace a Google Maps.
+- El layout se mantiene continuo con capas decorativas, bandas suaves y overlap de galería para sensación narrativa.
+- En mobile se evita scroll horizontal, se ajustan tamaños con `clamp` y se mantiene legibilidad de mapa/RSVP.
+- Ajuste adicional: el panel de configuración usa columna de 330px y ancho útil de ~320px para mantener densidad sin perder legibilidad.
