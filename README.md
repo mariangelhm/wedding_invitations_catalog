@@ -985,3 +985,15 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Added the new dark **IDE / Desarrollo** preset with the requested values for a technical, modern visual style.
 - Applying a theme now updates all key style tokens (including `backgroundTheme`, `primaryColor`, `secondaryColor`, `background`, `accentShape`, `titleColor`, `bodyTextColor`, `surfaceColor`, `surfaceTextColor`) so switching between dark/light themes restores proper text contrast.
 - The panel keeps tab switching between **Temas** and **Colores** fully functional.
+
+## Romantic Motion editorial redesign
+- Romantic Motion was redesigned as an editorial, continuous wedding invitation experience inspired by modern Wix-style wedding pages.
+- The template now uses a cream editorial atmosphere with elegant serif typography, generous spacing, layered gallery composition, and smooth section reveals.
+- Added an invitation mini-header with initials and internal navigation links (`Historia`, `Cuándo y dónde`, `RSVP`), with mobile hamburger toggle support.
+- Hero section now acts as the visual anchor with large names, minimalist countdown, date/location metadata and a ghost CTA (`Confirmar asistencia`).
+- Story section uses asymmetric editorial composition (text + image placeholder) with subtle parallax-like reveal.
+- Timeline title and flow were adapted to an editorial itinerary style (`Cuándo y dónde`) with staggered reveal.
+- Map remains enabled by default and renders iframe embed when available, with polished cream wrapper and `Abrir en Google Maps` access.
+- RSVP was upgraded to include fields for full name, attendance, companions, and dietary restrictions, keeping backend disconnected and emitting/logging payload locally.
+- Scroll animations continue to use native `IntersectionObserver` and CSS transitions (no external animation libraries).
+- Mobile behavior was tuned for beauty and readability: centered hero, clamp typography, stacked gallery, mobile nav menu, full-width RSVP controls, and responsive map height.
