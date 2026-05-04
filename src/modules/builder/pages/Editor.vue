@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { useAutosave } from '../composables/useAutosave';
 import BasicEditorForm from '../components/BasicEditorForm.vue';
 import InvitationPreview from '../components/InvitationPreview.vue';
@@ -12,6 +12,7 @@ import { useI18n } from '../../../core/i18n';
 
 useAutosave();
 const route = useRoute();
+const router = useRouter();
 const builderStore = useBuilderStore();
 const { t } = useI18n();
 const selectedSection = ref('background');
@@ -19,6 +20,9 @@ const selectedPreviewDevice = ref('desktop');
 const backgroundTab = ref('themes');
 const selectedTypographyTab = ref('names');
 const isPreviewOpen = ref(false);
+const isCheckoutModalOpen = ref(false);
+const draggingBlockId = ref(null);
+const dropTargetBlockId = ref(null);
 
 const sectionCatalog = [
   { id: 'background', icon: '🎨', label: 'Fondo' },
@@ -66,16 +70,36 @@ watch(selectedTemplate, (template) => {
 const invitation = computed(() => builderStore.invitation);
 const orderedBlocks = computed(() => (invitation.value?.blocks || []).slice().sort((a, b) => a.order - b.order));
 const mapBlock = computed(() => orderedBlocks.value.find((block) => block.type === 'map'));
+const selectedExtras = computed(() => orderedBlocks.value.filter((block) => block.enabled && (block.price || 0) > 0));
 
-const toggleBlockAddon = (item, checked) => {
-  // Extras are reusable blocks. Toggling here updates invitation.blocks directly.
-  builderStore.toggleBlock(item.type, checked);
+const formatPrice = (value = 0) => `$${Number(value || 0).toLocaleString('es-CL')}`;
+const goToCheckout = () => {
+  if (router.getRoutes().some((item) => item.path === '/checkout')) {
+    router.push('/checkout');
+    return;
+  }
+  console.log('go to checkout');
 };
+
+const toggleBlockAddon = (item) => {
+  // Toggle enabled flag only. Blocks are never deleted so they can be re-enabled immediately.
+  builderStore.toggleBlock(item.type);
+};
+const onDragStart = (block) => { if (!block.enabled) return; draggingBlockId.value = block.id; };
+const onDropOver = (block) => { if (!block.enabled || !draggingBlockId.value || draggingBlockId.value === block.id) return; dropTargetBlockId.value = block.id; };
+const onDropBlock = (targetBlock) => {
+  if (!draggingBlockId.value || !targetBlock?.id || draggingBlockId.value === targetBlock.id) return;
+  builderStore.reorderBlocks(draggingBlockId.value, targetBlock.id);
+  draggingBlockId.value = null;
+  dropTargetBlockId.value = null;
+};
+const onDragEnd = () => { draggingBlockId.value = null; dropTargetBlockId.value = null; };
 
 const applyThemePreset = (preset) => {
   invitation.value.styles.backgroundTheme = preset.id;
   invitation.value.styles.primaryColor = preset.primaryColor;
   invitation.value.styles.secondaryColor = preset.secondaryColor;
+  invitation.value.styles.background = preset.background;
   invitation.value.styles.titleColor = preset.titleColor;
   invitation.value.styles.bodyTextColor = preset.bodyTextColor;
   invitation.value.styles.accentShape = preset.accentShape;
@@ -92,19 +116,48 @@ const applyThemePreset = (preset) => {
     <header class="builder-toolbar">
       <RouterLink to="/catalog" class="back-link">← {{ t('editor.backToCatalog') }}</RouterLink>
       <div class="toolbar-title">Visual Builder · {{ invitation?.templateName || 'Sin template' }}</div>
+      <div class="device-switch">
+        <button class="device-btn" :class="{ active: selectedPreviewDevice === 'desktop' }" type="button" @click="selectedPreviewDevice = 'desktop'">🖥️ Web</button>
+        <button class="device-btn" :class="{ active: selectedPreviewDevice === 'mobile' }" type="button" @click="selectedPreviewDevice = 'mobile'">📱 Mobile</button>
+      </div>
     </header>
 
     <div class="builder-layout">
-      <aside class="icon-menu">
-        <button v-for="item in sectionCatalog" :key="item.id" class="icon-menu-item" :class="{ active: selectedSection === item.id }" @click="selectedSection = item.id">
-          <span class="menu-icon">{{ item.icon }}</span><span class="menu-label">{{ item.label }}</span>
-        </button>
+      <aside class="icon-menu editor-sidebar">
+        <div class="icon-menu-top editor-sidebar__menu">
+          <button v-for="item in sectionCatalog" :key="item.id" class="icon-menu-item" :class="{ active: selectedSection === item.id }" @click="selectedSection = item.id">
+            <span class="menu-icon">{{ item.icon }}</span><span class="menu-label">{{ item.label }}</span>
+          </button>
+        </div>
+        <div class="icon-menu-bottom editor-sidebar__summary">
+          <div class="compact-total">
+            <span>Total</span>
+            <strong>{{ formatPrice(builderStore.totalPrice).replace('.000', 'k') }}</strong>
+          </div>
+          <button class="done-btn" type="button" @click="isCheckoutModalOpen = true">Listo</button>
+        </div>
       </aside>
 
       <aside class="settings-panel">
+        <div class="mobile-section-tabs" role="tablist" aria-label="Secciones del editor">
+          <button v-for="item in sectionCatalog" :key="`mobile-${item.id}`" class="mobile-tab-btn" :class="{ active: selectedSection === item.id }" @click="selectedSection = item.id">
+            {{ item.label }}
+          </button>
+        </div>
         <div v-if="selectedSection === 'background'" class="settings-block">
           <div class="tab-row"><button class="tab-btn" :class="{ active: backgroundTab==='themes' }" @click="backgroundTab='themes'">Temas</button><button class="tab-btn" :class="{ active: backgroundTab==='colors' }" @click="backgroundTab='colors'">Colores</button></div>
-          <div v-if="backgroundTab==='themes'" class="theme-grid"><button v-for="preset in themePresets" :key="preset.id" class="theme-card" :class="{ selected: invitation.styles.backgroundTheme===preset.id }" @click="applyThemePreset(preset)"><span class="theme-preview" :style="{ background: preset.background }"></span><strong>{{ preset.name }}</strong></button></div>
+          <div v-if="backgroundTab==='themes'" class="theme-grid">
+            <button v-for="preset in themePresets" :key="preset.id" class="theme-card" :class="{ selected: invitation.styles.backgroundTheme===preset.id }" @click="applyThemePreset(preset)">
+              <div class="theme-main">
+                <strong>{{ preset.name }}</strong>
+                <small>{{ preset.description }}</small>
+              </div>
+              <div class="theme-palette">
+                <span v-for="(tone, idx) in preset.palette" :key="`${preset.id}-${idx}`" :style="{ background: tone }"></span>
+              </div>
+              <span v-if="invitation.styles.backgroundTheme===preset.id" class="theme-check">✓</span>
+            </button>
+          </div>
           <div v-else class="swatch-grid"><button v-for="color in backgroundSwatches" :key="color" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation?.styles?.secondaryColor===color }" @click="invitation.styles.secondaryColor = color" /></div>
         </div>
         <div v-else-if="selectedSection === 'card'" class="settings-block"><BasicEditorForm /></div>
@@ -125,15 +178,26 @@ const applyThemePreset = (preset) => {
         </div>
         <div v-else class="block-list">
           <!-- This is the base for future drag-and-drop ordering in all templates. -->
-          <article v-for="block in orderedBlocks" :key="block.id" class="block-card">
-            <div class="extra-preview" :class="`extra-preview--${blockOptions.find((i)=>i.type===block.type)?.preview}`"></div>
-            <div><h4>{{ blockOptions.find((i)=>i.type===block.type)?.label || block.type }}</h4><p>{{ blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p><small v-if="block.price > 0">${{ block.price }}</small></div>
-            <div class="toggle-wrap">
-              <label><input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block, $event.target.checked)" /> Activar</label>
-              <template v-if="block.enabled">
+          <article v-for="block in orderedBlocks" :key="block.id" class="block-card" :class="{ 'is-active': block.enabled, 'is-inactive': !block.enabled, 'is-dragging': draggingBlockId === block.id, 'is-drop-target': dropTargetBlockId === block.id }" :draggable="block.enabled" @dragstart="onDragStart(block)" @dragover.prevent="onDropOver(block)" @drop="onDropBlock(block)" @dragend="onDragEnd">
+            <div class="block-head">
+              <div class="extra-preview" :class="`extra-preview--${blockOptions.find((i)=>i.type===block.type)?.preview}`"></div>
+              <div class="block-head-meta">
+                <h4>{{ block.label || blockOptions.find((i)=>i.type===block.type)?.label || block.type }}</h4>
+                <small v-if="block.price > 0" class="price-badge">${{ block.price }}</small>
+                <small v-else class="price-badge price-badge--free">Incluido</small>
+              </div>
+            </div>
+            <p class="block-description">{{ block.description || blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p>
+            <div class="block-footer">
+              <label class="switch" :aria-label="`Activar ${block.type}`">
+                <input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block)" />
+                <span class="switch-slider"></span>
+              </label>
+              <span class="status-label">{{ block.enabled ? 'Activo' : 'Inactivo' }}</span>
+              <div v-if="block.enabled" class="move-actions">
                 <button class="mini-btn" @click="builderStore.moveBlockUp(block.id)">↑</button>
                 <button class="mini-btn" @click="builderStore.moveBlockDown(block.id)">↓</button>
-              </template>
+              </div>
             </div>
           </article>
 
@@ -151,6 +215,31 @@ const applyThemePreset = (preset) => {
     </div>
 
     <EditorPreviewModal :is-open="isPreviewOpen" @close="isPreviewOpen = false" />
+    <div class="editor-mobile-summary">
+      <div class="compact-total">
+        <span>Total</span>
+        <strong>{{ formatPrice(builderStore.totalPrice).replace('.000', 'k') }}</strong>
+      </div>
+      <button class="done-btn" type="button" @click="isCheckoutModalOpen = true">Listo</button>
+    </div>
+    <div v-if="isCheckoutModalOpen" class="checkout-modal-overlay" @click.self="isCheckoutModalOpen = false">
+      <article class="checkout-modal-card" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
+        <h3 id="checkout-modal-title">Resumen de tu invitación</h3>
+        <ul class="checkout-lines">
+          <li><span>Template</span><strong>{{ invitation?.templateName || 'Sin template' }}</strong></li>
+          <li><span>Precio base</span><strong>{{ formatPrice(invitation?.basePrice || builderStore.basePrice) }}</strong></li>
+          <li v-if="invitation?.duration"><span>Duración</span><strong>{{ invitation.duration }}</strong></li>
+          <li class="line-title">Extras seleccionados</li>
+          <li v-for="item in selectedExtras" :key="item.id"><span>{{ item.type }}</span><strong>{{ formatPrice(item.price) }}</strong></li>
+          <li v-if="selectedExtras.length === 0"><span>Sin extras con costo</span><strong>{{ formatPrice(0) }}</strong></li>
+          <li class="line-total"><span>Total</span><strong>{{ formatPrice(builderStore.totalPrice) }}</strong></li>
+        </ul>
+        <div class="checkout-actions">
+          <button type="button" class="checkout-cancel" @click="isCheckoutModalOpen = false">Cancelar</button>
+          <button type="button" class="checkout-primary" @click="goToCheckout">Ir a pagar</button>
+        </div>
+      </article>
+    </div>
   </section>
 </template>
 
