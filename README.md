@@ -955,3 +955,14 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - sidebar summary is hidden from the small horizontal icon menu,
   - total + Listo are shown in a sticky bottom bar for reliable access and no squeezing.
 - Existing checkout modal behavior remains unchanged.
+
+## Editor mobile layout
+- Desktop layout remains unchanged: top toolbar, left icon sidebar, settings panel, and preview canvas.
+- On mobile (`< 768px`):
+  - toolbar remains fixed at top (including Web/Mobile preview switch),
+  - desktop left sidebar is hidden,
+  - a new horizontal, scrollable mobile tabs row is shown inside settings with: **Fondo, Tarjeta, Letras, Extras**,
+  - settings panel uses full width with improved spacing,
+  - preview canvas stays full width with `12px` padding and centered preview,
+  - sticky bottom summary bar keeps **Total** and **Listo** always accessible.
+- Mobile layout blocks horizontal page scrolling and keeps interactions inside panels.

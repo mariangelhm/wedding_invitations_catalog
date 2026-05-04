@@ -138,6 +138,11 @@ const applyThemePreset = (preset) => {
       </aside>
 
       <aside class="settings-panel">
+        <div class="mobile-section-tabs" role="tablist" aria-label="Secciones del editor">
+          <button v-for="item in sectionCatalog" :key="`mobile-${item.id}`" class="mobile-tab-btn" :class="{ active: selectedSection === item.id }" @click="selectedSection = item.id">
+            {{ item.label }}
+          </button>
+        </div>
         <div v-if="selectedSection === 'background'" class="settings-block">
           <div class="tab-row"><button class="tab-btn" :class="{ active: backgroundTab==='themes' }" @click="backgroundTab='themes'">Temas</button><button class="tab-btn" :class="{ active: backgroundTab==='colors' }" @click="backgroundTab='colors'">Colores</button></div>
           <div v-if="backgroundTab==='themes'" class="theme-grid"><button v-for="preset in themePresets" :key="preset.id" class="theme-card" :class="{ selected: invitation.styles.backgroundTheme===preset.id }" @click="applyThemePreset(preset)"><span class="theme-preview" :style="{ background: preset.background }"></span><strong>{{ preset.name }}</strong></button></div>
