@@ -122,16 +122,16 @@ const applyThemePreset = (preset) => {
     </header>
 
     <div class="builder-layout">
-      <aside class="icon-menu">
-        <div class="icon-menu-top">
+      <aside class="icon-menu editor-sidebar">
+        <div class="icon-menu-top editor-sidebar__menu">
           <button v-for="item in sectionCatalog" :key="item.id" class="icon-menu-item" :class="{ active: selectedSection === item.id }" @click="selectedSection = item.id">
             <span class="menu-icon">{{ item.icon }}</span><span class="menu-label">{{ item.label }}</span>
           </button>
         </div>
-        <div class="icon-menu-bottom">
+        <div class="icon-menu-bottom editor-sidebar__summary">
           <div class="compact-total">
             <span>Total</span>
-            <strong>{{ formatPrice(builderStore.totalPrice) }}</strong>
+            <strong>{{ formatPrice(builderStore.totalPrice).replace('.000', 'k') }}</strong>
           </div>
           <button class="done-btn" type="button" @click="isCheckoutModalOpen = true">Listo</button>
         </div>
@@ -206,6 +206,13 @@ const applyThemePreset = (preset) => {
     </div>
 
     <EditorPreviewModal :is-open="isPreviewOpen" @close="isPreviewOpen = false" />
+    <div class="editor-mobile-summary">
+      <div class="compact-total">
+        <span>Total</span>
+        <strong>{{ formatPrice(builderStore.totalPrice).replace('.000', 'k') }}</strong>
+      </div>
+      <button class="done-btn" type="button" @click="isCheckoutModalOpen = true">Listo</button>
+    </div>
     <div v-if="isCheckoutModalOpen" class="checkout-modal-overlay" @click.self="isCheckoutModalOpen = false">
       <article class="checkout-modal-card" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
         <h3 id="checkout-modal-title">Resumen de tu invitación</h3>

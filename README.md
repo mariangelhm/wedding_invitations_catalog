@@ -943,3 +943,15 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - `createDefaultBlock(blockType)` supports all standard extras and now returns complete metadata (`id`, `type`, `enabled`, `order`, `price`, `label`, `description`, `settings`).
 - Romantic Motion now renders from enabled blocks computed as `blocks.filter(block => block.enabled).sort((a, b) => a.order - b.order)` with fallback enabled blocks only when `invitationData.blocks` is missing.
 - Development-only debug logging was added to verify live block state transitions: `console.log("Enabled blocks", enabledBlocks.value)`.
+
+## Compact editor price and Done button
+- The left editor sidebar now uses a compact two-zone structure:
+  - top: menu items,
+  - bottom: summary area with **Total** and **Listo**.
+- Sidebar summary is constrained to the sidebar width (`92px`) and prevents horizontal overflow.
+- Price display uses compact formatting (`$35k`) to avoid long-line clipping in narrow sidebar width.
+- **Listo** button is full-width with compact sizing (`font-size: 12px`, tighter padding, rounded corners) to prevent split/cut rendering.
+- Mobile behavior was improved:
+  - sidebar summary is hidden from the small horizontal icon menu,
+  - total + Listo are shown in a sticky bottom bar for reliable access and no squeezing.
+- Existing checkout modal behavior remains unchanged.
