@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import CountdownBlock from '../../../../components/blocks/CountdownBlock/CountdownBlock.vue';
 import StoryBlock from '../../../../components/blocks/StoryBlock/StoryBlock.vue';
 import GalleryBlock from '../../../../components/blocks/GalleryBlock/GalleryBlock.vue';
@@ -41,7 +41,6 @@ onUnmounted(() => {
   removeScrollListener?.();
 });
 </script>
-
 <template>
 <div class="romantic-template" :style="themeVars">
   <header class="romantic-template__header" :class="{ scrolled: headerScrolled }">
