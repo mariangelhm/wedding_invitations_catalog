@@ -1093,3 +1093,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Efectos: fade-up, entrada desde izquierda y entrada desde derecha con transición `all 0.6s cubic-bezier(0.4, 0, 0.2, 1)`.
 - Navegación interna mantiene desplazamiento suave (`scroll-behavior: smooth`).
 - TODO documentado en código: evaluar reemplazo por AOS en el futuro si se necesita.
+
+
+### Hero and quote theme binding
+- Hero usa variables dedicadas: `--template-hero-bg`, `--template-hero-overlay`, `--template-hero-text`, `--template-hero-accent`.
+- Parallax quote usa: `--template-quote-bg`, `--template-quote-overlay`, `--template-quote-text`.
+- Las presets incluyen esos campos para evitar fondos/textos fijos y respetar contraste (texto claro en fondos oscuros y texto oscuro en fondos claros).
