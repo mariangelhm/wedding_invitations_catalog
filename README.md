@@ -854,3 +854,92 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Menú lateral y panel de ajustes con espaciado compacto y scroll interno.
 - Canvas maximiza el preview con padding `24px` desktop y `12px` mobile.
 - Mientras la ruta `/editor` está activa, el `body` bloquea su scroll; solo los paneles internos hacen scroll.
+
+
+## Romantic Motion premium template
+- The `romantic-01` template now ships with all default sections enabled in a continuous one-page storytelling flow: Hero, wedding countdown, story, gallery, event timeline, map, RSVP countdown, and final RSVP CTA/form.
+- `createDraftInvitation(template)` preloads premium default content data for `romantic-01` including base couple details, timeline milestones, gallery placeholders, and complete map settings with Google Maps embed support.
+- The template uses native `IntersectionObserver` reveal animations (no external libraries) with staggered item transitions for gallery and timeline entries.
+- The map section supports embedded iframes (`embedUrl`) and gracefully falls back to a Google Maps link card when only `mapUrl` is available.
+- Layout was redesigned as a connected invitation experience (shared background layers, soft bands, overlap, and depth) instead of isolated cards.
+- Responsive behavior was tuned for mobile: clamp-based hero typography, stacked split/gallery layouts, no horizontal scroll, responsive map height, and full-width RSVP form controls.
+
+## Done button and checkout summary modal
+- The editor now includes a compact **Total** summary panel under the left area and a **Listo** button to finish configuration.
+- Total price is calculated in `builderStore` using enabled blocks pricing (`basePrice + sum(enabled blocks prices)`) through reactive getters.
+- Clicking **Listo** opens a checkout summary modal with: template name, base price, selected extras with prices, optional duration, and total price.
+- Modal actions:
+  - **Cancelar** closes the modal and returns to editing.
+  - **Ir a pagar** routes to `/checkout` if that route exists; otherwise logs `go to checkout`.
+- The modal is responsive for mobile (`width: 95vw`, `max-width: 520px`) with a centered card, overlay, clean spacing, and dark pink primary action.
+- No payment provider or backend integration is included yet.
+
+## Fix block toggling and device preview switch
+- Extras now use **enabled flag toggling** instead of deleting blocks from `invitation.blocks`, preserving section configuration and preventing preview loss after reactivation.
+- `builderStore.toggleBlock(blockType)` now supports resilient behavior: if a block is missing (legacy/inconsistent state), it is recreated through a `createDefaultBlock(blockType)` factory and appended with `lastOrder + 1`.
+- The default block factory covers `countdown_wedding`, `story`, `gallery`, `timeline`, `map`, `countdown_rsvp`, and `rsvp` with full default config (`id`, `type`, `enabled`, `order`, `price`, `settings`).
+- The Romantic Motion template renders from `invitationData.blocks.filter(block => block.enabled).sort(...)`, so toggled-off blocks disappear and toggled-on blocks reappear consistently.
+- The editor toolbar restores device preview controls:
+  - `🖥️ Web` sets `selectedPreviewDevice = "desktop"`
+  - `📱 Mobile` sets `selectedPreviewDevice = "mobile"`
+- `InvitationPreview` accepts `device` prop and applies `invitation-preview--desktop` / `invitation-preview--mobile` classes so the preview stays responsive and centered without horizontal overflow.
+
+## Fix extras toggle behavior
+- Extras are no longer removed from `invitation.blocks` when disabled; they are preserved and only switch `enabled` to `false`.
+- Re-enabling the same extra switches `enabled` back to `true`, so the section appears again immediately in preview.
+- `toggleBlock(blockType)` now toggles existing blocks by type, and recreates missing blocks through `createDefaultBlock(blockType)` for resilient legacy-data handling.
+- `createDefaultBlock(blockType)` supports: `countdown_wedding`, `story`, `gallery`, `timeline`, `map`, `countdown_rsvp`, and `rsvp`.
+- Romantic Motion rendering uses `invitationData.blocks.filter(block => block.enabled).sort((a, b) => a.order - b.order)` so disabled sections do not render and re-enabled ones return instantly.
+
+## Done button placement
+- The separate middle price panel was removed from the editor layout.
+- The **Total** summary and **Listo** button now live under the left icon menu in a bottom section.
+- Left sidebar uses a column flow (`display: flex; flex-direction: column;`) so:
+  - menu items stay at the top,
+  - total + Listo stay pinned to the bottom.
+- The **Listo** button keeps the current behavior (opens the invitation summary modal).
+- On mobile, the icon menu becomes horizontal and the total + Listo controls are shown inline after the menu actions for quick access.
+
+## Extras visual cards
+- The Extras section cards were redesigned to a compact professional layout with three clear zones:
+  - top row: mini visual preview + title + price badge,
+  - description row,
+  - bottom row: modern toggle switch, state label (`Activo` / `Inactivo`), and move up/down actions only when active.
+- Cards now have active/inactive visual states:
+  - active: primary border + soft pink background,
+  - inactive: white background + muted text.
+- Added subtle hover micro-interaction (`translateY(-2px)` + soft shadow).
+- Replaced checkbox with a modern switch control for better UX clarity.
+- Updated compact preview mini-UIs for countdown, story, gallery, timeline, map and RSVP blocks.
+
+## Native drag and drop extras ordering
+- Extras cards now support native HTML5 drag and drop (`draggable`, `dragstart`, `dragover`, `drop`) without external libraries.
+- Only active extras are draggable for ordering; inactive extras remain visible but non-draggable.
+- Dropping one active extra over another calls `reorderBlocks(draggedBlockId, targetBlockId)` in the store.
+- `reorderBlocks` reorders `invitation.blocks` and normalizes `order` values sequentially.
+- Move up/down buttons remain available as fallback controls.
+- Visual feedback during drag:
+  - dragged card uses reduced opacity,
+  - drop target gets highlighted.
+- Romantic Motion preview updates immediately because enabled blocks are always rendered sorted by `order`.
+
+## Countdown seconds fix
+- `CountdownBlock` now always renders exactly four units: **Días, Horas, Minutos, Segundos**.
+- `useCountdown` now returns the requested API shape:
+  - `days`
+  - `hours`
+  - `minutes`
+  - `seconds`
+  - `isExpired`
+- Countdown layout is responsive by default:
+  - desktop: 4 columns,
+  - mobile: 2x2 grid.
+- Extras mini preview for countdown now explicitly shows four values including seconds: `12 / 04 / 33 / 59`.
+
+## Extras toggle fix
+- `toggleBlock(blockType)` now uses `invitation.blocks` as the source of truth and never deletes block entries when disabling extras.
+- Existing blocks are toggled only through `block.enabled = !block.enabled`, preserving previous order and settings.
+- If a block does not exist, it is recreated through `createDefaultBlock(blockType)`, pushed into `invitation.blocks`, and enabled by default.
+- `createDefaultBlock(blockType)` supports all standard extras and now returns complete metadata (`id`, `type`, `enabled`, `order`, `price`, `label`, `description`, `settings`).
+- Romantic Motion now renders from enabled blocks computed as `blocks.filter(block => block.enabled).sort((a, b) => a.order - b.order)` with fallback enabled blocks only when `invitationData.blocks` is missing.
+- Development-only debug logging was added to verify live block state transitions: `console.log("Enabled blocks", enabledBlocks.value)`.
