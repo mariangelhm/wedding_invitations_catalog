@@ -24,6 +24,7 @@ const romanticDefaultBlocks = [
   { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, settings: {} },
 ];
 const getDefaultBlocks = () => defaultBlocks.map((b) => ({ ...b }));
+const modernRusticTheme = themePresets.find((preset) => preset.id === 'modernRustic') || {};
 const editorialClassicTheme = themePresets.find((preset) => preset.id === 'editorialClassic') || {};
 const buildStylesFromTheme = (theme = {}) => {
   const tokens = theme.tokens || {};
@@ -148,7 +149,7 @@ export const useBuilderStore = defineStore('builderStore', {
         id: Date.now(), status: 'draft', templateId: template?.id || null, templateComponent: template?.templateComponent || null,
         templateName: template?.name || 'Invitación base', category: template?.category || 'general', level: template?.level || 'basic', basePrice: template?.basePrice || this.basePrice,
         base: romanticDefaults?.base || { names: '', date: '', location: '', heroMessage: '', storyMessage: '' },
-        styles: romanticDefaults ? buildStylesFromTheme(editorialClassicTheme) : { primaryColor: template?.previewStyle?.accentColor || '#303030', secondaryColor: template?.previewStyle?.background || '#F4F1EA', backgroundTheme: 'editorialClassic', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#575757', titleColor: '#303030', bodyTextColor: '#575757', accentShape: '#E6E2D8', background: '#F4F1EA', backgroundGradient: '#F4F1EA', surfaceColor: '#FFFFFF', surfaceTextColor: '#303030', mutedTextColor: '#757575' },
+        styles: romanticDefaults ? buildStylesFromTheme(modernRusticTheme) : { primaryColor: template?.previewStyle?.accentColor || '#303030', secondaryColor: template?.previewStyle?.background || '#F4F1EA', backgroundTheme: 'editorialClassic', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#575757', titleColor: '#303030', bodyTextColor: '#575757', accentShape: '#E6E2D8', background: '#F4F1EA', backgroundGradient: '#F4F1EA', surfaceColor: '#FFFFFF', surfaceTextColor: '#303030', mutedTextColor: '#757575' },
         addons: [], blocks: romanticDefaults?.blocks || getDefaultBlocks(), customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
         timeline: romanticDefaults?.timeline || [], gallery: romanticDefaults?.gallery || [], mapSettings: romanticDefaults?.mapSettings || { locationName: '', address: '', mapUrl: '', embedUrl: '' }, expiresAt, createdAt,
       };

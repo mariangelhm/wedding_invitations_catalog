@@ -1111,3 +1111,8 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - El selector de temas ahora llama al flujo del store (`applyTheme`) en lugar de mutar estado local parcial.
 - `applyTheme` reemplaza `themeTokens` completo y reasigna `invitation`/`styles` para garantizar reactividad en Vue/Pinia.
 - Romantic Motion consume variables raíz `--theme-*` derivadas de `styles.themeTokens`, evitando mezclas con valores viejos.
+
+
+### Default romantic-01 theme: Modern Rustic
+- `romantic-01` ahora inicia con `backgroundTheme: "modernRustic"` y tokens cálidos editoriales por defecto.
+- `editorialClassic` se mantiene disponible como alternativa, pero ya no es el preset inicial del draft romántico.
