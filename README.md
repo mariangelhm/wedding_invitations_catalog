@@ -1099,3 +1099,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Hero usa variables dedicadas: `--template-hero-bg`, `--template-hero-overlay`, `--template-hero-text`, `--template-hero-accent`.
 - Parallax quote usa: `--template-quote-bg`, `--template-quote-overlay`, `--template-quote-text`.
 - Las presets incluyen esos campos para evitar fondos/textos fijos y respetar contraste (texto claro en fondos oscuros y texto oscuro en fondos claros).
+
+### Reusable semantic theme tokens
+- `themePresets` ahora define `tokens` semánticos (page, section, hero, quote, button, RSVP, footer, textos y bordes).
+- `builder.store` guarda `styles.themeTokens` al aplicar tema y además mantiene campos legacy por compatibilidad.
+- `RomanticMotionTemplate` consume tokens vía variables CSS (`--theme-*`) en vez de colores sueltos.
+- Este enfoque permite reutilizar el mismo contrato visual en futuros templates sin hardcodear colores por sección.
