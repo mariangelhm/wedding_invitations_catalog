@@ -1,15 +1,5 @@
-.timeline-block {
-  --primary-color: var(--primary-color, #C7355C);
-  --text-color: var(--text-color, #111827);
-  --muted-color: var(--muted-color, #6B7280);
-  --surface-color: var(--surface-color, #FFFFFF);
-  --border-color: var(--border-color, #E5E7EB);
-
-  background: var(--surface-color);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.08);
+.timeline-block { --primary-color: var(--primary-color, #C7355C); --text-color: var(--text-color, #2f2a24); --muted-color: var(--muted-color, #6B7280); --surface-color: transparent; --border-color: color-mix(in srgb,var(--primary-color) 20%, #d1d5db);
+  background: var(--surface-color); border: 0; border-radius: 0; padding: 4px 0; box-shadow: none;
 
   opacity: 0;
   transform: translateY(30px);
@@ -22,7 +12,7 @@
 .timeline-item { display: grid; grid-template-columns: 14px 1fr; gap: 10px; align-items: start; opacity: 0; transform: translateY(30px); transition: opacity .45s ease, transform .45s ease; }
 .timeline-block.is-visible .timeline-item { opacity: 1; transform: translateY(0); }
 .timeline-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--primary-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 18%, white); margin-top: 5px; }
-.timeline-card { border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; background: var(--surface-color); }
+.timeline-card { border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; background: color-mix(in srgb,#fff 70%, transparent); }
 .timeline-time { color: var(--primary-color); font-weight: 700; }
 .timeline-item-title { color: var(--text-color); font-weight: 600; margin-top: 2px; }
 .timeline-place { color: var(--muted-color); margin-top: 2px; }
