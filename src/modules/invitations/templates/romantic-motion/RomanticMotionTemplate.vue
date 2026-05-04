@@ -21,7 +21,8 @@ const enabledBlocks = computed(() => {
   const source = Array.isArray(props.invitationData?.blocks) && props.invitationData.blocks.length ? props.invitationData.blocks : fallbackBlocks;
   return source.filter((block) => block.enabled).sort((a, b) => a.order - b.order);
 });
-if (import.meta.env.DEV) watchEffect(() => console.log('Enabled blocks', enabledBlocks.value));
+const hasBlock = (type) => enabledBlocks.value.some((block) => block.type === type);
+if (import.meta.env.DEV) watchEffect(() => console.log('enabled blocks', enabledBlocks.value.map((b) => b.type)));
 
 const names = computed(() => base.value.names || 'María & Carlos');
 const initials = computed(() => (names.value.split('&').map((part) => part.trim()[0] || '').join('&')).toUpperCase() || 'M&C');
@@ -35,7 +36,18 @@ const storyMessage = computed(() => base.value.storyMessage || 'Nuestra historia
 const timeline = computed(() => props.invitationData?.timeline?.length ? props.invitationData.timeline : [{ time:'17:00', title:'Ceremonia', place:'Jardín principal' },{ time:'19:00', title:'Cena', place:'Salón principal' },{ time:'21:00', title:'Fiesta', place:'Pista de baile' }]);
 const gallery = computed(() => props.invitationData?.gallery?.length ? props.invitationData.gallery : [{src:'',alt:'Foto editorial 1'},{src:'',alt:'Foto editorial 2'},{src:'',alt:'Foto editorial 3'}]);
 
-const cssVars = computed(() => ({ '--editorial-bg': styles.value.background || styles.value.backgroundGradient || '#F4F1EA', '--editorial-accent': styles.value.primaryColor || '#B88A44', '--editorial-title': styles.value.titleColor || '#2F2A24', '--editorial-text': styles.value.bodyTextColor || '#3F3A34' }));
+const cssVars = computed(() => ({
+  '--template-bg': styles.value.background || styles.value.backgroundGradient || '#F4F1EA',
+  '--template-primary': styles.value.primaryColor || '#B88A44',
+  '--template-title-color': styles.value.titleColor || '#2F2A24',
+  '--template-body-color': styles.value.bodyTextColor || '#3F3A34',
+  '--template-surface': styles.value.surfaceColor || '#FFFFFF',
+  '--template-surface-text': styles.value.surfaceTextColor || '#1F2937',
+  '--template-muted-text': styles.value.mutedTextColor || '#6B7280',
+  '--block-surface': styles.value.surfaceColor || '#FFFFFF',
+  '--block-text-color': styles.value.surfaceTextColor || '#1F2937',
+  '--block-muted-color': styles.value.mutedTextColor || '#6B7280',
+}));
 
 onMounted(() => {
   observer = new IntersectionObserver((entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer?.unobserve(entry.target); } }); }, { threshold: 0.16 });
@@ -63,12 +75,12 @@ const onRsvp = (payload) => console.log('RSVP payload', payload);
       <a href="#rsvp" class="hero-cta">Confirmar asistencia</a>
     </section>
 
-    <section id="story" class="story-editorial motion-section" :ref="setSectionRef">
+    <section v-if="hasBlock('story')" id="story" class="story-editorial motion-section" :ref="setSectionRef">
       <div><h2>Nuestra historia</h2><p>{{ storyMessage }}</p></div>
       <div class="story-image"></div>
     </section>
 
-    <section class="gallery-editorial motion-section" :ref="setSectionRef">
+    <section v-if="hasBlock('gallery')" class="gallery-editorial motion-section" :ref="setSectionRef">
       <h2>Galería</h2>
       <div class="gallery-layered">
         <figure class="g-large"><div v-if="!gallery[0]?.src" class="ph">{{ gallery[0]?.alt || 'Foto principal' }}</div><img v-else :src="gallery[0].src" :alt="gallery[0].alt" /></figure>
@@ -77,8 +89,8 @@ const onRsvp = (payload) => console.log('RSVP payload', payload);
       </div>
     </section>
 
-    <section id="when" class="motion-section" :ref="setSectionRef"><TimelineBlock title="Cuándo y dónde" :items="timeline" /></section>
-    <section class="motion-section" :ref="setSectionRef"><MapBlock :location-name="locationName" :address="locationAddress" :map-url="mapUrl" :embed-url="embedUrl" /></section>
-    <section id="rsvp" class="motion-section" :ref="setSectionRef"><RSVPBlock @confirm="onRsvp" /></section>
+    <section v-if="hasBlock('timeline')" id="when" class="motion-section" :ref="setSectionRef"><TimelineBlock title="Cuándo y dónde" :items="timeline" /></section>
+    <section v-if="hasBlock('map')" class="motion-section" :ref="setSectionRef"><MapBlock :location-name="locationName" :address="locationAddress" :map-url="mapUrl" :embed-url="embedUrl" /></section>
+    <section v-if="hasBlock('rsvp')" id="rsvp" class="motion-section" :ref="setSectionRef"><RSVPBlock @confirm="onRsvp" /></section>
   </article>
 </template>

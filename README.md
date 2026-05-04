@@ -997,3 +997,11 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - RSVP was upgraded to include fields for full name, attendance, companions, and dietary restrictions, keeping backend disconnected and emitting/logging payload locally.
 - Scroll animations continue to use native `IntersectionObserver` and CSS transitions (no external animation libraries).
 - Mobile behavior was tuned for beauty and readability: centered hero, clamp typography, stacked gallery, mobile nav menu, full-width RSVP controls, and responsive map height.
+
+## Critical editor/template fixes
+- Extras toggle now treats `invitation.blocks` as the single source of truth and never deletes blocks when disabling; `toggleBlock(type)` only flips `enabled` and recreates missing blocks from `createDefaultBlock(type)`.
+- Added block order normalization to keep stable `order` values (`1..n`) after toggles/reorders while preserving disabled blocks in the array.
+- Mobile width issues were fixed by forcing `html/body/#app` and editor containers to hide horizontal overflow and by keeping mobile panels/canvas at full width.
+- Countdown reliability remains enforced with explicit 4-unit output (`Días`, `Horas`, `Minutos`, `Segundos`) and responsive 4-column desktop / 2x2 mobile layout.
+- Theme contrast rules were reinforced with expanded preset tokens (`surfaceColor`, `surfaceTextColor`, `mutedTextColor`) to avoid unreadable light text on light surfaces in dark/light switches.
+- Theme catalog was restored/expanded with classic, romantic, boho, dark premium, and developer-oriented themes (including IDE Dark and IDE Matrix).

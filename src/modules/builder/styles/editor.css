@@ -1,3 +1,4 @@
+.builder-editor-page, :global(html), :global(body), :global(#app){width:100%;overflow-x:hidden}
 .builder-editor-page{height:100vh;max-height:100vh;overflow:hidden;background:#f8fafc;display:grid;grid-template-rows:64px 1fr}
 .builder-toolbar{height:64px;min-height:64px;position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 14px;background:#fff;border-bottom:1px solid #e5e7eb}
 .toolbar-title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

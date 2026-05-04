@@ -106,6 +106,7 @@ const applyThemePreset = (preset) => {
   invitation.value.styles.backgroundGradient = preset.background;
   invitation.value.styles.surfaceColor = preset.surfaceColor;
   invitation.value.styles.surfaceTextColor = preset.surfaceTextColor;
+  invitation.value.styles.mutedTextColor = preset.mutedTextColor;
   // Keep legacy key synced for components still reading textColor.
   invitation.value.styles.textColor = preset.bodyTextColor;
 };

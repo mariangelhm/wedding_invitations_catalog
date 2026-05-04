@@ -33,7 +33,9 @@ const createDefaultBlock = (blockType) => {
     countdown_rsvp: { id: 'countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, price: 2000, label: 'Cuenta regresiva RSVP', description: 'Límite de confirmación.', settings: { targetDate: '2027-05-20T23:59:59', title: 'Tiempo para confirmar' } },
     rsvp: { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, label: 'RSVP', description: 'Confirmación de asistencia.', settings: {} },
   };
-  return blockCatalog[blockType] ? { ...blockCatalog[blockType] } : null;
+  if (!blockCatalog[blockType]) return null;
+  const uniqueId = globalThis.crypto?.randomUUID?.() || `${blockType}-${Date.now()}`;
+  return { ...blockCatalog[blockType], id: uniqueId };
 };
 const getRomanticDefaults = () => ({
   base: {
@@ -90,6 +92,11 @@ export const useBuilderStore = defineStore('builderStore', {
     },
     // Extras are reusable blocks shared by templates.
     // This ordered blocks API is the base for future drag & drop support.
+    normalizeBlockOrders() {
+      const blocks = this.ensureBlocks();
+      blocks.sort((a, b) => (a.order || 0) - (b.order || 0));
+      blocks.forEach((block, index) => { block.order = index + 1; });
+    },
     toggleBlock(blockType) {
       const blocks = this.ensureBlocks();
       const b = blocks.find((it) => it.type === blockType);
@@ -97,6 +104,7 @@ export const useBuilderStore = defineStore('builderStore', {
         // We do NOT delete blocks from invitation.blocks.
         // Keeping the block object preserves order/settings and allows instant re-enable in preview.
         b.enabled = !b.enabled;
+        this.normalizeBlockOrders();
         return;
       }
       // If a block is missing (legacy data), recreate from defaults instead of silently failing.
@@ -106,6 +114,7 @@ export const useBuilderStore = defineStore('builderStore', {
       recreated.order = lastOrder + 1;
       recreated.enabled = true;
       blocks.push(recreated);
+      this.normalizeBlockOrders();
     },
     moveBlockUp(blockId) { const items = this.invitation?.blocks; if (!items) return; items.sort((a,b)=>a.order-b.order); const i = items.findIndex((b)=>b.id===blockId); if (i<=0) return; [items[i-1].order, items[i].order] = [items[i].order, items[i-1].order]; },
     moveBlockDown(blockId) { const items = this.invitation?.blocks; if (!items) return; items.sort((a,b)=>a.order-b.order); const i = items.findIndex((b)=>b.id===blockId); if (i<0 || i===items.length-1) return; [items[i+1].order, items[i].order] = [items[i].order, items[i+1].order]; },
