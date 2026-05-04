@@ -873,3 +873,13 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - **Ir a pagar** routes to `/checkout` if that route exists; otherwise logs `go to checkout`.
 - The modal is responsive for mobile (`width: 95vw`, `max-width: 520px`) with a centered card, overlay, clean spacing, and dark pink primary action.
 - No payment provider or backend integration is included yet.
+
+## Fix block toggling and device preview switch
+- Extras now use **enabled flag toggling** instead of deleting blocks from `invitation.blocks`, preserving section configuration and preventing preview loss after reactivation.
+- `builderStore.toggleBlock(blockType)` now supports resilient behavior: if a block is missing (legacy/inconsistent state), it is recreated through a `createDefaultBlock(blockType)` factory and appended with `lastOrder + 1`.
+- The default block factory covers `countdown_wedding`, `story`, `gallery`, `timeline`, `map`, `countdown_rsvp`, and `rsvp` with full default config (`id`, `type`, `enabled`, `order`, `price`, `settings`).
+- The Romantic Motion template renders from `invitationData.blocks.filter(block => block.enabled).sort(...)`, so toggled-off blocks disappear and toggled-on blocks reappear consistently.
+- The editor toolbar restores device preview controls:
+  - `🖥️ Web` sets `selectedPreviewDevice = "desktop"`
+  - `📱 Mobile` sets `selectedPreviewDevice = "mobile"`
+- `InvitationPreview` accepts `device` prop and applies `invitation-preview--desktop` / `invitation-preview--mobile` classes so the preview stays responsive and centered without horizontal overflow.

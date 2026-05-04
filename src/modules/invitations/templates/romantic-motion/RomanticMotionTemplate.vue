@@ -16,8 +16,15 @@ let observer = null;
 const base = computed(() => props.invitationData?.base || {});
 const styles = computed(() => props.invitationData?.styles || {});
 const blocks = computed(() => Array.isArray(props.invitationData?.blocks) ? props.invitationData.blocks : []);
-const enabledTypes = computed(() => new Set(blocks.value.filter((b) => b.enabled !== false).map((b) => b.type)));
-const isEnabled = (type) => enabledTypes.value.has(type) || blocks.value.length === 0;
+const activeBlocks = computed(() => (blocks.value.length ? blocks.value : [
+  { type: 'countdown_wedding', enabled: true, order: 1 },
+  { type: 'story', enabled: true, order: 2 },
+  { type: 'gallery', enabled: true, order: 3 },
+  { type: 'timeline', enabled: true, order: 4 },
+  { type: 'map', enabled: true, order: 5 },
+  { type: 'countdown_rsvp', enabled: true, order: 6 },
+  { type: 'rsvp', enabled: true, order: 7 },
+]).filter((block) => block.enabled).sort((a, b) => a.order - b.order));
 
 const names = computed(() => base.value.names || 'María & Carlos');
 const weddingDate = computed(() => blocks.value.find((b) => b.type === 'countdown_wedding')?.settings?.targetDate || base.value.date || '2027-06-14T18:00:00');
@@ -102,62 +109,38 @@ onUnmounted(() => observer?.disconnect());
       <p class="hero-message">{{ heroMessage }}</p>
     </section>
 
-    <section v-if="isEnabled('countdown_wedding')" :ref="setSectionRef" class="motion-section section section-band">
-      <h2>Faltan para nuestra boda</h2>
-      <div class="count-grid"><div><strong>{{ weddingCountdown.days }}</strong><span>Días</span></div><div><strong>{{ weddingCountdown.hours }}</strong><span>Horas</span></div><div><strong>{{ weddingCountdown.minutes }}</strong><span>Min</span></div></div>
-    </section>
-
-    <section v-if="isEnabled('story')" :ref="setSectionRef" class="motion-section section story-split">
-      <div>
-        <h2>Nuestra historia</h2>
-        <p>{{ storyMessage }}</p>
-      </div>
-      <div class="story-panel" aria-hidden="true"><span>Desde el primer “sí”, todo cambió.</span></div>
-    </section>
-
-    <section v-if="isEnabled('gallery')" :ref="setSectionRef" class="motion-section section gallery-wrap">
-      <h2>Nuestros momentos</h2>
-      <div class="gallery-layered">
-        <figure v-for="(item, index) in gallery.slice(0,3)" :key="`${item.alt}-${index}`" :ref="setRevealItemRef" class="motion-item" :style="{ '--delay': `${index * 120}ms` }">
-          <img v-if="item.src" :src="item.src" :alt="item.alt" />
-          <div v-else class="placeholder">{{ item.alt }}</div>
-        </figure>
-      </div>
-    </section>
-
-    <section v-if="isEnabled('timeline')" :ref="setSectionRef" class="motion-section section section-band">
-      <h2>Bitácora del evento</h2>
-      <div class="timeline">
-        <article v-for="(item, index) in timeline" :key="`${item.time}-${index}`" :ref="setRevealItemRef" class="timeline-item motion-item" :style="{ '--delay': `${index * 120}ms` }">
-          <span class="dot"></span><p class="time">{{ item.time }}</p><h3>{{ item.title }}</h3><p>{{ item.place }}</p>
-        </article>
-      </div>
-    </section>
-
-    <section v-if="isEnabled('map')" :ref="setSectionRef" class="motion-section section">
-      <h2>Cómo llegar</h2>
-      <p>{{ locationName }} · {{ locationAddress }}</p>
-      <div v-if="embedUrl" class="map-frame">
-        <iframe :src="embedUrl" width="100%" height="320" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
-      <div v-else class="map-fallback">Ubicación disponible en Google Maps.</div>
-      <a :href="mapUrl" target="_blank" rel="noreferrer" class="map-btn">Abrir en Google Maps</a>
-    </section>
-
-    <section v-if="isEnabled('countdown_rsvp')" :ref="setSectionRef" class="motion-section section compact">
-      <h2>Tiempo para confirmar</h2>
-      <div class="count-grid compact"><div><strong>{{ rsvpCountdown.days }}</strong><span>Días</span></div><div><strong>{{ rsvpCountdown.hours }}</strong><span>Horas</span></div><div><strong>{{ rsvpCountdown.minutes }}</strong><span>Min</span></div></div>
-    </section>
-
-    <section v-if="isEnabled('rsvp')" :ref="setSectionRef" class="motion-section section rsvp-final">
-      <h2>¿Nos acompañas?</h2>
-      <p>Tu presencia hará este día todavía más inolvidable.</p>
-      <button v-if="!showRsvpInput" class="cta" type="button" @click="showRsvpInput = true">Confirmar asistencia</button>
-      <div v-else class="rsvp-form">
-        <input v-model="guestName" type="text" placeholder="Nombre y apellido" />
-        <button class="cta" type="button" @click="confirmRsvp">Enviar confirmación</button>
-      </div>
-      <p v-if="rsvpSent" class="success">¡Gracias {{ guestName }}! Tu confirmación fue enviada.</p>
+    <section v-for="block in activeBlocks" :key="block.id || block.type" :ref="setSectionRef" class="motion-section section" :class="{ 'section-band': ['countdown_wedding','timeline'].includes(block.type), compact: block.type === 'countdown_rsvp', 'story-split': block.type === 'story', 'gallery-wrap': block.type === 'gallery', 'rsvp-final': block.type === 'rsvp' }">
+      <template v-if="block.type === 'countdown_wedding'">
+        <h2>Faltan para nuestra boda</h2>
+        <div class="count-grid"><div><strong>{{ weddingCountdown.days }}</strong><span>Días</span></div><div><strong>{{ weddingCountdown.hours }}</strong><span>Horas</span></div><div><strong>{{ weddingCountdown.minutes }}</strong><span>Min</span></div></div>
+      </template>
+      <template v-else-if="block.type === 'story'">
+        <div><h2>Nuestra historia</h2><p>{{ storyMessage }}</p></div>
+        <div class="story-panel" aria-hidden="true"><span>Desde el primer “sí”, todo cambió.</span></div>
+      </template>
+      <template v-else-if="block.type === 'gallery'">
+        <h2>Nuestros momentos</h2>
+        <div class="gallery-layered"><figure v-for="(item, index) in gallery.slice(0,3)" :key="`${item.alt}-${index}`" :ref="setRevealItemRef" class="motion-item" :style="{ '--delay': `${index * 120}ms` }"><img v-if="item.src" :src="item.src" :alt="item.alt" /><div v-else class="placeholder">{{ item.alt }}</div></figure></div>
+      </template>
+      <template v-else-if="block.type === 'timeline'">
+        <h2>Bitácora del evento</h2>
+        <div class="timeline"><article v-for="(item, index) in timeline" :key="`${item.time}-${index}`" :ref="setRevealItemRef" class="timeline-item motion-item" :style="{ '--delay': `${index * 120}ms` }"><span class="dot"></span><p class="time">{{ item.time }}</p><h3>{{ item.title }}</h3><p>{{ item.place }}</p></article></div>
+      </template>
+      <template v-else-if="block.type === 'map'">
+        <h2>Cómo llegar</h2><p>{{ locationName }} · {{ locationAddress }}</p>
+        <div v-if="embedUrl" class="map-frame"><iframe :src="embedUrl" width="100%" height="320" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+        <div v-else class="map-fallback">Ubicación disponible en Google Maps.</div><a :href="mapUrl" target="_blank" rel="noreferrer" class="map-btn">Abrir en Google Maps</a>
+      </template>
+      <template v-else-if="block.type === 'countdown_rsvp'">
+        <h2>Tiempo para confirmar</h2>
+        <div class="count-grid compact"><div><strong>{{ rsvpCountdown.days }}</strong><span>Días</span></div><div><strong>{{ rsvpCountdown.hours }}</strong><span>Horas</span></div><div><strong>{{ rsvpCountdown.minutes }}</strong><span>Min</span></div></div>
+      </template>
+      <template v-else-if="block.type === 'rsvp'">
+        <h2>¿Nos acompañas?</h2><p>Tu presencia hará este día todavía más inolvidable.</p>
+        <button v-if="!showRsvpInput" class="cta" type="button" @click="showRsvpInput = true">Confirmar asistencia</button>
+        <div v-else class="rsvp-form"><input v-model="guestName" type="text" placeholder="Nombre y apellido" /><button class="cta" type="button" @click="confirmRsvp">Enviar confirmación</button></div>
+        <p v-if="rsvpSent" class="success">¡Gracias {{ guestName }}! Tu confirmación fue enviada.</p>
+      </template>
     </section>
   </article>
 </template>

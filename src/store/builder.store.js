@@ -23,6 +23,18 @@ const romanticDefaultBlocks = [
   { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, settings: {} },
 ];
 const getDefaultBlocks = () => defaultBlocks.map((b) => ({ ...b }));
+const createDefaultBlock = (blockType) => {
+  const blockCatalog = {
+    countdown_wedding: { id: 'countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, price: 3000, settings: { targetDate: '2027-06-14T18:00:00', title: 'Faltan para nuestra boda' } },
+    story: { id: 'story', type: 'story', enabled: true, order: 2, price: 0, settings: {} },
+    gallery: { id: 'gallery', type: 'gallery', enabled: true, order: 3, price: 5000, settings: {} },
+    timeline: { id: 'timeline', type: 'timeline', enabled: true, order: 4, price: 2000, settings: {} },
+    map: { id: 'map', type: 'map', enabled: true, order: 5, price: 3000, settings: {} },
+    countdown_rsvp: { id: 'countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, price: 2000, settings: { targetDate: '2027-05-20T23:59:59', title: 'Tiempo para confirmar' } },
+    rsvp: { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, settings: {} },
+  };
+  return blockCatalog[blockType] ? { ...blockCatalog[blockType] } : null;
+};
 const getRomanticDefaults = () => ({
   base: {
     names: 'María & Carlos',
@@ -81,8 +93,18 @@ export const useBuilderStore = defineStore('builderStore', {
     toggleBlock(blockType, enabled = null) {
       const blocks = this.ensureBlocks();
       const b = blocks.find((it) => it.type === blockType);
-      if (!b) return;
-      b.enabled = typeof enabled === 'boolean' ? enabled : !b.enabled;
+      if (b) {
+        // Keep blocks in the list and only toggle enabled flag so preview/editor data is preserved.
+        b.enabled = typeof enabled === 'boolean' ? enabled : !b.enabled;
+        return;
+      }
+      // If a block is missing (legacy data), recreate from defaults instead of silently failing.
+      const recreated = createDefaultBlock(blockType);
+      if (!recreated) return;
+      const lastOrder = blocks.length ? Math.max(...blocks.map((item) => item.order || 0)) : 0;
+      recreated.order = lastOrder + 1;
+      recreated.enabled = true;
+      blocks.push(recreated);
     },
     moveBlockUp(blockId) { const items = this.invitation?.blocks; if (!items) return; items.sort((a,b)=>a.order-b.order); const i = items.findIndex((b)=>b.id===blockId); if (i<=0) return; [items[i-1].order, items[i].order] = [items[i].order, items[i-1].order]; },
     moveBlockDown(blockId) { const items = this.invitation?.blocks; if (!items) return; items.sort((a,b)=>a.order-b.order); const i = items.findIndex((b)=>b.id===blockId); if (i<0 || i===items.length-1) return; [items[i+1].order, items[i].order] = [items[i].order, items[i+1].order]; },

@@ -104,6 +104,10 @@ const applyThemePreset = (preset) => {
     <header class="builder-toolbar">
       <RouterLink to="/catalog" class="back-link">← {{ t('editor.backToCatalog') }}</RouterLink>
       <div class="toolbar-title">Visual Builder · {{ invitation?.templateName || 'Sin template' }}</div>
+      <div class="device-switch">
+        <button class="device-btn" :class="{ active: selectedPreviewDevice === 'desktop' }" type="button" @click="selectedPreviewDevice = 'desktop'">🖥️ Web</button>
+        <button class="device-btn" :class="{ active: selectedPreviewDevice === 'mobile' }" type="button" @click="selectedPreviewDevice = 'mobile'">📱 Mobile</button>
+      </div>
     </header>
 
     <div class="builder-layout">
