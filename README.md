@@ -1005,3 +1005,26 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Countdown reliability remains enforced with explicit 4-unit output (`Días`, `Horas`, `Minutos`, `Segundos`) and responsive 4-column desktop / 2x2 mobile layout.
 - Theme contrast rules were reinforced with expanded preset tokens (`surfaceColor`, `surfaceTextColor`, `mutedTextColor`) to avoid unreadable light text on light surfaces in dark/light switches.
 - Theme catalog was restored/expanded with classic, romantic, boho, dark premium, and developer-oriented themes (including IDE Dark and IDE Matrix).
+
+## High-End Editorial Romantic Motion Template
+- Romantic Motion was upgraded to a luxury editorial concept inspired by high-end Wix wedding websites.
+- Design foundations:
+  - cream editorial base,
+  - charcoal typography,
+  - elegant accent color,
+  - refined serif + sans hierarchy,
+  - generous whitespace and continuous one-page narrative.
+- Core sections included in flow:
+  - sticky invitation header (desktop nav + mobile hamburger),
+  - full-screen hero,
+  - minimalist countdown,
+  - story split section,
+  - event details,
+  - masonry gallery with lightbox,
+  - registry strip,
+  - map with embedded frame,
+  - editorial dark RSVP section.
+- Animations use custom `IntersectionObserver` + CSS reveal classes (`motion-section`, `motion-left`, `motion-right`, `motion-fade`, `is-visible`).
+- No AOS/external animation library is used yet.
+- Future option is documented in code comments for optional AOS migration.
+- Mobile behavior includes no horizontal overflow, stacked content, responsive map, and full-width RSVP controls.

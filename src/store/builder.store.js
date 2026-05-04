@@ -54,6 +54,7 @@ const getRomanticDefaults = () => ({
     { src: '', alt: 'Foto principal' },
     { src: '', alt: 'Momento especial' },
     { src: '', alt: 'Nuestra historia' },
+    { src: '', alt: 'Celebración' },
   ],
   mapSettings: {
     locationName: 'Rose Garden Hall',

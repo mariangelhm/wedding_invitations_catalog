@@ -11,6 +11,7 @@
 .countdown-block.is-visible { opacity: 1; transform: translateY(0); }
 .countdown-block--primary { background: transparent; border-radius: 0; box-shadow:none; padding: 4px 0; }
 .countdown-block--minimal { padding: 8px 0; }
+.countdown-block--editorial { padding: 0; background: transparent; box-shadow:none; }
 .countdown-title { margin-bottom: 12px; color: var(--primary-color); }
 .countdown-grid {
   display: grid;
@@ -19,6 +20,8 @@
 }
 .time-cell { text-align: center; border-radius: 12px; padding: 10px 4px; background: transparent; }
 .countdown-block--minimal .time-cell { background: transparent; border: 1px solid transparent; }
+.countdown-block--editorial .time-cell { background: transparent; border:0; }
+.countdown-block--editorial .time-value { font-size: clamp(2.2rem, 6vw, 3rem); }
 .time-value { display: block; font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
 .time-label { display: block; color: var(--muted-color); font-size: .7rem; margin-top: 2px; text-transform:uppercase; letter-spacing:.08em; }
 @media (max-width: 768px) {

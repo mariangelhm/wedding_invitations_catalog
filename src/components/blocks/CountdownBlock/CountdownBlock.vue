@@ -12,7 +12,7 @@ import './countdownBlock.css';
 const props = withDefaults(defineProps<{
   targetDate: string;
   title?: string;
-  variant?: 'primary' | 'minimal';
+  variant?: 'primary' | 'minimal' | 'editorial';
 }>(), {
   title: '',
   variant: 'primary',
