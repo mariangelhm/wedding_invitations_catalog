@@ -890,3 +890,12 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - `toggleBlock(blockType)` now toggles existing blocks by type, and recreates missing blocks through `createDefaultBlock(blockType)` for resilient legacy-data handling.
 - `createDefaultBlock(blockType)` supports: `countdown_wedding`, `story`, `gallery`, `timeline`, `map`, `countdown_rsvp`, and `rsvp`.
 - Romantic Motion rendering uses `invitationData.blocks.filter(block => block.enabled).sort((a, b) => a.order - b.order)` so disabled sections do not render and re-enabled ones return instantly.
+
+## Done button placement
+- The separate middle price panel was removed from the editor layout.
+- The **Total** summary and **Listo** button now live under the left icon menu in a bottom section.
+- Left sidebar uses a column flow (`display: flex; flex-direction: column;`) so:
+  - menu items stay at the top,
+  - total + Listo stay pinned to the bottom.
+- The **Listo** button keeps the current behavior (opens the invitation summary modal).
+- On mobile, the icon menu becomes horizontal and the total + Listo controls are shown inline after the menu actions for quick access.

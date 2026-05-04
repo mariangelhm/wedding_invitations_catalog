@@ -112,9 +112,18 @@ const applyThemePreset = (preset) => {
 
     <div class="builder-layout">
       <aside class="icon-menu">
-        <button v-for="item in sectionCatalog" :key="item.id" class="icon-menu-item" :class="{ active: selectedSection === item.id }" @click="selectedSection = item.id">
-          <span class="menu-icon">{{ item.icon }}</span><span class="menu-label">{{ item.label }}</span>
-        </button>
+        <div class="icon-menu-top">
+          <button v-for="item in sectionCatalog" :key="item.id" class="icon-menu-item" :class="{ active: selectedSection === item.id }" @click="selectedSection = item.id">
+            <span class="menu-icon">{{ item.icon }}</span><span class="menu-label">{{ item.label }}</span>
+          </button>
+        </div>
+        <div class="icon-menu-bottom">
+          <div class="compact-total">
+            <span>Total</span>
+            <strong>{{ formatPrice(builderStore.totalPrice) }}</strong>
+          </div>
+          <button class="done-btn" type="button" @click="isCheckoutModalOpen = true">Listo</button>
+        </div>
       </aside>
 
       <aside class="settings-panel">
