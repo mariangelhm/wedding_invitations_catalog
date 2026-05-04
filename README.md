@@ -854,3 +854,20 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Menú lateral y panel de ajustes con espaciado compacto y scroll interno.
 - Canvas maximiza el preview con padding `24px` desktop y `12px` mobile.
 - Mientras la ruta `/editor` está activa, el `body` bloquea su scroll; solo los paneles internos hacen scroll.
+
+## Sample gallery images
+- La galería usa assets locales de muestra desde `src/assets/sample-gallery/` cuando no hay fotos personalizadas.
+- Agrega estos archivos en esa carpeta:
+  - `wedding-1.jpg`
+  - `wedding-2.jpg`
+  - `wedding-3.jpg`
+  - `wedding-4.jpg`
+- Si los archivos faltan o fallan al cargar, `GalleryBlock` muestra placeholders elegantes y nunca deja iconos rotos.
+
+## Romantic Motion premium template
+- `romantic-01` ahora inicia con una experiencia premium continua tipo Wix: Hero, countdown boda, historia, galería, bitácora, mapa, countdown RSVP y RSVP final.
+- `builder.store` crea datos por defecto para romantic-01 (nombres, fecha, ubicación, mensajes, timeline, gallery, mapSettings y blocks habilitados).
+- El template usa scroll reveal con `IntersectionObserver` (fade + translateY) y lo anima una sola vez por sección.
+- El mapa soporta `embedUrl` con iframe responsivo (`loading="lazy"`, `allowfullscreen`, `referrerpolicy="no-referrer-when-downgrade"`) y fallback de enlace a Google Maps.
+- El layout se mantiene continuo con capas decorativas, bandas suaves y overlap de galería para sensación narrativa.
+- En mobile se evita scroll horizontal, se ajustan tamaños con `clamp` y se mantiene legibilidad de mapa/RSVP.

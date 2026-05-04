@@ -88,7 +88,7 @@ const applyThemePreset = (preset) => {
 </script>
 
 <template>
-  <section class="builder-editor-page">
+  <section class="builder-editor-page" aria-label="Compact full-height editor">
     <header class="builder-toolbar">
       <RouterLink to="/catalog" class="back-link">← {{ t('editor.backToCatalog') }}</RouterLink>
       <div class="toolbar-title">Visual Builder · {{ invitation?.templateName || 'Sin template' }}</div>

@@ -8,7 +8,7 @@ import './galleryBlock.css';
 
 const props = withDefaults(defineProps<{
   title?: string;
-  images?: Array<{ src: string; alt?: string }>
+  images?: Array<{ src: string; alt?: string }>;
   integrated?: boolean;
 }>(), {
   title: 'Nuestros momentos',
@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<{
   integrated: false,
 });
 
+// These images will later be replaced by user-uploaded photos.
 const localSampleImages = [
   { src: wedding1, alt: 'Foto principal' },
   { src: wedding2, alt: 'Momento especial' },
@@ -23,27 +24,39 @@ const localSampleImages = [
   { src: wedding4, alt: 'Celebración' },
 ];
 
+const fallbackPlaceholders = [
+  { src: '', alt: 'Foto principal' },
+  { src: '', alt: 'Momento especial' },
+  { src: '', alt: 'Nuestra historia' },
+];
+
+const failedImages = ref<Record<string, boolean>>({});
+
 const normalizedItems = computed(() => {
   const customItems = (props.images || [])
     .map((item, index) => {
       const src = (item?.src || '').trim();
-      return {
-        src,
-        alt: item?.alt || `Imagen ${index + 1}`,
-        isRealImage: src.length > 0,
-      };
+      return { src, alt: item?.alt || `Imagen ${index + 1}` };
     })
-    .filter((item) => item.isRealImage);
+    .filter((item) => item.src.length > 0);
 
-  if (customItems.length > 0) {
-    return customItems;
-  }
+  if (customItems.length > 0) return customItems;
 
-  return localSampleImages.map((item) => ({
-    ...item,
-    isRealImage: Boolean(item.src),
-  }));
+  const availableLocalSamples = localSampleImages.filter((item) => (item.src || '').trim().length > 0);
+  if (availableLocalSamples.length > 0) return availableLocalSamples;
+
+  return fallbackPlaceholders;
 });
+
+const isVisibleImage = (image: { src: string; alt: string }, index: number) => {
+  const key = `${index}-${image.src}`;
+  return Boolean(image.src) && !failedImages.value[key];
+};
+
+const onImageError = (image: { src: string; alt: string }, index: number) => {
+  const key = `${index}-${image.src}`;
+  failedImages.value[key] = true;
+};
 
 const rootEl = ref<HTMLElement | null>(null);
 const isVisible = ref(false);
@@ -70,10 +83,10 @@ onMounted(() => {
         v-for="(image, index) in normalizedItems"
         :key="`${image.alt}-${index}`"
         class="gallery-item"
-        :class="[{ 'gallery-item--main': index === 0 }, { 'gallery-item--placeholder': !image.isRealImage }]"
+        :class="[{ 'gallery-item--main': index === 0 }, { 'gallery-item--placeholder': !isVisibleImage(image, index) }]"
         :style="{ transitionDelay: `${index * 80}ms` }"
       >
-        <img v-if="image.isRealImage" :src="image.src" :alt="image.alt" />
+        <img v-if="isVisibleImage(image, index)" :src="image.src" :alt="image.alt" @error="onImageError(image, index)" />
         <div v-else class="placeholder-card">
           <span class="placeholder-icon">✦</span>
           <span>{{ image.alt }}</span>

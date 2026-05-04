@@ -28,7 +28,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.app-layout { min-height: 100vh; display: grid; grid-template-rows: 1fr; }
+.app-layout { height: 100vh; min-height: 100vh; display: grid; grid-template-rows: 1fr; overflow: hidden; }
 .app-main { min-height: 0; }
 .app-main--editor { height: 100vh; overflow: hidden; }
 </style>
