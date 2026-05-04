@@ -1043,3 +1043,11 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Extras reutilizados (Countdown/Story/Gallery/Map/RSVP) sin recrear data: solo se renderizan si el bloque está habilitado.
 - Flujo continuo de secciones (detalles, registro, FAQ, RSVP) sin UI del editor dentro de la vista pública.
 - El preview permanece limpio y de ancho completo, sin paneles internos adicionales.
+
+## Romantic Motion Wix-style editorial redesign
+- Se rediseñó el template `romantic-01` con estructura editorial premium: header fijo, hero, story, details, parallax quote, RSVP, map+FAQ y footer.
+- `romantic-01` mantiene `editorialClassic` como tema por defecto y usa colores de alto contraste para hero, detalles, RSVP suave (`#EFEBE9`) y footer oscuro.
+- Los extras reutilizables (Countdown/Gallery/Map/RSVP) no se recrean: solo se renderizan cuando están habilitados y se estilizan por wrappers del template.
+- Se agregó sección intermedia parallax (desktop fixed, mobile scroll fallback) y acordeón de FAQ sin librerías externas.
+- El template usa `IntersectionObserver` para revelar secciones con `motion-section`, `motion-left`, `motion-right`.
+- Ajustes responsive: menú hamburguesa full-screen, columnas apiladas en móvil, hero adaptable y control estricto de overflow horizontal.
