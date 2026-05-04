@@ -37,5 +37,10 @@ export function useCountdown(targetDate: string) {
     if (timer) clearInterval(timer);
   });
 
-  return { breakdown, isExpired };
+  const days = computed(() => breakdown.value.days);
+  const hours = computed(() => breakdown.value.hours);
+  const minutes = computed(() => breakdown.value.minutes);
+  const seconds = computed(() => breakdown.value.seconds);
+
+  return { days, hours, minutes, seconds, isExpired };
 }

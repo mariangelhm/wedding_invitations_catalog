@@ -19,13 +19,13 @@
 .countdown-title { margin-bottom: 12px; color: var(--primary-color); }
 .countdown-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
 .time-cell { text-align: center; border-radius: 12px; padding: 10px; background: #fff; }
 .countdown-block--minimal .time-cell { background: transparent; border: 1px solid transparent; }
 .time-value { display: block; font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
 .time-label { display: block; color: var(--muted-color); font-size: .8rem; margin-top: 2px; }
-@media (min-width: 900px) {
-  .countdown-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 768px) {
+  .countdown-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
