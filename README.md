@@ -1105,3 +1105,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - `builder.store` guarda `styles.themeTokens` al aplicar tema y además mantiene campos legacy por compatibilidad.
 - `RomanticMotionTemplate` consume tokens vía variables CSS (`--theme-*`) en vez de colores sueltos.
 - Este enfoque permite reutilizar el mismo contrato visual en futuros templates sin hardcodear colores por sección.
+
+
+### Theme switching repair
+- El selector de temas ahora llama al flujo del store (`applyTheme`) en lugar de mutar estado local parcial.
+- `applyTheme` reemplaza `themeTokens` completo y reasigna `invitation`/`styles` para garantizar reactividad en Vue/Pinia.
+- Romantic Motion consume variables raíz `--theme-*` derivadas de `styles.themeTokens`, evitando mezclas con valores viejos.

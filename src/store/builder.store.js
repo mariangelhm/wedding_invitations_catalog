@@ -120,6 +120,27 @@ export const useBuilderStore = defineStore('builderStore', {
     totalPrice() { return (this.invitation?.basePrice || this.basePrice) + this.enabledBlocksPrice; },
   },
   actions: {
+
+    applyTheme(themeId) {
+      if (!this.invitation) return;
+      const theme = themePresets.find((item) => item.id === themeId);
+      if (!theme?.tokens) return;
+      const tokens = structuredClone(theme.tokens);
+      this.invitation = {
+        ...this.invitation,
+        styles: {
+          ...(this.invitation.styles || {}),
+          backgroundTheme: theme.id,
+          themeTokens: tokens,
+          primaryColor: tokens.accent,
+          secondaryColor: tokens.sectionAltBg,
+          titleColor: tokens.titleText,
+          bodyTextColor: tokens.bodyText,
+          heroBackground: tokens.heroBg,
+          heroTextColor: tokens.heroText,
+        },
+      };
+    },
     createDraftInvitation(template = null) {
       const createdAt = new Date(); const expiresAt = new Date(createdAt); expiresAt.setDate(expiresAt.getDate() + 30);
       const romanticDefaults = template?.id === 'romantic-01' ? getRomanticDefaults() : null;
