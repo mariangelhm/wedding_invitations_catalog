@@ -1,5 +1,6 @@
 <script setup>
-import { computed, ref } from 'vue';
+import * as Vue from 'vue';
+const { computed, ref } = Vue;
 import CountdownBlock from '../../../../components/blocks/CountdownBlock/CountdownBlock.vue';
 import StoryBlock from '../../../../components/blocks/StoryBlock/StoryBlock.vue';
 import GalleryBlock from '../../../../components/blocks/GalleryBlock/GalleryBlock.vue';
@@ -26,7 +27,7 @@ const revealRefs = ref([]);
 let observer = null;
 let removeScrollListener = null;
 const setRevealRef = (el) => { if (el && !revealRefs.value.includes(el)) revealRefs.value.push(el); };
-onMounted(() => {
+Vue.onMounted(() => {
   const onScroll = () => { headerScrolled.value = window.scrollY > 16; };
   window.addEventListener('scroll', onScroll, { passive: true });
   removeScrollListener = () => window.removeEventListener('scroll', onScroll);
@@ -36,7 +37,7 @@ onMounted(() => {
   }, { threshold: 0.14 });
   revealRefs.value.forEach((el) => observer?.observe(el));
 });
-onUnmounted(() => {
+Vue.onUnmounted(() => {
   observer?.disconnect();
   removeScrollListener?.();
 });
