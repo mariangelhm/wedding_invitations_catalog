@@ -911,3 +911,14 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Added subtle hover micro-interaction (`translateY(-2px)` + soft shadow).
 - Replaced checkbox with a modern switch control for better UX clarity.
 - Updated compact preview mini-UIs for countdown, story, gallery, timeline, map and RSVP blocks.
+
+## Native drag and drop extras ordering
+- Extras cards now support native HTML5 drag and drop (`draggable`, `dragstart`, `dragover`, `drop`) without external libraries.
+- Only active extras are draggable for ordering; inactive extras remain visible but non-draggable.
+- Dropping one active extra over another calls `reorderBlocks(draggedBlockId, targetBlockId)` in the store.
+- `reorderBlocks` reorders `invitation.blocks` and normalizes `order` values sequentially.
+- Move up/down buttons remain available as fallback controls.
+- Visual feedback during drag:
+  - dragged card uses reduced opacity,
+  - drop target gets highlighted.
+- Romantic Motion preview updates immediately because enabled blocks are always rendered sorted by `order`.

@@ -16,6 +16,7 @@ let observer = null;
 const base = computed(() => props.invitationData?.base || {});
 const styles = computed(() => props.invitationData?.styles || {});
 const blocks = computed(() => Array.isArray(props.invitationData?.blocks) ? props.invitationData.blocks : []);
+// Preview order reacts to builder drag-and-drop because we always sort by current block.order.
 const activeBlocks = computed(() => blocks.value.filter((block) => block.enabled).sort((a, b) => a.order - b.order));
 
 const names = computed(() => base.value.names || 'María & Carlos');

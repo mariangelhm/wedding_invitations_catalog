@@ -20,6 +20,9 @@
 .block-list{display:grid;gap:10px}
 .block-card{display:grid;gap:8px;border:1px solid #e5e7eb;border-radius:12px;padding:10px;background:#fff;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
 .block-card:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(15,23,42,.10)}
+.block-card.is-active{cursor:grab}
+.block-card.is-dragging{opacity:.5;cursor:grabbing}
+.block-card.is-drop-target{border-color:#c7355c;box-shadow:0 0 0 2px rgba(199,53,92,.2)}
 .block-card.is-active{border-color:var(--color-primary);background:#fff4f8}
 .block-card.is-inactive{color:#6b7280}
 .block-head{display:flex;align-items:center;gap:10px}

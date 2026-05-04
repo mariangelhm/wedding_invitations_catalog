@@ -21,6 +21,8 @@ const backgroundTab = ref('themes');
 const selectedTypographyTab = ref('names');
 const isPreviewOpen = ref(false);
 const isCheckoutModalOpen = ref(false);
+const draggingBlockId = ref(null);
+const dropTargetBlockId = ref(null);
 
 const sectionCatalog = [
   { id: 'background', icon: '🎨', label: 'Fondo' },
@@ -83,6 +85,15 @@ const toggleBlockAddon = (item) => {
   // Toggle enabled flag only. Blocks are never deleted so they can be re-enabled immediately.
   builderStore.toggleBlock(item.type);
 };
+const onDragStart = (block) => { if (!block.enabled) return; draggingBlockId.value = block.id; };
+const onDropOver = (block) => { if (!block.enabled || !draggingBlockId.value || draggingBlockId.value === block.id) return; dropTargetBlockId.value = block.id; };
+const onDropBlock = (targetBlock) => {
+  if (!draggingBlockId.value || !targetBlock?.id || draggingBlockId.value === targetBlock.id) return;
+  builderStore.reorderBlocks(draggingBlockId.value, targetBlock.id);
+  draggingBlockId.value = null;
+  dropTargetBlockId.value = null;
+};
+const onDragEnd = () => { draggingBlockId.value = null; dropTargetBlockId.value = null; };
 
 const applyThemePreset = (preset) => {
   invitation.value.styles.backgroundTheme = preset.id;
@@ -150,7 +161,7 @@ const applyThemePreset = (preset) => {
         </div>
         <div v-else class="block-list">
           <!-- This is the base for future drag-and-drop ordering in all templates. -->
-          <article v-for="block in orderedBlocks" :key="block.id" class="block-card" :class="{ 'is-active': block.enabled, 'is-inactive': !block.enabled }">
+          <article v-for="block in orderedBlocks" :key="block.id" class="block-card" :class="{ 'is-active': block.enabled, 'is-inactive': !block.enabled, 'is-dragging': draggingBlockId === block.id, 'is-drop-target': dropTargetBlockId === block.id }" :draggable="block.enabled" @dragstart="onDragStart(block)" @dragover.prevent="onDropOver(block)" @drop="onDropBlock(block)" @dragend="onDragEnd">
             <div class="block-head">
               <div class="extra-preview" :class="`extra-preview--${blockOptions.find((i)=>i.type===block.type)?.preview}`"></div>
               <div class="block-head-meta">

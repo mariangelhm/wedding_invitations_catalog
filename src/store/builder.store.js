@@ -109,5 +109,17 @@ export const useBuilderStore = defineStore('builderStore', {
     },
     moveBlockUp(blockId) { const items = this.invitation?.blocks; if (!items) return; items.sort((a,b)=>a.order-b.order); const i = items.findIndex((b)=>b.id===blockId); if (i<=0) return; [items[i-1].order, items[i].order] = [items[i].order, items[i-1].order]; },
     moveBlockDown(blockId) { const items = this.invitation?.blocks; if (!items) return; items.sort((a,b)=>a.order-b.order); const i = items.findIndex((b)=>b.id===blockId); if (i<0 || i===items.length-1) return; [items[i+1].order, items[i].order] = [items[i].order, items[i+1].order]; },
+    reorderBlocks(draggedBlockId, targetBlockId) {
+      const items = this.invitation?.blocks;
+      if (!items?.length || !draggedBlockId || !targetBlockId || draggedBlockId === targetBlockId) return;
+      const ordered = items.slice().sort((a, b) => a.order - b.order);
+      const draggedIndex = ordered.findIndex((item) => item.id === draggedBlockId);
+      const targetIndex = ordered.findIndex((item) => item.id === targetBlockId);
+      if (draggedIndex < 0 || targetIndex < 0) return;
+      const [dragged] = ordered.splice(draggedIndex, 1);
+      ordered.splice(targetIndex, 0, dragged);
+      ordered.forEach((item, index) => { item.order = index + 1; });
+      this.invitation.blocks = ordered;
+    },
   },
 });
