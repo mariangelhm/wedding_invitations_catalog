@@ -1116,3 +1116,11 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 ### Default romantic-01 theme: Modern Rustic
 - `romantic-01` ahora inicia con `backgroundTheme: "modernRustic"` y tokens cálidos editoriales por defecto.
 - `editorialClassic` se mantiene disponible como alternativa, pero ya no es el preset inicial del draft romántico.
+
+
+### Modern Rustic default theme and contrast rules
+- `modernRustic` mantiene hero claro (`#F7F7F5`) con texto oscuro y alternancia de secciones claras/cálidas.
+- Regla global: fondos claros -> texto oscuro; fondos oscuros -> texto claro.
+- Se agregó helper de contraste (`getReadableTextColor`) para fallback seguro cuando falta texto en tokens.
+- Hero y quote usan tokens dedicados (incluyendo botones del hero) para evitar texto ilegible.
+- El fallback de contraste prioriza `styles.themeTokens` y solo aplica color automático cuando un token de texto no está definido.
