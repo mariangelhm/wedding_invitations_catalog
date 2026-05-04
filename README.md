@@ -854,3 +854,228 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Menú lateral y panel de ajustes con espaciado compacto y scroll interno.
 - Canvas maximiza el preview con padding `24px` desktop y `12px` mobile.
 - Mientras la ruta `/editor` está activa, el `body` bloquea su scroll; solo los paneles internos hacen scroll.
+
+
+## Romantic Motion premium template
+- The `romantic-01` template now ships with all default sections enabled in a continuous one-page storytelling flow: Hero, wedding countdown, story, gallery, event timeline, map, RSVP countdown, and final RSVP CTA/form.
+- `createDraftInvitation(template)` preloads premium default content data for `romantic-01` including base couple details, timeline milestones, gallery placeholders, and complete map settings with Google Maps embed support.
+- The template uses native `IntersectionObserver` reveal animations (no external libraries) with staggered item transitions for gallery and timeline entries.
+- The map section supports embedded iframes (`embedUrl`) and gracefully falls back to a Google Maps link card when only `mapUrl` is available.
+- Layout was redesigned as a connected invitation experience (shared background layers, soft bands, overlap, and depth) instead of isolated cards.
+- Responsive behavior was tuned for mobile: clamp-based hero typography, stacked split/gallery layouts, no horizontal scroll, responsive map height, and full-width RSVP form controls.
+
+## Done button and checkout summary modal
+- The editor now includes a compact **Total** summary panel under the left area and a **Listo** button to finish configuration.
+- Total price is calculated in `builderStore` using enabled blocks pricing (`basePrice + sum(enabled blocks prices)`) through reactive getters.
+- Clicking **Listo** opens a checkout summary modal with: template name, base price, selected extras with prices, optional duration, and total price.
+- Modal actions:
+  - **Cancelar** closes the modal and returns to editing.
+  - **Ir a pagar** routes to `/checkout` if that route exists; otherwise logs `go to checkout`.
+- The modal is responsive for mobile (`width: 95vw`, `max-width: 520px`) with a centered card, overlay, clean spacing, and dark pink primary action.
+- No payment provider or backend integration is included yet.
+
+## Fix block toggling and device preview switch
+- Extras now use **enabled flag toggling** instead of deleting blocks from `invitation.blocks`, preserving section configuration and preventing preview loss after reactivation.
+- `builderStore.toggleBlock(blockType)` now supports resilient behavior: if a block is missing (legacy/inconsistent state), it is recreated through a `createDefaultBlock(blockType)` factory and appended with `lastOrder + 1`.
+- The default block factory covers `countdown_wedding`, `story`, `gallery`, `timeline`, `map`, `countdown_rsvp`, and `rsvp` with full default config (`id`, `type`, `enabled`, `order`, `price`, `settings`).
+- The Romantic Motion template renders from `invitationData.blocks.filter(block => block.enabled).sort(...)`, so toggled-off blocks disappear and toggled-on blocks reappear consistently.
+- The editor toolbar restores device preview controls:
+  - `🖥️ Web` sets `selectedPreviewDevice = "desktop"`
+  - `📱 Mobile` sets `selectedPreviewDevice = "mobile"`
+- `InvitationPreview` accepts `device` prop and applies `invitation-preview--desktop` / `invitation-preview--mobile` classes so the preview stays responsive and centered without horizontal overflow.
+
+## Fix extras toggle behavior
+- Extras are no longer removed from `invitation.blocks` when disabled; they are preserved and only switch `enabled` to `false`.
+- Re-enabling the same extra switches `enabled` back to `true`, so the section appears again immediately in preview.
+- `toggleBlock(blockType)` now toggles existing blocks by type, and recreates missing blocks through `createDefaultBlock(blockType)` for resilient legacy-data handling.
+- `createDefaultBlock(blockType)` supports: `countdown_wedding`, `story`, `gallery`, `timeline`, `map`, `countdown_rsvp`, and `rsvp`.
+- Romantic Motion rendering uses `invitationData.blocks.filter(block => block.enabled).sort((a, b) => a.order - b.order)` so disabled sections do not render and re-enabled ones return instantly.
+
+## Done button placement
+- The separate middle price panel was removed from the editor layout.
+- The **Total** summary and **Listo** button now live under the left icon menu in a bottom section.
+- Left sidebar uses a column flow (`display: flex; flex-direction: column;`) so:
+  - menu items stay at the top,
+  - total + Listo stay pinned to the bottom.
+- The **Listo** button keeps the current behavior (opens the invitation summary modal).
+- On mobile, the icon menu becomes horizontal and the total + Listo controls are shown inline after the menu actions for quick access.
+
+## Extras visual cards
+- The Extras section cards were redesigned to a compact professional layout with three clear zones:
+  - top row: mini visual preview + title + price badge,
+  - description row,
+  - bottom row: modern toggle switch, state label (`Activo` / `Inactivo`), and move up/down actions only when active.
+- Cards now have active/inactive visual states:
+  - active: primary border + soft pink background,
+  - inactive: white background + muted text.
+- Added subtle hover micro-interaction (`translateY(-2px)` + soft shadow).
+- Replaced checkbox with a modern switch control for better UX clarity.
+- Updated compact preview mini-UIs for countdown, story, gallery, timeline, map and RSVP blocks.
+
+## Native drag and drop extras ordering
+- Extras cards now support native HTML5 drag and drop (`draggable`, `dragstart`, `dragover`, `drop`) without external libraries.
+- Only active extras are draggable for ordering; inactive extras remain visible but non-draggable.
+- Dropping one active extra over another calls `reorderBlocks(draggedBlockId, targetBlockId)` in the store.
+- `reorderBlocks` reorders `invitation.blocks` and normalizes `order` values sequentially.
+- Move up/down buttons remain available as fallback controls.
+- Visual feedback during drag:
+  - dragged card uses reduced opacity,
+  - drop target gets highlighted.
+- Romantic Motion preview updates immediately because enabled blocks are always rendered sorted by `order`.
+
+## Countdown seconds fix
+- `CountdownBlock` now always renders exactly four units: **Días, Horas, Minutos, Segundos**.
+- `useCountdown` now returns the requested API shape:
+  - `days`
+  - `hours`
+  - `minutes`
+  - `seconds`
+  - `isExpired`
+- Countdown layout is responsive by default:
+  - desktop: 4 columns,
+  - mobile: 2x2 grid.
+- Extras mini preview for countdown now explicitly shows four values including seconds: `12 / 04 / 33 / 59`.
+
+## Extras toggle fix
+- `toggleBlock(blockType)` now uses `invitation.blocks` as the source of truth and never deletes block entries when disabling extras.
+- Existing blocks are toggled only through `block.enabled = !block.enabled`, preserving previous order and settings.
+- If a block does not exist, it is recreated through `createDefaultBlock(blockType)`, pushed into `invitation.blocks`, and enabled by default.
+- `createDefaultBlock(blockType)` supports all standard extras and now returns complete metadata (`id`, `type`, `enabled`, `order`, `price`, `label`, `description`, `settings`).
+- Romantic Motion now renders from enabled blocks computed as `blocks.filter(block => block.enabled).sort((a, b) => a.order - b.order)` with fallback enabled blocks only when `invitationData.blocks` is missing.
+- Development-only debug logging was added to verify live block state transitions: `console.log("Enabled blocks", enabledBlocks.value)`.
+
+## Compact editor price and Done button
+- The left editor sidebar now uses a compact two-zone structure:
+  - top: menu items,
+  - bottom: summary area with **Total** and **Listo**.
+- Sidebar summary is constrained to the sidebar width (`92px`) and prevents horizontal overflow.
+- Price display uses compact formatting (`$35k`) to avoid long-line clipping in narrow sidebar width.
+- **Listo** button is full-width with compact sizing (`font-size: 12px`, tighter padding, rounded corners) to prevent split/cut rendering.
+- Mobile behavior was improved:
+  - sidebar summary is hidden from the small horizontal icon menu,
+  - total + Listo are shown in a sticky bottom bar for reliable access and no squeezing.
+- Existing checkout modal behavior remains unchanged.
+
+## Editor mobile layout
+- Desktop layout remains unchanged: top toolbar, left icon sidebar, settings panel, and preview canvas.
+- On mobile (`< 768px`):
+  - toolbar remains fixed at top (including Web/Mobile preview switch),
+  - desktop left sidebar is hidden,
+  - a new horizontal, scrollable mobile tabs row is shown inside settings with: **Fondo, Tarjeta, Letras, Extras**,
+  - settings panel uses full width with improved spacing,
+  - preview canvas stays full width with `12px` padding and centered preview,
+  - sticky bottom summary bar keeps **Total** and **Listo** always accessible.
+- Mobile layout blocks horizontal page scrolling and keeps interactions inside panels.
+
+## Theme card selector and IDE theme
+- The **Temas** panel now uses modern large theme cards with:
+  - theme name,
+  - short description,
+  - 4-color palette swatches,
+  - selected state with primary border and checkmark.
+- Theme presets were normalized to include full metadata:
+  - `id`, `name`, `description`, `primaryColor`, `secondaryColor`, `background`, `accentShape`, `titleColor`, `bodyTextColor`, `surfaceColor`, `surfaceTextColor`, `palette`.
+- Added curated themes:
+  - Editorial Marfil
+  - Boho Chic
+  - Noche Elegante
+  - Moderna Lavanda
+  - Gris Carbón
+  - IDE / Desarrollo
+- Added the new dark **IDE / Desarrollo** preset with the requested values for a technical, modern visual style.
+- Applying a theme now updates all key style tokens (including `backgroundTheme`, `primaryColor`, `secondaryColor`, `background`, `accentShape`, `titleColor`, `bodyTextColor`, `surfaceColor`, `surfaceTextColor`) so switching between dark/light themes restores proper text contrast.
+- The panel keeps tab switching between **Temas** and **Colores** fully functional.
+
+## Romantic Motion editorial redesign
+- Romantic Motion was redesigned as an editorial, continuous wedding invitation experience inspired by modern Wix-style wedding pages.
+- The template now uses a cream editorial atmosphere with elegant serif typography, generous spacing, layered gallery composition, and smooth section reveals.
+- Added an invitation mini-header with initials and internal navigation links (`Historia`, `Cuándo y dónde`, `RSVP`), with mobile hamburger toggle support.
+- Hero section now acts as the visual anchor with large names, minimalist countdown, date/location metadata and a ghost CTA (`Confirmar asistencia`).
+- Story section uses asymmetric editorial composition (text + image placeholder) with subtle parallax-like reveal.
+- Timeline title and flow were adapted to an editorial itinerary style (`Cuándo y dónde`) with staggered reveal.
+- Map remains enabled by default and renders iframe embed when available, with polished cream wrapper and `Abrir en Google Maps` access.
+- RSVP was upgraded to include fields for full name, attendance, companions, and dietary restrictions, keeping backend disconnected and emitting/logging payload locally.
+- Scroll animations continue to use native `IntersectionObserver` and CSS transitions (no external animation libraries).
+- Mobile behavior was tuned for beauty and readability: centered hero, clamp typography, stacked gallery, mobile nav menu, full-width RSVP controls, and responsive map height.
+
+## Critical editor/template fixes
+- Extras toggle now treats `invitation.blocks` as the single source of truth and never deletes blocks when disabling; `toggleBlock(type)` only flips `enabled` and recreates missing blocks from `createDefaultBlock(type)`.
+- Added block order normalization to keep stable `order` values (`1..n`) after toggles/reorders while preserving disabled blocks in the array.
+- Mobile width issues were fixed by forcing `html/body/#app` and editor containers to hide horizontal overflow and by keeping mobile panels/canvas at full width.
+- Countdown reliability remains enforced with explicit 4-unit output (`Días`, `Horas`, `Minutos`, `Segundos`) and responsive 4-column desktop / 2x2 mobile layout.
+- Theme contrast rules were reinforced with expanded preset tokens (`surfaceColor`, `surfaceTextColor`, `mutedTextColor`) to avoid unreadable light text on light surfaces in dark/light switches.
+- Theme catalog was restored/expanded with classic, romantic, boho, dark premium, and developer-oriented themes (including IDE Dark and IDE Matrix).
+
+## High-End Editorial Romantic Motion Template
+- Romantic Motion was upgraded to a luxury editorial concept inspired by high-end Wix wedding websites.
+- Design foundations:
+  - cream editorial base,
+  - charcoal typography,
+  - elegant accent color,
+  - refined serif + sans hierarchy,
+  - generous whitespace and continuous one-page narrative.
+- Core sections included in flow:
+  - sticky invitation header (desktop nav + mobile hamburger),
+  - full-screen hero,
+  - minimalist countdown,
+  - story split section,
+  - event details,
+  - masonry gallery with lightbox,
+  - registry strip,
+  - map with embedded frame,
+  - editorial dark RSVP section.
+- Animations use custom `IntersectionObserver` + CSS reveal classes (`motion-section`, `motion-left`, `motion-right`, `motion-fade`, `is-visible`).
+- No AOS/external animation library is used yet.
+- Future option is documented in code comments for optional AOS migration.
+- Mobile behavior includes no horizontal overflow, stacked content, responsive map, and full-width RSVP controls.
+
+
+## HU-90 Global editorial theming
+- `editorialClassic` is now the default palette for `romantic-01` with cream/white/charcoal tokens and RSVP contrast-safe colors.
+- Romantic Motion exposes global CSS variables (`--template-*`) to theme hero, countdown, story, gallery, event, registry, map and RSVP surfaces/text consistently.
+- Reusable blocks inherit template variables via `--block-*` aliases to avoid hardcoded section colors and preserve readability across light/dark switches.
+- Theme switching now copies all color fields to `invitation.styles`, preventing stale values during dark↔light transitions.
+
+
+## Romantic Motion Layout
+- Header fijo superior con estado transparente y fondo sólido al hacer scroll.
+- Hero full-screen editorial con overlay, tipografía destacada y CTA RSVP.
+- Extras reutilizados (Countdown/Story/Gallery/Map/RSVP) sin recrear data: solo se renderizan si el bloque está habilitado.
+- Flujo continuo de secciones (detalles, registro, FAQ, RSVP) sin UI del editor dentro de la vista pública.
+- El preview permanece limpio y de ancho completo, sin paneles internos adicionales.
+
+## Romantic Motion Wix-style editorial redesign
+- Se rediseñó el template `romantic-01` con estructura editorial premium: header fijo, hero, story, details, parallax quote, RSVP, map+FAQ y footer.
+- `romantic-01` mantiene `editorialClassic` como tema por defecto y usa colores de alto contraste para hero, detalles, RSVP suave (`#EFEBE9`) y footer oscuro.
+- Los extras reutilizables (Countdown/Gallery/Map/RSVP) no se recrean: solo se renderizan cuando están habilitados y se estilizan por wrappers del template.
+- Se agregó sección intermedia parallax (desktop fixed, mobile scroll fallback) y acordeón de FAQ sin librerías externas.
+- El template usa `IntersectionObserver` para revelar secciones con `motion-section`, `motion-left`, `motion-right`.
+- Ajustes responsive: menú hamburguesa full-screen, columnas apiladas en móvil, hero adaptable y control estricto de overflow horizontal.
+
+### Hero refinement (Romantic Motion)
+- El hero se ajustó a estilo premium tipo Wix: altura completa `100vh` con `min-height` de `720px` desktop y `640px` móvil.
+- Fondo dinámico: usa `heroImage` cuando existe y cae a gradiente editorial si no hay imagen.
+- Overlay unificado por variable `--inv-hero-overlay` con opacidad cinematográfica.
+- Contenido principal optimizado: microcopy, nombres grandes serif (`clamp(4rem,10vw,8rem)`), fecha/lugar y CTA RSVP ghost.
+- Se agregó indicador de scroll animado para reforzar narrativa one-page.
+- Se cuidó wrapping y overflow en móvil para evitar scroll horizontal.
+
+### Countdown editorial style fix
+- `CountdownBlock` ahora usa estructura explícita con 4 unidades visibles siempre: Días, Horas, Minutos, Segundos.
+- En variante `editorial` se removió el look de tarjetas pesadas y se priorizó tipografía grande para números + labels pequeños en mayúscula.
+- Desktop usa 4 columnas y móvil cambia automáticamente a grilla 2x2.
+- El bloque toma colores desde variables de tema (`--template-countdown-number`, `--template-countdown-label`, `--template-title-color`) para mantener contraste consistente.
+
+### RSVPBlock premium editorial update
+- El bloque RSVP ahora usa estado local con `v-model` para: `fullName`, `attendance`, `guestsCount`, `foodRestrictions`.
+- Al enviar, emite el payload exacto `{ fullName, attendance, guestsCount, foodRestrictions }` sin integración backend.
+- Se aplicó estilo editorial premium: inputs limpios con borde inferior, espaciado consistente y botón personalizado sin apariencia nativa del navegador.
+- En Romantic Motion, fondo/texto del RSVP se controlan por `--template-rsvp-bg` y `--template-rsvp-text`.
+- Se muestra mensaje de éxito tras confirmar asistencia.
+
+### Map + FAQ section improvements (Romantic Motion)
+- La sección ahora usa layout de dos columnas en desktop: mapa a la izquierda y FAQ a la derecha.
+- En mobile, el contenido se apila en orden mapa → FAQ para mejor lectura.
+- `MapBlock` fue refinado con marco redondeado, sombra suave, nombre/dirección y CTA "Abrir en Google Maps" incluso cuando hay embed.
+- El acordeón FAQ usa iconos +/- y transición suave de apertura/cierre con bordes sutiles.
+- Todo el estilo usa variables de tema y controles sin apariencia nativa por defecto.
