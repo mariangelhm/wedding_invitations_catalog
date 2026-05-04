@@ -199,6 +199,14 @@ const applyThemePreset = (preset) => {
         </div>
       </aside>
 
+      <section class="checkout-summary-panel">
+        <div class="compact-total">
+          <span>Total</span>
+          <strong>{{ formatPrice(builderStore.totalPrice) }}</strong>
+        </div>
+        <button class="done-btn" type="button" @click="isCheckoutModalOpen = true">Listo</button>
+      </section>
+
       <main class="canvas-panel"><div class="preview-canvas" :class="selectedPreviewDevice === 'mobile' ? 'preview-canvas--mobile' : 'preview-canvas--desktop'"><InvitationPreview :showTitle="false" :device="selectedPreviewDevice" /></div></main>
     </div>
 
