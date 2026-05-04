@@ -1,35 +1,14 @@
-.romantic-motion{position:relative;overflow:hidden;background:var(--theme-background);color:var(--template-text-color);font-family:var(--body-font-family);max-width:860px;margin:0 auto;padding:20px 14px 64px}
-.romantic-motion__bg-layer{position:absolute;border-radius:999px;filter:blur(2px);pointer-events:none;z-index:0}
-.romantic-motion__bg-layer--one{width:340px;height:340px;right:-130px;top:220px;background:color-mix(in srgb,var(--theme-accent-shape) 70%,transparent)}
-.romantic-motion__bg-layer--two{width:260px;height:260px;left:-90px;bottom:280px;background:color-mix(in srgb,var(--color-primary-light) 60%,transparent)}
-.romantic-motion > *{position:relative;z-index:1}
-.hero{min-height:56vh;display:grid;place-content:center;text-align:center;border-radius:28px;padding:42px 20px 38px;background:color-mix(in srgb,var(--color-primary-light) 75%,transparent);box-shadow:0 24px 48px rgba(17,24,39,.12)}
-.hero h1{font-family:var(--couple-font-family);color:var(--color-primary-dark);margin:8px 0}.hero-kicker{letter-spacing:.2em;text-transform:uppercase;color:var(--color-primary-dark);font-size:.75rem}.hero-date,.hero-location{color:var(--color-text-muted)}
-.romantic-motion__couple-names{font-size:clamp(2.4rem,8vw,5rem);line-height:1.08;text-wrap:balance;overflow-wrap:anywhere}
-.hero-message{max-width:50ch;margin:12px auto 0;color:var(--color-text-main)}
-.romantic-motion__flow{margin-top:4px}
-.motion-section{opacity:0;transform:translateY(var(--parallax-y,12px));transition:transform .7s ease,opacity .7s ease;margin-top:2px}
-.motion-section.is-visible{opacity:1;transform:translateY(0)}
-.flow-section{padding:24px 10px;position:relative}
-.flow-section--band::before{content:'';position:absolute;inset:8px 0;background:color-mix(in srgb,var(--color-primary-light) 35%,transparent);border-radius:18px;z-index:-1}
-.flow-section--gallery{margin-bottom:-36px;z-index:3}
-.flow-section + .flow-section{padding-top:40px}
-.motion-section :is(h2,h3,h4){color:var(--section-heading-color)}
-
-/* Integrated reusable blocks: remove detached-card feeling */
-.flow-section :is(.countdown-block,.story-block,.gallery-block,.timeline-block,.map-block,.rsvp-block){
-  --surface-color: transparent;
-  --muted-color: var(--block-muted-color);
-  --color-surface: transparent;
-  --color-text-main: var(--block-text-color);
-  background:transparent;border:none;box-shadow:none;color:var(--block-text-color);padding:8px 2px
-}
-.flow-section :is(.countdown-block,.story-block,.gallery-block,.timeline-block,.map-block,.rsvp-block) :is(p,li,small,label,span,input,button){color:var(--block-text-color)}
-
-@media (max-width: 640px){
-  .romantic-motion{padding:14px 10px 48px;overflow-x:hidden}
-  .hero{padding:30px 14px 26px}
-  .romantic-motion__couple-names{font-size:clamp(2rem,9vw,3rem)}
-  .flow-section{padding:16px 2px}
-  .flow-section--gallery{margin-bottom:0}
-}
+.romantic-template,.romantic-template *{box-sizing:border-box;max-width:100%}.romantic-template{scroll-behavior:smooth;overflow-x:hidden;color:var(--inv-text-primary);font-family:'Montserrat',sans-serif;background:var(--inv-bg-main)}
+.romantic-template__header{position:absolute;top:0;left:0;right:0;z-index:50;background:transparent;transition:background-color .3s ease}.romantic-template__header.scrolled{background:var(--inv-bg-main);border-bottom:1px solid var(--inv-bg-alt)}.romantic-template__header-inner{max-width:1200px;margin:0 auto;padding:20px 24px;display:flex;justify-content:space-between;align-items:center}.romantic-template__initials{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--inv-hero-text)}.romantic-template__header.scrolled .romantic-template__initials{color:var(--inv-text-primary)}.romantic-template__nav{display:flex;gap:48px}.romantic-template__nav a{text-decoration:none;letter-spacing:.15em;font-size:12px;text-transform:uppercase;color:var(--inv-hero-text)}.romantic-template__header.scrolled .romantic-template__nav a{color:var(--inv-text-primary)}
+.romantic-template__hamburger{display:none;border:0;background:transparent;color:var(--inv-hero-text);font-size:1.4rem}
+.romantic-template__hero{height:100vh;background-image:var(--inv-hero-bg);background-size:cover;background-position:center;position:relative;display:flex;align-items:center}.hero-overlay{position:absolute;inset:0;background:var(--inv-hero-overlay)}.hero-content{position:relative;padding:0 10vw;color:var(--inv-hero-text)}.hero-content h1{font-family:'Playfair Display',serif;font-size:clamp(4rem,10vw,8rem);line-height:1.05;margin:.2em 0}
+.romantic-btn{padding:12px 28px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:.3s;text-decoration:none;display:inline-block}.romantic-btn--ghost{border:1px solid var(--inv-hero-text);background:var(--inv-button-bg);color:var(--inv-hero-text)}.romantic-btn--ghost:hover{background:var(--inv-hero-text);color:var(--inv-text-primary)}
+.romantic-section{padding:20px 0}
+.romantic-template__story{background:var(--inv-bg-main);display:grid;grid-template-columns:1fr 1fr;gap:50px;padding:120px 8vw}.story-copy p{color:var(--inv-text-secondary)}.story-media{min-height:360px;background:linear-gradient(150deg,var(--inv-bg-alt),var(--inv-bg-main))}.romantic-section-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);margin:0 0 16px;color:var(--inv-text-primary)}
+.romantic-template__details{background:var(--inv-bg-alt);padding:90px 8vw;border-top:1px solid var(--inv-text-secondary);border-bottom:1px solid var(--inv-text-secondary)}.details-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.details-grid article{padding:24px;background:var(--inv-bg-main)}.romantic-link{text-decoration:none;color:var(--inv-text-primary);letter-spacing:.14em;font-size:.75rem;border-bottom:1px solid var(--inv-text-primary)}.romantic-link:hover{padding-bottom:3px}
+.romantic-template__parallax{height:420px;background-image:linear-gradient(var(--inv-hero-overlay),var(--inv-hero-overlay)),var(--inv-hero-bg);background-attachment:fixed;background-size:cover;background-position:center;display:grid;place-items:center;text-align:center;padding:20px}.romantic-template__parallax p{color:var(--inv-hero-text);font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem)}
+.romantic-template__rsvp{background:var(--inv-bg-alt);padding:100px 8vw}.romantic-template__rsvp .rsvp-block{background:transparent;color:var(--inv-text-primary)}.romantic-template__rsvp .rsvp-form :is(input,select){background:var(--inv-bg-main);border:0;border-bottom:1px solid var(--inv-text-secondary);padding:12px}.romantic-template__rsvp .rsvp-btn{background:var(--inv-accent);color:var(--inv-button-text);border:1px solid var(--inv-accent)}.romantic-template__rsvp .rsvp-btn:hover{filter:brightness(1.1)}
+.romantic-template__map-faq{background:var(--inv-bg-main);padding:100px 8vw;display:grid;grid-template-columns:1.1fr .9fr;gap:30px}.map-wrap .map-block{border-radius:16px;box-shadow:0 12px 30px color-mix(in srgb,var(--inv-text-primary) 12%, transparent);padding:18px;background:var(--inv-bg-main)}.faq-item{border-bottom:1px solid color-mix(in srgb,var(--inv-text-secondary) 40%, transparent);padding:12px 0}.faq-item button{width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:0;padding:0;cursor:pointer;color:var(--inv-text-primary)}.faq-item p{margin:10px 0 0;color:var(--inv-text-secondary)}
+.romantic-template__footer{background:var(--inv-text-primary);color:var(--inv-hero-text);text-align:center;padding:56px 24px;display:grid;gap:8px}
+.motion-section,.motion-left,.motion-right{opacity:0;transform:translateY(40px);transition:all .7s cubic-bezier(0.4,0,0.2,1)}.motion-left{transform:translateX(-32px)}.motion-right{transform:translateX(32px)}.is-visible{opacity:1;transform:translate(0,0)!important}
+@media (max-width:900px){.romantic-template__nav{display:none}.romantic-template__hamburger{display:block}.romantic-template__nav.open{display:flex;position:fixed;inset:0;background:var(--inv-text-primary);flex-direction:column;justify-content:center;align-items:center;gap:28px}.romantic-template__nav.open a{color:var(--inv-hero-text)}.romantic-template__story,.details-grid,.romantic-template__map-faq{grid-template-columns:1fr}.romantic-template__parallax{background-attachment:scroll;height:280px}.hero-content{padding:0 24px}}
