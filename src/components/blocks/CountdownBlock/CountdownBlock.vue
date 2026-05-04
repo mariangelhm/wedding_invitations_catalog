@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<{
   variant: 'primary',
 });
 
-const { breakdown } = useCountdown(props.targetDate);
+const { days, hours, minutes, seconds } = useCountdown(props.targetDate);
 const rootEl = ref<HTMLElement | null>(null);
 const isVisible = ref(false);
 
@@ -41,10 +41,10 @@ onMounted(() => {
     <h3 v-if="title" class="countdown-title">{{ title }}</h3>
 
     <div class="countdown-grid">
-      <article class="time-cell"><span class="time-value">{{ breakdown.days }}</span><span class="time-label">Días</span></article>
-      <article class="time-cell"><span class="time-value">{{ breakdown.hours }}</span><span class="time-label">Horas</span></article>
-      <article class="time-cell"><span class="time-value">{{ breakdown.minutes }}</span><span class="time-label">Minutos</span></article>
-      <article class="time-cell"><span class="time-value">{{ breakdown.seconds }}</span><span class="time-label">Segundos</span></article>
+      <article class="time-cell"><span class="time-value">{{ days }}</span><span class="time-label">Días</span></article>
+      <article class="time-cell"><span class="time-value">{{ hours }}</span><span class="time-label">Horas</span></article>
+      <article class="time-cell"><span class="time-value">{{ minutes }}</span><span class="time-label">Minutos</span></article>
+      <article class="time-cell"><span class="time-value">{{ seconds }}</span><span class="time-label">Segundos</span></article>
     </div>
   </section>
 </template>

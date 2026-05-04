@@ -16,11 +16,14 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-  (e: 'confirm', payload: { fullName: string; response: 'confirmed' }): void;
+  (e: 'confirm', payload: { fullName: string; attending: 'si' | 'no'; guests: number; dietary: string }): void;
 }>();
 
 // Local state handles temporary UI interaction and validation.
 const fullName = ref('');
+const attending = ref<'si' | 'no'>('si');
+const guests = ref(1);
+const dietary = ref('');
 const isFormVisible = ref(false);
 const isConfirmed = ref(false);
 const errorMessage = ref('');
@@ -53,10 +56,7 @@ const submitConfirmation = () => {
     return;
   }
 
-  emit('confirm', {
-    fullName: fullName.value.trim(),
-    response: 'confirmed',
-  });
+  emit('confirm', { fullName: fullName.value.trim(), attending: attending.value, guests: Number(guests.value) || 1, dietary: dietary.value.trim() });
 
   isConfirmed.value = true;
   errorMessage.value = '';
@@ -72,8 +72,14 @@ const submitConfirmation = () => {
     </button>
 
     <div v-else-if="!isConfirmed" class="rsvp-form">
-      <label for="rsvpName">Nombre completo</label>
+      <label for="rsvpName">Nombre y apellido</label>
       <input id="rsvpName" v-model="fullName" type="text" placeholder="Escribe tu nombre" />
+      <label for="rsvpAttend">¿Asistirás?</label>
+      <select id="rsvpAttend" v-model="attending"><option value="si">Sí</option><option value="no">No</option></select>
+      <label for="rsvpGuests">Número de acompañantes</label>
+      <input id="rsvpGuests" v-model="guests" type="number" min="0" max="8" />
+      <label for="rsvpDietary">Restricciones alimenticias</label>
+      <input id="rsvpDietary" v-model="dietary" type="text" placeholder="Opcional" />
       <p v-if="errorMessage" class="rsvp-error">{{ errorMessage }}</p>
       <button type="button" class="rsvp-btn" @click="submitConfirmation">Enviar confirmación</button>
     </div>

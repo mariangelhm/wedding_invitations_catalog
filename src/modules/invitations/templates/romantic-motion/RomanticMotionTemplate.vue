@@ -1,130 +1,96 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watchEffect } from 'vue';
 import CountdownBlock from '../../../../components/blocks/CountdownBlock/CountdownBlock.vue';
-import GalleryBlock from '../../../../components/blocks/GalleryBlock/GalleryBlock.vue';
+import TimelineBlock from '../../../../components/blocks/TimelineBlock/TimelineBlock.vue';
 import MapBlock from '../../../../components/blocks/MapBlock/MapBlock.vue';
 import RSVPBlock from '../../../../components/blocks/RSVPBlock/RSVPBlock.vue';
-import StoryBlock from '../../../../components/blocks/StoryBlock/StoryBlock.vue';
-import TimelineBlock from '../../../../components/blocks/TimelineBlock/TimelineBlock.vue';
 import './romanticMotionTemplate.css';
-import wedding1 from '../../../../assets/sample-gallery/wedding-1.jpg';
-import wedding2 from '../../../../assets/sample-gallery/wedding-2.jpg';
-import wedding3 from '../../../../assets/sample-gallery/wedding-3.jpg';
-import wedding4 from '../../../../assets/sample-gallery/wedding-4.jpg';
 
 const props = defineProps({ invitationData: { type: Object, default: () => ({}) } });
+const menuOpen = ref(false);
 const sectionRefs = [];
-function setSectionRef(el) { if (el && !sectionRefs.includes(el)) sectionRefs.push(el); }
-let sectionObserver = null;
+function setSectionRef(el){ if (el && !sectionRefs.includes(el)) sectionRefs.push(el); }
+let observer = null;
 
 const base = computed(() => props.invitationData?.base || {});
 const styles = computed(() => props.invitationData?.styles || {});
-const timeline = computed(() => props.invitationData?.timeline || []);
-const gallery = computed(() => props.invitationData?.gallery || [
-  { src: wedding1, alt: 'Foto principal' },
-  { src: wedding2, alt: 'Momento especial' },
-  { src: wedding3, alt: 'Nuestra historia' },
-  { src: wedding4, alt: 'Celebración' },
-]);
 const fallbackBlocks = [
-  { id: 'block-countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, settings: {} },
-  { id: 'block-story', type: 'story', enabled: true, order: 2, settings: {} },
-  { id: 'block-gallery', type: 'gallery', enabled: true, order: 3, settings: {} },
-  { id: 'block-timeline', type: 'timeline', enabled: true, order: 4, settings: {} },
-  { id: 'block-map', type: 'map', enabled: false, order: 5, settings: {} },
-  { id: 'block-countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, settings: {} },
-  { id: 'block-rsvp', type: 'rsvp', enabled: true, order: 7, settings: {} },
+  { id: 'countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1 },{ id: 'story', type: 'story', enabled: true, order: 2 },{ id: 'gallery', type: 'gallery', enabled: true, order: 3 },{ id: 'timeline', type: 'timeline', enabled: true, order: 4 },{ id: 'map', type: 'map', enabled: true, order: 5 },{ id: 'rsvp', type: 'rsvp', enabled: true, order: 6 },
 ];
-
-const orderedBlocks = computed(() => {
+const enabledBlocks = computed(() => {
   const source = Array.isArray(props.invitationData?.blocks) && props.invitationData.blocks.length ? props.invitationData.blocks : fallbackBlocks;
-  return source.filter((b) => b.enabled !== false).slice().sort((a, b) => a.order - b.order);
+  return source.filter((block) => block.enabled).sort((a, b) => a.order - b.order);
 });
-const getEnabledBlock = (type) => orderedBlocks.value.find((block) => block.type === type);
-const weddingCountdownBlock = computed(() => getEnabledBlock('countdown_wedding'));
-const rsvpCountdownBlock = computed(() => getEnabledBlock('countdown_rsvp'));
-const mapBlock = computed(() => getEnabledBlock('map'));
-const weddingDate = computed(() => weddingCountdownBlock.value?.settings?.targetDate || base.value.date || '2027-06-14T18:00:00');
-const rsvpDate = computed(() => rsvpCountdownBlock.value?.settings?.targetDate || '2027-05-20T23:59:59');
-const formattedDate = computed(() => {
-  const date = new Date(base.value.date || weddingDate.value);
-  if (Number.isNaN(date.getTime())) return '14 de junio de 2027';
-  return date.toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
-});
-
-const fontStacks = { 'Playfair Display': "'Playfair Display', Georgia, serif", 'Cormorant Garamond': "'Cormorant Garamond', Georgia, serif", 'Libre Baskerville': "'Libre Baskerville', Georgia, serif", Merriweather: "'Merriweather', Georgia, serif", Lora: "'Lora', Georgia, serif", Poppins: "'Poppins', Arial, sans-serif", Montserrat: "'Montserrat', Arial, sans-serif", Raleway: "'Raleway', Arial, sans-serif", Nunito: "'Nunito', Arial, sans-serif", Georgia: 'Georgia, serif', 'Patrick Hand': "'Patrick Hand', cursive", 'Dancing Script': "'Dancing Script', cursive", 'Great Vibes': "'Great Vibes', cursive", Arial: 'Arial, sans-serif' };
-
-const templateVars = computed(() => ({
-  '--color-primary': styles.value.primaryColor || '#C7355C',
-  '--color-primary-dark': styles.value.titleColor || '#9F1F46',
-  '--section-heading-color': styles.value.titleColor || '#9F1F46',
-  '--color-primary-light': styles.value.secondaryColor || '#FFF1F4',
-  '--theme-background': styles.value.backgroundGradient || 'linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)',
-  '--theme-accent-shape': styles.value.accentShape || '#F7DCE5',
-  '--color-text-main': styles.value.bodyTextColor || '#111827',
-  '--color-text-muted': styles.value.bodyTextColor || '#6B7280',
-  '--color-surface': styles.value.surfaceColor || '#FFFFFF',
-  '--color-border': 'color-mix(in srgb, var(--color-primary-dark) 15%, transparent)',
-  '--couple-font-family': fontStacks[styles.value.coupleFontFamily] || "'Playfair Display', Georgia, serif",
-  '--body-font-family': fontStacks[styles.value.bodyFontFamily] || 'Arial, sans-serif',
-  '--template-text-color': styles.value.bodyTextColor || '#111827',
-  '--block-surface': styles.value.surfaceColor || '#FFFFFF',
-  '--block-text-color': styles.value.surfaceTextColor || styles.value.bodyTextColor || '#1F2937',
-  '--block-muted-color': styles.value.bodyTextColor || '#6B7280',
-}));
+const hasBlock = (type) => enabledBlocks.value.some((block) => block.type === type);
+if (import.meta.env.DEV) watchEffect(() => console.log('enabled blocks', enabledBlocks.value.map((b) => b.type)));
 
 const names = computed(() => base.value.names || 'María & Carlos');
-const locationName = computed(() => mapBlock.value?.settings?.locationName || props.invitationData?.mapSettings?.locationName || base.value.location || 'Rose Garden Hall');
-const locationAddress = computed(() => mapBlock.value?.settings?.address || props.invitationData?.mapSettings?.address || 'Santiago, Chile');
-const locationMapUrl = computed(() => mapBlock.value?.settings?.mapUrl || props.invitationData?.mapSettings?.mapUrl || 'https://maps.google.com');
-const locationEmbedUrl = computed(() => mapBlock.value?.settings?.embedUrl || props.invitationData?.mapSettings?.embedUrl || '');
-const heroMessage = computed(() => base.value.heroMessage || 'Nos encantaría que seas parte de este día especial.');
+const initials = computed(() => (names.value.split('&').map((part) => part.trim()[0] || '').join('&')).toUpperCase() || 'M&C');
+const weddingDate = computed(() => base.value.date || '2027-06-14T18:00:00');
+const formattedDate = computed(() => new Date(weddingDate.value).toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' }));
+const locationName = computed(() => props.invitationData?.mapSettings?.locationName || base.value.location || 'Rose Garden Hall');
+const locationAddress = computed(() => props.invitationData?.mapSettings?.address || 'Santiago, Chile');
+const mapUrl = computed(() => props.invitationData?.mapSettings?.mapUrl || 'https://maps.google.com');
+const embedUrl = computed(() => props.invitationData?.mapSettings?.embedUrl || '');
 const storyMessage = computed(() => base.value.storyMessage || 'Nuestra historia está llena de momentos simples, valientes y hermosos que queremos celebrar contigo.');
+const timeline = computed(() => props.invitationData?.timeline?.length ? props.invitationData.timeline : [{ time:'17:00', title:'Ceremonia', place:'Jardín principal' },{ time:'19:00', title:'Cena', place:'Salón principal' },{ time:'21:00', title:'Fiesta', place:'Pista de baile' }]);
+const gallery = computed(() => props.invitationData?.gallery?.length ? props.invitationData.gallery : [{src:'',alt:'Foto editorial 1'},{src:'',alt:'Foto editorial 2'},{src:'',alt:'Foto editorial 3'}]);
+
+const cssVars = computed(() => ({
+  '--template-bg': styles.value.background || styles.value.backgroundGradient || '#F4F1EA',
+  '--template-primary': styles.value.primaryColor || '#B88A44',
+  '--template-title-color': styles.value.titleColor || '#2F2A24',
+  '--template-body-color': styles.value.bodyTextColor || '#3F3A34',
+  '--template-surface': styles.value.surfaceColor || '#FFFFFF',
+  '--template-surface-text': styles.value.surfaceTextColor || '#1F2937',
+  '--template-muted-text': styles.value.mutedTextColor || '#6B7280',
+  '--block-surface': styles.value.surfaceColor || '#FFFFFF',
+  '--block-text-color': styles.value.surfaceTextColor || '#1F2937',
+  '--block-muted-color': styles.value.mutedTextColor || '#6B7280',
+}));
 
 onMounted(() => {
-  sectionObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        entry.target.style.setProperty('--parallax-y', '0px');
-      }
-    });
-  }, { threshold: 0.15 });
-
-  sectionRefs.forEach((el, i) => {
-    el.style.setProperty('--parallax-y', `${Math.max(4, 14 - i * 2)}px`);
-    sectionObserver?.observe(el);
-  });
+  observer = new IntersectionObserver((entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer?.unobserve(entry.target); } }); }, { threshold: 0.16 });
+  sectionRefs.forEach((el) => observer?.observe(el));
 });
-onUnmounted(() => sectionObserver?.disconnect());
-const onRsvpConfirm = (payload) => console.log('RSVP confirmed', payload);
+onUnmounted(() => observer?.disconnect());
+const onRsvp = (payload) => console.log('RSVP payload', payload);
 </script>
 
 <template>
-  <article class="romantic-motion" :style="templateVars">
-    <div class="romantic-motion__bg-layer romantic-motion__bg-layer--one" aria-hidden="true"></div>
-    <div class="romantic-motion__bg-layer romantic-motion__bg-layer--two" aria-hidden="true"></div>
+  <article class="romantic-motion-editorial" :style="cssVars">
+    <!-- TODO: sticky header behavior can be upgraded if needed for nested preview scroll container. -->
+    <header class="editorial-header">
+      <div class="editorial-brand">{{ initials }}</div>
+      <button class="editorial-menu-btn" @click="menuOpen = !menuOpen">☰</button>
+      <nav class="editorial-nav" :class="{ open: menuOpen }"><a href="#story">Historia</a><a href="#when">Cuándo y dónde</a><a href="#rsvp">RSVP</a></nav>
+    </header>
 
-    <section :ref="setSectionRef" class="hero motion-section">
-      <div class="hero-decor hero-decor--one" aria-hidden="true"></div>
-      <div class="hero-decor hero-decor--two" aria-hidden="true"></div>
-      <p class="hero-kicker">Nuestra boda</p>
-      <h1 class="romantic-motion__couple-names">{{ names }}</h1>
-      <p class="hero-date">{{ formattedDate }}</p>
-      <p class="hero-location">{{ locationName }}</p>
-      <p class="hero-message">{{ heroMessage }}</p>
+    <section class="hero-editorial motion-section" :ref="setSectionRef">
+      <div class="hero-overlay"></div>
+      <CountdownBlock :target-date="weddingDate" title="Cuenta regresiva" variant="minimal" />
+      <h1>{{ names }}</h1>
+      <p>{{ formattedDate }}</p>
+      <p>{{ locationName }}</p>
+      <a href="#rsvp" class="hero-cta">Confirmar asistencia</a>
     </section>
 
-    <div class="romantic-motion__flow">
-      <template v-for="block in orderedBlocks" :key="block.id">
-        <section v-if="block.type === 'countdown_wedding'" :ref="setSectionRef" class="motion-section flow-section flow-section--band"><CountdownBlock :target-date="weddingDate" title="Faltan para nuestra boda" variant="primary" /></section>
-        <section v-else-if="block.type === 'story'" :ref="setSectionRef" class="motion-section flow-section"><StoryBlock title="Nuestra historia" :message="storyMessage" /></section>
-        <section v-else-if="block.type === 'gallery'" :ref="setSectionRef" class="motion-section flow-section flow-section--gallery"><GalleryBlock title="Nuestros momentos" :images="gallery" integrated /></section>
-        <section v-else-if="block.type === 'timeline'" :ref="setSectionRef" class="motion-section flow-section flow-section--band"><TimelineBlock title="Bitácora del evento" :items="timeline" /></section>
-        <section v-else-if="block.type === 'map'" :ref="setSectionRef" class="motion-section flow-section"><MapBlock :location-name="locationName" :address="locationAddress" :map-url="locationMapUrl" :embed-url="locationEmbedUrl" /></section>
-        <section v-else-if="block.type === 'countdown_rsvp'" :ref="setSectionRef" class="motion-section flow-section"><CountdownBlock :target-date="rsvpDate" title="Tiempo para confirmar" variant="minimal" /></section>
-        <section v-else-if="block.type === 'rsvp'" :ref="setSectionRef" class="motion-section flow-section"><RSVPBlock @confirm="onRsvpConfirm" /></section>
-      </template>
-    </div>
+    <section v-if="hasBlock('story')" id="story" class="story-editorial motion-section" :ref="setSectionRef">
+      <div><h2>Nuestra historia</h2><p>{{ storyMessage }}</p></div>
+      <div class="story-image"></div>
+    </section>
+
+    <section v-if="hasBlock('gallery')" class="gallery-editorial motion-section" :ref="setSectionRef">
+      <h2>Galería</h2>
+      <div class="gallery-layered">
+        <figure class="g-large"><div v-if="!gallery[0]?.src" class="ph">{{ gallery[0]?.alt || 'Foto principal' }}</div><img v-else :src="gallery[0].src" :alt="gallery[0].alt" /></figure>
+        <figure class="g-small"><div v-if="!gallery[1]?.src" class="ph">{{ gallery[1]?.alt || 'Foto secundaria' }}</div><img v-else :src="gallery[1].src" :alt="gallery[1].alt" /></figure>
+        <figure class="g-small"><div v-if="!gallery[2]?.src" class="ph">{{ gallery[2]?.alt || 'Foto secundaria' }}</div><img v-else :src="gallery[2].src" :alt="gallery[2].alt" /></figure>
+      </div>
+    </section>
+
+    <section v-if="hasBlock('timeline')" id="when" class="motion-section" :ref="setSectionRef"><TimelineBlock title="Cuándo y dónde" :items="timeline" /></section>
+    <section v-if="hasBlock('map')" class="motion-section" :ref="setSectionRef"><MapBlock :location-name="locationName" :address="locationAddress" :map-url="mapUrl" :embed-url="embedUrl" /></section>
+    <section v-if="hasBlock('rsvp')" id="rsvp" class="motion-section" :ref="setSectionRef"><RSVPBlock @confirm="onRsvp" /></section>
   </article>
 </template>
