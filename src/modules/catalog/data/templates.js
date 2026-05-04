@@ -18,7 +18,6 @@ export const templates = [
       colors: true,
       fonts: true,
       photos: true,
-      music: false,
       map: true,
       countdown: true,
       timeline: true,
