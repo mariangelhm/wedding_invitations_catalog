@@ -1065,3 +1065,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - En variante `editorial` se removió el look de tarjetas pesadas y se priorizó tipografía grande para números + labels pequeños en mayúscula.
 - Desktop usa 4 columnas y móvil cambia automáticamente a grilla 2x2.
 - El bloque toma colores desde variables de tema (`--template-countdown-number`, `--template-countdown-label`, `--template-title-color`) para mantener contraste consistente.
+
+### RSVPBlock premium editorial update
+- El bloque RSVP ahora usa estado local con `v-model` para: `fullName`, `attendance`, `guestsCount`, `foodRestrictions`.
+- Al enviar, emite el payload exacto `{ fullName, attendance, guestsCount, foodRestrictions }` sin integración backend.
+- Se aplicó estilo editorial premium: inputs limpios con borde inferior, espaciado consistente y botón personalizado sin apariencia nativa del navegador.
+- En Romantic Motion, fondo/texto del RSVP se controlan por `--template-rsvp-bg` y `--template-rsvp-text`.
+- Se muestra mensaje de éxito tras confirmar asistencia.
