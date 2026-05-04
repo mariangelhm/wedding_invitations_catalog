@@ -18,8 +18,17 @@ const activeTemplateComponent = computed(() => getTemplateComponent(invitation.v
 <template>
   <section class="invitation-preview" :class="[`invitation-preview--${device}`]">
     <h2 v-if="showTitle">Invitation Preview</h2>
-    <p v-if="!invitation">No invitation selected</p>
-    <component :is="activeTemplateComponent" v-else-if="activeTemplateComponent" :invitationData="invitation" />
-    <RomanticTemplate v-else :names="invitation?.base?.names" :date="invitation?.base?.date" :location="invitation?.base?.location" :message="invitation?.base?.message" />
+    <div class="invitation-preview__canvas">
+      <p v-if="!invitation">No invitation selected</p>
+      <component :is="activeTemplateComponent" v-else-if="activeTemplateComponent" :invitationData="invitation" />
+      <RomanticTemplate v-else :names="invitation?.base?.names" :date="invitation?.base?.date" :location="invitation?.base?.location" :message="invitation?.base?.message" />
+    </div>
   </section>
 </template>
+
+<style scoped>
+.invitation-preview{position:relative;overflow:auto;width:100%;max-width:100%}
+.invitation-preview__canvas{position:relative;overflow:hidden;width:100%;max-width:100%;isolation:isolate}
+.invitation-preview--desktop{max-width:920px;width:100%;margin:0 auto}
+.invitation-preview--mobile{max-width:390px;width:100%;margin:0 auto}
+</style>
