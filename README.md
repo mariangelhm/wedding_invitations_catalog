@@ -1079,3 +1079,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - `MapBlock` fue refinado con marco redondeado, sombra suave, nombre/dirección y CTA "Abrir en Google Maps" incluso cuando hay embed.
 - El acordeón FAQ usa iconos +/- y transición suave de apertura/cierre con bordes sutiles.
 - Todo el estilo usa variables de tema y controles sin apariencia nativa por defecto.
+
+
+### Gallery / Parallax refinement
+- Se añadió una sección parallax con cita central: "Cada historia de amor merece celebrarse", overlay suave y fallback responsive.
+- Desktop usa `background-attachment: fixed`; mobile usa `scroll` para compatibilidad iOS.
+- `GalleryBlock` ahora usa layout tipo masonry, placeholders elegantes, zoom hover y lightbox nativo (sin librerías externas).
