@@ -42,7 +42,6 @@ Vue.onUnmounted(() => {
   removeScrollListener?.();
 });
 </script>
-
 <template>
 <div class="romantic-template" :style="themeVars">
   <header class="romantic-template__header" :class="{ scrolled: headerScrolled }">
