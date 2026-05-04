@@ -883,3 +883,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - `🖥️ Web` sets `selectedPreviewDevice = "desktop"`
   - `📱 Mobile` sets `selectedPreviewDevice = "mobile"`
 - `InvitationPreview` accepts `device` prop and applies `invitation-preview--desktop` / `invitation-preview--mobile` classes so the preview stays responsive and centered without horizontal overflow.
+
+## Fix extras toggle behavior
+- Extras are no longer removed from `invitation.blocks` when disabled; they are preserved and only switch `enabled` to `false`.
+- Re-enabling the same extra switches `enabled` back to `true`, so the section appears again immediately in preview.
+- `toggleBlock(blockType)` now toggles existing blocks by type, and recreates missing blocks through `createDefaultBlock(blockType)` for resilient legacy-data handling.
+- `createDefaultBlock(blockType)` supports: `countdown_wedding`, `story`, `gallery`, `timeline`, `map`, `countdown_rsvp`, and `rsvp`.
+- Romantic Motion rendering uses `invitationData.blocks.filter(block => block.enabled).sort((a, b) => a.order - b.order)` so disabled sections do not render and re-enabled ones return instantly.

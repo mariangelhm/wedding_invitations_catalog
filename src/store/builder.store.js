@@ -90,12 +90,13 @@ export const useBuilderStore = defineStore('builderStore', {
     },
     // Extras are reusable blocks shared by templates.
     // This ordered blocks API is the base for future drag & drop support.
-    toggleBlock(blockType, enabled = null) {
+    toggleBlock(blockType) {
       const blocks = this.ensureBlocks();
       const b = blocks.find((it) => it.type === blockType);
       if (b) {
-        // Keep blocks in the list and only toggle enabled flag so preview/editor data is preserved.
-        b.enabled = typeof enabled === 'boolean' ? enabled : !b.enabled;
+        // We do NOT delete blocks from invitation.blocks.
+        // Keeping the block object preserves order/settings and allows instant re-enable in preview.
+        b.enabled = !b.enabled;
         return;
       }
       // If a block is missing (legacy data), recreate from defaults instead of silently failing.

@@ -16,15 +16,7 @@ let observer = null;
 const base = computed(() => props.invitationData?.base || {});
 const styles = computed(() => props.invitationData?.styles || {});
 const blocks = computed(() => Array.isArray(props.invitationData?.blocks) ? props.invitationData.blocks : []);
-const activeBlocks = computed(() => (blocks.value.length ? blocks.value : [
-  { type: 'countdown_wedding', enabled: true, order: 1 },
-  { type: 'story', enabled: true, order: 2 },
-  { type: 'gallery', enabled: true, order: 3 },
-  { type: 'timeline', enabled: true, order: 4 },
-  { type: 'map', enabled: true, order: 5 },
-  { type: 'countdown_rsvp', enabled: true, order: 6 },
-  { type: 'rsvp', enabled: true, order: 7 },
-]).filter((block) => block.enabled).sort((a, b) => a.order - b.order));
+const activeBlocks = computed(() => blocks.value.filter((block) => block.enabled).sort((a, b) => a.order - b.order));
 
 const names = computed(() => base.value.names || 'María & Carlos');
 const weddingDate = computed(() => blocks.value.find((b) => b.type === 'countdown_wedding')?.settings?.targetDate || base.value.date || '2027-06-14T18:00:00');

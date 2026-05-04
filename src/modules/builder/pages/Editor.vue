@@ -79,9 +79,9 @@ const goToCheckout = () => {
   console.log('go to checkout');
 };
 
-const toggleBlockAddon = (item, checked) => {
-  // Extras are reusable blocks. Toggling here updates invitation.blocks directly.
-  builderStore.toggleBlock(item.type, checked);
+const toggleBlockAddon = (item) => {
+  // Toggle enabled flag only. Blocks are never deleted so they can be re-enabled immediately.
+  builderStore.toggleBlock(item.type);
 };
 
 const applyThemePreset = (preset) => {
@@ -145,7 +145,7 @@ const applyThemePreset = (preset) => {
             <div class="extra-preview" :class="`extra-preview--${blockOptions.find((i)=>i.type===block.type)?.preview}`"></div>
             <div><h4>{{ blockOptions.find((i)=>i.type===block.type)?.label || block.type }}</h4><p>{{ blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p><small v-if="block.price > 0">${{ block.price }}</small></div>
             <div class="toggle-wrap">
-              <label><input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block, $event.target.checked)" /> Activar</label>
+              <label><input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block)" /> Activar</label>
               <template v-if="block.enabled">
                 <button class="mini-btn" @click="builderStore.moveBlockUp(block.id)">↑</button>
                 <button class="mini-btn" @click="builderStore.moveBlockDown(block.id)">↓</button>
