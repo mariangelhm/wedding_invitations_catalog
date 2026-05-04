@@ -22,10 +22,24 @@ const faqs = [{q:'¿Puedo llevar acompañante?',a:'Sí, puedes indicarlo en el f
 
 const themeVars = computed(() => ({ '--template-hero-bg': styles.value.heroBackground || 'linear-gradient(145deg,#6c675c,#2f2e2e)', '--template-hero-text': styles.value.heroTextColor || '#FFFFFF', '--template-story-bg': styles.value.storyBackground || '#FFFFFF', '--template-details-bg': styles.value.eventBackground || '#F4F1EA', '--template-parallax-bg': styles.value.galleryBackground || '#d8d1c4', '--template-rsvp-bg': styles.value.rsvpBackground || '#EFEBE9', '--template-rsvp-text': styles.value.rsvpTextColor || '#2F2E2E', '--template-title': styles.value.titleColor || '#2F2E2E', '--template-body': styles.value.bodyTextColor || '#2F2E2E', '--template-link': styles.value.linkColor || '#2F2E2E', '--template-border': styles.value.borderColor || 'rgba(47,46,46,.2)' }));
 
-const revealRefs = ref([]); let observer;
-const setRevealRef = (el) => { if (el) revealRefs.value.push(el); };
-onMounted(() => { const onScroll = () => { headerScrolled.value = window.scrollY > 16; }; window.addEventListener('scroll', onScroll, { passive: true }); onScroll(); observer = new IntersectionObserver((entries) => entries.forEach((entry)=> entry.isIntersecting && entry.target.classList.add('is-visible')), { threshold:.14 }); revealRefs.value.forEach((el) => observer.observe(el)); onUnmounted(() => window.removeEventListener('scroll', onScroll)); });
-onUnmounted(() => observer?.disconnect());
+const revealRefs = ref([]);
+let observer = null;
+let removeScrollListener = null;
+const setRevealRef = (el) => { if (el && !revealRefs.value.includes(el)) revealRefs.value.push(el); };
+onMounted(() => {
+  const onScroll = () => { headerScrolled.value = window.scrollY > 16; };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  removeScrollListener = () => window.removeEventListener('scroll', onScroll);
+  onScroll();
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); });
+  }, { threshold: 0.14 });
+  revealRefs.value.forEach((el) => observer?.observe(el));
+});
+onUnmounted(() => {
+  observer?.disconnect();
+  removeScrollListener?.();
+});
 </script>
 <template>
 <div class="romantic-template" :style="themeVars">
