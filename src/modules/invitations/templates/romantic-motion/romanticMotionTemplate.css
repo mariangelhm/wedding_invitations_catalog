@@ -18,3 +18,11 @@
 
 .romantic-section .countdown-block--editorial{background:inherit;}
 .romantic-section .countdown-block__title{color:var(--template-title-color,var(--inv-text-primary));}
+
+.romantic-template__map-faq{align-items:start;}
+.faq{padding:4px 0 0;}
+.faq-item{overflow:hidden;transition:border-color .25s ease;}
+.faq-trigger{width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:0;padding:4px 0;cursor:pointer;color:var(--inv-text-primary);font:inherit;text-align:left;}
+.faq-icon{font-size:1.25rem;line-height:1;color:var(--inv-text-secondary);}
+.faq-answer{overflow:hidden;transition:max-height .35s ease;}
+.faq-answer p{margin:6px 0 12px;color:var(--inv-text-secondary);}

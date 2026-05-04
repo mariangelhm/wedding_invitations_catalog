@@ -1072,3 +1072,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se aplicó estilo editorial premium: inputs limpios con borde inferior, espaciado consistente y botón personalizado sin apariencia nativa del navegador.
 - En Romantic Motion, fondo/texto del RSVP se controlan por `--template-rsvp-bg` y `--template-rsvp-text`.
 - Se muestra mensaje de éxito tras confirmar asistencia.
+
+### Map + FAQ section improvements (Romantic Motion)
+- La sección ahora usa layout de dos columnas en desktop: mapa a la izquierda y FAQ a la derecha.
+- En mobile, el contenido se apila en orden mapa → FAQ para mejor lectura.
+- `MapBlock` fue refinado con marco redondeado, sombra suave, nombre/dirección y CTA "Abrir en Google Maps" incluso cuando hay embed.
+- El acordeón FAQ usa iconos +/- y transición suave de apertura/cierre con bordes sutiles.
+- Todo el estilo usa variables de tema y controles sin apariencia nativa por defecto.
