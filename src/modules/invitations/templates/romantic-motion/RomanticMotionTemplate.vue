@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watchEffect } from 'vue';
 import './romanticMotionTemplate.css';
 import wedding1 from '../../../../assets/sample-gallery/wedding-1.jpg';
 import wedding2 from '../../../../assets/sample-gallery/wedding-2.jpg';
@@ -15,13 +15,24 @@ let observer = null;
 
 const base = computed(() => props.invitationData?.base || {});
 const styles = computed(() => props.invitationData?.styles || {});
-const blocks = computed(() => Array.isArray(props.invitationData?.blocks) ? props.invitationData.blocks : []);
-// Preview order reacts to builder drag-and-drop because we always sort by current block.order.
-const activeBlocks = computed(() => blocks.value.filter((block) => block.enabled).sort((a, b) => a.order - b.order));
+const fallbackBlocks = [
+  { id: 'countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1 },
+  { id: 'story', type: 'story', enabled: true, order: 2 },
+  { id: 'gallery', type: 'gallery', enabled: true, order: 3 },
+  { id: 'timeline', type: 'timeline', enabled: true, order: 4 },
+  { id: 'map', type: 'map', enabled: true, order: 5 },
+  { id: 'countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6 },
+  { id: 'rsvp', type: 'rsvp', enabled: true, order: 7 },
+];
+const enabledBlocks = computed(() => {
+  const source = Array.isArray(props.invitationData?.blocks) && props.invitationData.blocks.length ? props.invitationData.blocks : fallbackBlocks;
+  return source.filter((block) => block.enabled).sort((a, b) => a.order - b.order);
+});
+const sourceBlocks = computed(() => Array.isArray(props.invitationData?.blocks) ? props.invitationData.blocks : fallbackBlocks);
 
 const names = computed(() => base.value.names || 'María & Carlos');
-const weddingDate = computed(() => blocks.value.find((b) => b.type === 'countdown_wedding')?.settings?.targetDate || base.value.date || '2027-06-14T18:00:00');
-const rsvpDate = computed(() => blocks.value.find((b) => b.type === 'countdown_rsvp')?.settings?.targetDate || '2027-05-20T23:59:59');
+const weddingDate = computed(() => sourceBlocks.value.find((b) => b.type === 'countdown_wedding')?.settings?.targetDate || base.value.date || '2027-06-14T18:00:00');
+const rsvpDate = computed(() => sourceBlocks.value.find((b) => b.type === 'countdown_rsvp')?.settings?.targetDate || '2027-05-20T23:59:59');
 const locationName = computed(() => props.invitationData?.mapSettings?.locationName || base.value.location || 'Rose Garden Hall');
 const locationAddress = computed(() => props.invitationData?.mapSettings?.address || 'Santiago, Chile');
 const mapUrl = computed(() => props.invitationData?.mapSettings?.mapUrl || 'https://maps.google.com');
@@ -74,6 +85,11 @@ const calculateCountdown = (targetDate) => {
 };
 const weddingCountdown = computed(() => calculateCountdown(weddingDate.value));
 const rsvpCountdown = computed(() => calculateCountdown(rsvpDate.value));
+if (import.meta.env.DEV) {
+  watchEffect(() => {
+    console.log('Enabled blocks', enabledBlocks.value);
+  });
+}
 
 onMounted(() => {
   observer = new IntersectionObserver((entries) => {
@@ -102,7 +118,7 @@ onUnmounted(() => observer?.disconnect());
       <p class="hero-message">{{ heroMessage }}</p>
     </section>
 
-    <section v-for="block in activeBlocks" :key="block.id || block.type" :ref="setSectionRef" class="motion-section section" :class="{ 'section-band': ['countdown_wedding','timeline'].includes(block.type), compact: block.type === 'countdown_rsvp', 'story-split': block.type === 'story', 'gallery-wrap': block.type === 'gallery', 'rsvp-final': block.type === 'rsvp' }">
+    <section v-for="block in enabledBlocks" :key="block.id || block.type" :ref="setSectionRef" class="motion-section section" :class="{ 'section-band': ['countdown_wedding','timeline'].includes(block.type), compact: block.type === 'countdown_rsvp', 'story-split': block.type === 'story', 'gallery-wrap': block.type === 'gallery', 'rsvp-final': block.type === 'rsvp' }">
       <template v-if="block.type === 'countdown_wedding'">
         <h2>Faltan para nuestra boda</h2>
         <div class="count-grid"><div><strong>{{ weddingCountdown.days }}</strong><span>Días</span></div><div><strong>{{ weddingCountdown.hours }}</strong><span>Horas</span></div><div><strong>{{ weddingCountdown.minutes }}</strong><span>Min</span></div></div>

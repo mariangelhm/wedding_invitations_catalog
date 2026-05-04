@@ -25,13 +25,13 @@ const romanticDefaultBlocks = [
 const getDefaultBlocks = () => defaultBlocks.map((b) => ({ ...b }));
 const createDefaultBlock = (blockType) => {
   const blockCatalog = {
-    countdown_wedding: { id: 'countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, price: 3000, settings: { targetDate: '2027-06-14T18:00:00', title: 'Faltan para nuestra boda' } },
-    story: { id: 'story', type: 'story', enabled: true, order: 2, price: 0, settings: {} },
-    gallery: { id: 'gallery', type: 'gallery', enabled: true, order: 3, price: 5000, settings: {} },
-    timeline: { id: 'timeline', type: 'timeline', enabled: true, order: 4, price: 2000, settings: {} },
-    map: { id: 'map', type: 'map', enabled: true, order: 5, price: 3000, settings: {} },
-    countdown_rsvp: { id: 'countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, price: 2000, settings: { targetDate: '2027-05-20T23:59:59', title: 'Tiempo para confirmar' } },
-    rsvp: { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, settings: {} },
+    countdown_wedding: { id: 'countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, price: 3000, label: 'Cuenta regresiva boda', description: 'Cuenta regresiva al evento principal.', settings: { targetDate: '2027-06-14T18:00:00', title: 'Faltan para nuestra boda' } },
+    story: { id: 'story', type: 'story', enabled: true, order: 2, price: 0, label: 'Historia', description: 'Cuenta su historia de amor.', settings: {} },
+    gallery: { id: 'gallery', type: 'gallery', enabled: true, order: 3, price: 5000, label: 'Galería', description: 'Muestra fotos destacadas.', settings: {} },
+    timeline: { id: 'timeline', type: 'timeline', enabled: true, order: 4, price: 2000, label: 'Bitácora', description: 'Agenda de momentos del evento.', settings: {} },
+    map: { id: 'map', type: 'map', enabled: true, order: 5, price: 3000, label: 'Mapa', description: 'Ubicación y cómo llegar.', settings: {} },
+    countdown_rsvp: { id: 'countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, price: 2000, label: 'Cuenta regresiva RSVP', description: 'Límite de confirmación.', settings: { targetDate: '2027-05-20T23:59:59', title: 'Tiempo para confirmar' } },
+    rsvp: { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, label: 'RSVP', description: 'Confirmación de asistencia.', settings: {} },
   };
   return blockCatalog[blockType] ? { ...blockCatalog[blockType] } : null;
 };

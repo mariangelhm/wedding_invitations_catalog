@@ -165,12 +165,12 @@ const applyThemePreset = (preset) => {
             <div class="block-head">
               <div class="extra-preview" :class="`extra-preview--${blockOptions.find((i)=>i.type===block.type)?.preview}`"></div>
               <div class="block-head-meta">
-                <h4>{{ blockOptions.find((i)=>i.type===block.type)?.label || block.type }}</h4>
+                <h4>{{ block.label || blockOptions.find((i)=>i.type===block.type)?.label || block.type }}</h4>
                 <small v-if="block.price > 0" class="price-badge">${{ block.price }}</small>
                 <small v-else class="price-badge price-badge--free">Incluido</small>
               </div>
             </div>
-            <p class="block-description">{{ blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p>
+            <p class="block-description">{{ block.description || blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p>
             <div class="block-footer">
               <label class="switch" :aria-label="`Activar ${block.type}`">
                 <input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block)" />

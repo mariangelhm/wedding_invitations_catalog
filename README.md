@@ -935,3 +935,11 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - desktop: 4 columns,
   - mobile: 2x2 grid.
 - Extras mini preview for countdown now explicitly shows four values including seconds: `12 / 04 / 33 / 59`.
+
+## Extras toggle fix
+- `toggleBlock(blockType)` now uses `invitation.blocks` as the source of truth and never deletes block entries when disabling extras.
+- Existing blocks are toggled only through `block.enabled = !block.enabled`, preserving previous order and settings.
+- If a block does not exist, it is recreated through `createDefaultBlock(blockType)`, pushed into `invitation.blocks`, and enabled by default.
+- `createDefaultBlock(blockType)` supports all standard extras and now returns complete metadata (`id`, `type`, `enabled`, `order`, `price`, `label`, `description`, `settings`).
+- Romantic Motion now renders from enabled blocks computed as `blocks.filter(block => block.enabled).sort((a, b) => a.order - b.order)` with fallback enabled blocks only when `invitationData.blocks` is missing.
+- Development-only debug logging was added to verify live block state transitions: `console.log("Enabled blocks", enabledBlocks.value)`.
