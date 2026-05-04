@@ -1,4 +1,4 @@
-export const themePresets = [
+const baseThemePresets = [
   { id:'editorialClassic', name:'Editorial clásico', description:'Crema, blanco y carbón editorial', primaryColor:'#303030', secondaryColor:'#F4F1EA', accentShape:'#E6E2D8', heroBackground:'linear-gradient(rgba(0,0,0,0.10), rgba(0,0,0,0.10)), linear-gradient(135deg, #4D4A43 0%, #303030 100%)', heroTextColor:'#FFFFFF', countdownBackground:'#F4F1EA', countdownNumberColor:'#303030', countdownLabelColor:'#757575', storyBackground:'#FFFFFF', galleryBackground:'#F4F1EA', eventBackground:'#FFFFFF', registryBackground:'#E6E2D8', rsvpBackground:'#1A1A1A', titleColor:'#303030', bodyTextColor:'#575757', mutedTextColor:'#757575', surfaceColor:'#FFFFFF', surfaceTextColor:'#303030', linkColor:'#303030', borderColor:'#E6E2D8', rsvpTextColor:'#FFFFFF', rsvpInputBorderColor:'#FFFFFF', rsvpButtonBackground:'#FFFFFF', rsvpButtonTextColor:'#1A1A1A', palette:['#F4F1EA','#FFFFFF','#E6E2D8','#303030','#757575','#1A1A1A'] },
   { id:'blancoClasico', name:'Blanco Clásico', description:'Limpio y tradicional', primaryColor:'#374151', secondaryColor:'#F8FAFC', background:'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)', accentShape:'#E5E7EB', titleColor:'#111827', bodyTextColor:'#374151', surfaceColor:'#FFFFFF', surfaceTextColor:'#111827', mutedTextColor:'#6B7280', palette:['#FFFFFF','#111827','#E5E7EB','#F8FAFC'] },
   { id:'rosaSuave', name:'Rosa Suave', description:'Blush romántico', primaryColor:'#C7355C', secondaryColor:'#FFF1F4', background:'linear-gradient(180deg,#fff7fa 0%,#ffffff 100%)', accentShape:'#F7DCE5', titleColor:'#9F1F46', bodyTextColor:'#6B7280', surfaceColor:'#FFFFFF', surfaceTextColor:'#1F2937', mutedTextColor:'#6B7280', palette:['#FFF1F4','#C7355C','#9F1F46','#FFFFFF'] },
@@ -13,3 +13,14 @@ export const themePresets = [
   { id:'ideDark', name:'IDE Dark', description:'Tecnológico y moderno', primaryColor:'#58A6FF', secondaryColor:'#0D1117', background:'linear-gradient(180deg,#0D1117 0%,#161B22 100%)', accentShape:'#238636', titleColor:'#F0F6FC', bodyTextColor:'#C9D1D9', surfaceColor:'#161B22', surfaceTextColor:'#F0F6FC', mutedTextColor:'#8B949E', palette:['#0D1117','#161B22','#58A6FF','#238636','#F78166'] },
   { id:'ideMatrix', name:'IDE Matrix', description:'Terminal verde oscuro', primaryColor:'#22C55E', secondaryColor:'#020617', background:'linear-gradient(180deg,#020617 0%,#0F172A 100%)', accentShape:'#16A34A', titleColor:'#DCFCE7', bodyTextColor:'#BBF7D0', surfaceColor:'#0F172A', surfaceTextColor:'#DCFCE7', mutedTextColor:'#86EFAC', palette:['#020617','#0F172A','#22C55E','#38BDF8','#DCFCE7'] },
 ];
+
+export const themePresets = baseThemePresets.map((theme) => ({
+  ...theme,
+  heroOverlay: theme.heroOverlay || 'color-mix(in srgb, var(--template-surface-text, #000) 35%, transparent)',
+  heroTextColor: theme.heroTextColor || theme.rsvpTextColor || theme.surfaceColor,
+  storyBackground: theme.storyBackground || theme.surfaceColor,
+  eventBackground: theme.eventBackground || theme.secondaryColor,
+  mutedTextColor: theme.mutedTextColor || theme.bodyTextColor,
+  rsvpButtonBackground: theme.rsvpButtonBackground || theme.primaryColor,
+  rsvpButtonTextColor: theme.rsvpButtonTextColor || theme.surfaceColor,
+}));
