@@ -1051,3 +1051,11 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se agregó sección intermedia parallax (desktop fixed, mobile scroll fallback) y acordeón de FAQ sin librerías externas.
 - El template usa `IntersectionObserver` para revelar secciones con `motion-section`, `motion-left`, `motion-right`.
 - Ajustes responsive: menú hamburguesa full-screen, columnas apiladas en móvil, hero adaptable y control estricto de overflow horizontal.
+
+### Hero refinement (Romantic Motion)
+- El hero se ajustó a estilo premium tipo Wix: altura completa `100vh` con `min-height` de `720px` desktop y `640px` móvil.
+- Fondo dinámico: usa `heroImage` cuando existe y cae a gradiente editorial si no hay imagen.
+- Overlay unificado por variable `--inv-hero-overlay` con opacidad cinematográfica.
+- Contenido principal optimizado: microcopy, nombres grandes serif (`clamp(4rem,10vw,8rem)`), fecha/lugar y CTA RSVP ghost.
+- Se agregó indicador de scroll animado para reforzar narrativa one-page.
+- Se cuidó wrapping y overflow en móvil para evitar scroll horizontal.
