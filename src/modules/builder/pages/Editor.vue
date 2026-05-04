@@ -228,25 +228,11 @@ const applyThemePreset = (preset) => {
         </div>
       </aside>
 
-      <section class="checkout-summary-panel">
-        <div class="compact-total">
-          <span>Total</span>
-          <strong>{{ formatPrice(builderStore.totalPrice) }}</strong>
-        </div>
-        <button class="done-btn" type="button" @click="isCheckoutModalOpen = true">Listo</button>
-      </section>
-
-      <main class="canvas-panel"><div class="preview-canvas" :class="selectedPreviewDevice === 'mobile' ? 'preview-canvas--mobile' : 'preview-canvas--desktop'"><InvitationPreview :showTitle="false" :device="selectedPreviewDevice" /></div></main>
+      <main class="canvas-panel"><div class="preview-container"><div class="preview-inner"><div class="preview-canvas" :class="selectedPreviewDevice === 'mobile' ? 'preview-canvas--mobile' : 'preview-canvas--desktop'"><InvitationPreview :showTitle="false" :device="selectedPreviewDevice" /></div></div></div></main>
     </div>
 
     <EditorPreviewModal :is-open="isPreviewOpen" @close="isPreviewOpen = false" />
-    <div class="editor-mobile-summary">
-      <div class="compact-total">
-        <span>Total</span>
-        <strong>{{ formatPrice(builderStore.totalPrice).replace('.000', 'k') }}</strong>
-      </div>
-      <button class="done-btn" type="button" @click="isCheckoutModalOpen = true">Listo</button>
-    </div>
+    
     <div v-if="isCheckoutModalOpen" class="checkout-modal-overlay" @click.self="isCheckoutModalOpen = false">
       <article class="checkout-modal-card" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
         <h3 id="checkout-modal-title">Resumen de tu invitación</h3>

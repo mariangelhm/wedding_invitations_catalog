@@ -1035,3 +1035,11 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Romantic Motion exposes global CSS variables (`--template-*`) to theme hero, countdown, story, gallery, event, registry, map and RSVP surfaces/text consistently.
 - Reusable blocks inherit template variables via `--block-*` aliases to avoid hardcoded section colors and preserve readability across light/dark switches.
 - Theme switching now copies all color fields to `invitation.styles`, preventing stale values during dark↔light transitions.
+
+
+## Romantic Motion Layout
+- Header fijo superior con estado transparente y fondo sólido al hacer scroll.
+- Hero full-screen editorial con overlay, tipografía destacada y CTA RSVP.
+- Extras reutilizados (Countdown/Story/Gallery/Map/RSVP) sin recrear data: solo se renderizan si el bloque está habilitado.
+- Flujo continuo de secciones (detalles, registro, FAQ, RSVP) sin UI del editor dentro de la vista pública.
+- El preview permanece limpio y de ancho completo, sin paneles internos adicionales.
