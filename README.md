@@ -922,3 +922,16 @@ The `builderStore` creates and stores a default invitation draft with a consiste
   - dragged card uses reduced opacity,
   - drop target gets highlighted.
 - Romantic Motion preview updates immediately because enabled blocks are always rendered sorted by `order`.
+
+## Countdown seconds fix
+- `CountdownBlock` now always renders exactly four units: **Días, Horas, Minutos, Segundos**.
+- `useCountdown` now returns the requested API shape:
+  - `days`
+  - `hours`
+  - `minutes`
+  - `seconds`
+  - `isExpired`
+- Countdown layout is responsive by default:
+  - desktop: 4 columns,
+  - mobile: 2x2 grid.
+- Extras mini preview for countdown now explicitly shows four values including seconds: `12 / 04 / 33 / 59`.
