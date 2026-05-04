@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import CountdownBlock from '../../../../components/blocks/CountdownBlock/CountdownBlock.vue';
 import StoryBlock from '../../../../components/blocks/StoryBlock/StoryBlock.vue';
 import GalleryBlock from '../../../../components/blocks/GalleryBlock/GalleryBlock.vue';
@@ -27,7 +27,6 @@ const setRevealRef = (el) => { if (el) revealRefs.value.push(el); };
 onMounted(() => { const onScroll = () => { headerScrolled.value = window.scrollY > 16; }; window.addEventListener('scroll', onScroll, { passive: true }); onScroll(); observer = new IntersectionObserver((entries) => entries.forEach((entry)=> entry.isIntersecting && entry.target.classList.add('is-visible')), { threshold:.14 }); revealRefs.value.forEach((el) => observer.observe(el)); onUnmounted(() => window.removeEventListener('scroll', onScroll)); });
 onUnmounted(() => observer?.disconnect());
 </script>
-
 <template>
 <div class="romantic-template" :style="themeVars">
   <header class="romantic-template__header" :class="{ scrolled: headerScrolled }">
