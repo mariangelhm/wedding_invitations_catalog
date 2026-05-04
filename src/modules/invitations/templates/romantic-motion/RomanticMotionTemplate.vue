@@ -1,130 +1,36 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import CountdownBlock from '../../../../components/blocks/CountdownBlock/CountdownBlock.vue';
+import StoryBlock from '../../../../components/blocks/StoryBlock/StoryBlock.vue';
 import GalleryBlock from '../../../../components/blocks/GalleryBlock/GalleryBlock.vue';
 import MapBlock from '../../../../components/blocks/MapBlock/MapBlock.vue';
 import RSVPBlock from '../../../../components/blocks/RSVPBlock/RSVPBlock.vue';
-import StoryBlock from '../../../../components/blocks/StoryBlock/StoryBlock.vue';
-import TimelineBlock from '../../../../components/blocks/TimelineBlock/TimelineBlock.vue';
 import './romanticMotionTemplate.css';
-import wedding1 from '../../../../assets/sample-gallery/wedding-1.jpg';
-import wedding2 from '../../../../assets/sample-gallery/wedding-2.jpg';
-import wedding3 from '../../../../assets/sample-gallery/wedding-3.jpg';
-import wedding4 from '../../../../assets/sample-gallery/wedding-4.jpg';
-
 const props = defineProps({ invitationData: { type: Object, default: () => ({}) } });
-const sectionRefs = [];
-function setSectionRef(el) { if (el && !sectionRefs.includes(el)) sectionRefs.push(el); }
-let sectionObserver = null;
-
-const base = computed(() => props.invitationData?.base || {});
 const styles = computed(() => props.invitationData?.styles || {});
-const timeline = computed(() => props.invitationData?.timeline || []);
-const gallery = computed(() => props.invitationData?.gallery || [
-  { src: wedding1, alt: 'Foto principal' },
-  { src: wedding2, alt: 'Momento especial' },
-  { src: wedding3, alt: 'Nuestra historia' },
-  { src: wedding4, alt: 'Celebración' },
-]);
-const fallbackBlocks = [
-  { id: 'block-countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, settings: {} },
-  { id: 'block-story', type: 'story', enabled: true, order: 2, settings: {} },
-  { id: 'block-gallery', type: 'gallery', enabled: true, order: 3, settings: {} },
-  { id: 'block-timeline', type: 'timeline', enabled: true, order: 4, settings: {} },
-  { id: 'block-map', type: 'map', enabled: false, order: 5, settings: {} },
-  { id: 'block-countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, settings: {} },
-  { id: 'block-rsvp', type: 'rsvp', enabled: true, order: 7, settings: {} },
-];
-
-const orderedBlocks = computed(() => {
-  const source = Array.isArray(props.invitationData?.blocks) && props.invitationData.blocks.length ? props.invitationData.blocks : fallbackBlocks;
-  return source.filter((b) => b.enabled !== false).slice().sort((a, b) => a.order - b.order);
-});
-const getEnabledBlock = (type) => orderedBlocks.value.find((block) => block.type === type);
-const weddingCountdownBlock = computed(() => getEnabledBlock('countdown_wedding'));
-const rsvpCountdownBlock = computed(() => getEnabledBlock('countdown_rsvp'));
-const mapBlock = computed(() => getEnabledBlock('map'));
-const weddingDate = computed(() => weddingCountdownBlock.value?.settings?.targetDate || base.value.date || '2027-06-14T18:00:00');
-const rsvpDate = computed(() => rsvpCountdownBlock.value?.settings?.targetDate || '2027-05-20T23:59:59');
-const formattedDate = computed(() => {
-  const date = new Date(base.value.date || weddingDate.value);
-  if (Number.isNaN(date.getTime())) return '14 de junio de 2027';
-  return date.toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
-});
-
-const fontStacks = { 'Playfair Display': "'Playfair Display', Georgia, serif", 'Cormorant Garamond': "'Cormorant Garamond', Georgia, serif", 'Libre Baskerville': "'Libre Baskerville', Georgia, serif", Merriweather: "'Merriweather', Georgia, serif", Lora: "'Lora', Georgia, serif", Poppins: "'Poppins', Arial, sans-serif", Montserrat: "'Montserrat', Arial, sans-serif", Raleway: "'Raleway', Arial, sans-serif", Nunito: "'Nunito', Arial, sans-serif", Georgia: 'Georgia, serif', 'Patrick Hand': "'Patrick Hand', cursive", 'Dancing Script': "'Dancing Script', cursive", 'Great Vibes': "'Great Vibes', cursive", Arial: 'Arial, sans-serif' };
-
-const templateVars = computed(() => ({
-  '--color-primary': styles.value.primaryColor || '#C7355C',
-  '--color-primary-dark': styles.value.titleColor || '#9F1F46',
-  '--section-heading-color': styles.value.titleColor || '#9F1F46',
-  '--color-primary-light': styles.value.secondaryColor || '#FFF1F4',
-  '--theme-background': styles.value.backgroundGradient || 'linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)',
-  '--theme-accent-shape': styles.value.accentShape || '#F7DCE5',
-  '--color-text-main': styles.value.bodyTextColor || '#111827',
-  '--color-text-muted': styles.value.bodyTextColor || '#6B7280',
-  '--color-surface': styles.value.surfaceColor || '#FFFFFF',
-  '--color-border': 'color-mix(in srgb, var(--color-primary-dark) 15%, transparent)',
-  '--couple-font-family': fontStacks[styles.value.coupleFontFamily] || "'Playfair Display', Georgia, serif",
-  '--body-font-family': fontStacks[styles.value.bodyFontFamily] || 'Arial, sans-serif',
-  '--template-text-color': styles.value.bodyTextColor || '#111827',
-  '--block-surface': styles.value.surfaceColor || '#FFFFFF',
-  '--block-text-color': styles.value.surfaceTextColor || styles.value.bodyTextColor || '#1F2937',
-  '--block-muted-color': styles.value.bodyTextColor || '#6B7280',
-}));
-
-const names = computed(() => base.value.names || 'María & Carlos');
-const locationName = computed(() => mapBlock.value?.settings?.locationName || props.invitationData?.mapSettings?.locationName || base.value.location || 'Rose Garden Hall');
-const locationAddress = computed(() => mapBlock.value?.settings?.address || props.invitationData?.mapSettings?.address || 'Santiago, Chile');
-const locationMapUrl = computed(() => mapBlock.value?.settings?.mapUrl || props.invitationData?.mapSettings?.mapUrl || 'https://maps.google.com');
-const locationEmbedUrl = computed(() => mapBlock.value?.settings?.embedUrl || props.invitationData?.mapSettings?.embedUrl || '');
-const heroMessage = computed(() => base.value.heroMessage || 'Nos encantaría que seas parte de este día especial.');
-const storyMessage = computed(() => base.value.storyMessage || 'Nuestra historia está llena de momentos simples, valientes y hermosos que queremos celebrar contigo.');
-
-onMounted(() => {
-  sectionObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        entry.target.style.setProperty('--parallax-y', '0px');
-      }
-    });
-  }, { threshold: 0.15 });
-
-  sectionRefs.forEach((el, i) => {
-    el.style.setProperty('--parallax-y', `${Math.max(4, 14 - i * 2)}px`);
-    sectionObserver?.observe(el);
-  });
-});
-onUnmounted(() => sectionObserver?.disconnect());
-const onRsvpConfirm = (payload) => console.log('RSVP confirmed', payload);
+const base = computed(() => props.invitationData?.base || {});
+const blocks = computed(() => (props.invitationData?.blocks || []).filter((b) => b.enabled));
+const hasBlock = (type) => blocks.value.some((b) => b.type === type);
+const blockByType = (type) => blocks.value.find((b) => b.type === type) || {};
+const headerScrolled = ref(false); const menuOpen = ref(false); const faqOpen = ref(0);
+if (typeof window !== 'undefined') window.addEventListener('scroll', () => { headerScrolled.value = window.scrollY > 24; }, { passive: true });
+const themeVars = computed(() => ({ '--template-primary': styles.value.primaryColor || '#303030','--template-secondary': styles.value.secondaryColor || '#F4F1EA','--template-accent': styles.value.accentShape || '#E6E2D8','--template-hero-bg': styles.value.heroBackground,'--template-hero-text': styles.value.heroTextColor || '#FFFFFF','--template-countdown-bg': styles.value.countdownBackground || '#F4F1EA','--template-countdown-number': styles.value.countdownNumberColor || '#303030','--template-countdown-label': styles.value.countdownLabelColor || '#757575','--template-story-bg': styles.value.storyBackground || '#FFFFFF','--template-gallery-bg': styles.value.galleryBackground || '#F4F1EA','--template-event-bg': styles.value.eventBackground || '#FFFFFF','--template-registry-bg': styles.value.registryBackground || '#E6E2D8','--template-rsvp-bg': styles.value.rsvpBackground || '#1A1A1A','--template-title-color': styles.value.titleColor || '#303030','--template-body-color': styles.value.bodyTextColor || '#575757','--template-muted-color': styles.value.mutedTextColor || '#757575','--template-surface': styles.value.surfaceColor || '#FFFFFF','--template-surface-text': styles.value.surfaceTextColor || '#303030','--template-link-color': styles.value.linkColor || '#303030','--template-border-color': styles.value.borderColor || '#E6E2D8','--template-rsvp-text': styles.value.rsvpTextColor || '#FFFFFF','--template-rsvp-input-border': styles.value.rsvpInputBorderColor || '#FFFFFF','--template-rsvp-button-bg': styles.value.rsvpButtonBackground || '#FFFFFF','--template-rsvp-button-text': styles.value.rsvpButtonTextColor || '#1A1A1A'}));
+const formattedDate = computed(() => new Date(base.value.date || '2027-06-14T18:00:00').toLocaleDateString('es-CL', { year:'numeric', month:'long', day:'numeric' }));
+const initials = computed(() => (base.value.names || 'M & C').split('&').map((p) => p.trim()[0] || '').join(' & ').toUpperCase());
+const mapSettings = computed(() => props.invitationData?.mapSettings || {});
+const faqs = [{q:'¿Hay código de vestimenta?',a:'Sí, formal elegante.'},{q:'¿Puedo llevar acompañante?',a:'Sí, confirma en RSVP.'},{q:'¿A qué hora inicia?',a:'Revisa la sección de ceremonia.'}];
 </script>
-
 <template>
-  <article class="romantic-motion" :style="templateVars">
-    <div class="romantic-motion__bg-layer romantic-motion__bg-layer--one" aria-hidden="true"></div>
-    <div class="romantic-motion__bg-layer romantic-motion__bg-layer--two" aria-hidden="true"></div>
-
-    <section :ref="setSectionRef" class="hero motion-section">
-      <div class="hero-decor hero-decor--one" aria-hidden="true"></div>
-      <div class="hero-decor hero-decor--two" aria-hidden="true"></div>
-      <p class="hero-kicker">Nuestra boda</p>
-      <h1 class="romantic-motion__couple-names">{{ names }}</h1>
-      <p class="hero-date">{{ formattedDate }}</p>
-      <p class="hero-location">{{ locationName }}</p>
-      <p class="hero-message">{{ heroMessage }}</p>
-    </section>
-
-    <div class="romantic-motion__flow">
-      <template v-for="block in orderedBlocks" :key="block.id">
-        <section v-if="block.type === 'countdown_wedding'" :ref="setSectionRef" class="motion-section flow-section flow-section--band"><CountdownBlock :target-date="weddingDate" title="Faltan para nuestra boda" variant="primary" /></section>
-        <section v-else-if="block.type === 'story'" :ref="setSectionRef" class="motion-section flow-section"><StoryBlock title="Nuestra historia" :message="storyMessage" /></section>
-        <section v-else-if="block.type === 'gallery'" :ref="setSectionRef" class="motion-section flow-section flow-section--gallery"><GalleryBlock title="Nuestros momentos" :images="gallery" integrated /></section>
-        <section v-else-if="block.type === 'timeline'" :ref="setSectionRef" class="motion-section flow-section flow-section--band"><TimelineBlock title="Bitácora del evento" :items="timeline" /></section>
-        <section v-else-if="block.type === 'map'" :ref="setSectionRef" class="motion-section flow-section"><MapBlock :location-name="locationName" :address="locationAddress" :map-url="locationMapUrl" :embed-url="locationEmbedUrl" /></section>
-        <section v-else-if="block.type === 'countdown_rsvp'" :ref="setSectionRef" class="motion-section flow-section"><CountdownBlock :target-date="rsvpDate" title="Tiempo para confirmar" variant="minimal" /></section>
-        <section v-else-if="block.type === 'rsvp'" :ref="setSectionRef" class="motion-section flow-section"><RSVPBlock @confirm="onRsvpConfirm" /></section>
-      </template>
-    </div>
-  </article>
+<article class="romantic-template" :style="themeVars">
+  <header class="the-header" :class="{ scrolled: headerScrolled }"><div class="header-inner"><div class="brand">{{ initials }}</div><nav class="menu" :class="{ open: menuOpen }"><a href="#story">NUESTRA HISTORIA</a><a href="#details">CUÁNDO Y DÓNDE</a><a href="#registry">REGISTRO</a><a href="#rsvp">RSVP</a></nav><button class="hamburger" @click="menuOpen=!menuOpen">☰</button></div></header>
+  <section class="hero"><div class="hero-overlay"></div><div class="hero-content"><h1>{{ base.names || 'María & Carlos' }}</h1><p>SE CASAN · {{ formattedDate }}</p><a href="#rsvp" class="hero-btn">RSVP</a></div></section>
+  <section v-if="hasBlock('countdown_wedding')" class="section"><CountdownBlock :target-date="base.date" :title="blockByType('countdown_wedding').settings?.title || 'Cuenta regresiva'" variant="editorial" /></section>
+  <section id="story" v-if="hasBlock('story')" class="section section-story"><StoryBlock :title="blockByType('story').settings?.title || 'Nuestra historia'" :message="base.storyMessage || blockByType('story').settings?.message || ''" /></section>
+  <section id="details" class="section section-details"><h2>Cuándo y dónde</h2><div class="details-grid"><article><span>◌</span><h3>Ceremonia</h3><p>{{ base.location || 'Lugar' }}</p><a :href="mapSettings.mapUrl" target="_blank">Ver mapa</a></article><article><span>◌</span><h3>Celebración</h3><p>{{ mapSettings.address || base.location }}</p><a :href="mapSettings.mapUrl" target="_blank">Ver mapa</a></article></div></section>
+  <section v-if="hasBlock('gallery')" class="section section-gallery"><GalleryBlock :images="props.invitationData?.gallery || []" :title="blockByType('gallery').settings?.title || 'Galería'" integrated /></section>
+  <section v-if="hasBlock('map')" class="section"><MapBlock :location-name="mapSettings.locationName || base.location || ''" :address="mapSettings.address || ''" :map-url="mapSettings.mapUrl || ''" :embed-url="mapSettings.embedUrl || ''" /></section>
+  <section id="registry" class="section section-registry"><h2>Registro</h2><p>Tu presencia es nuestro mejor regalo.</p></section>
+  <section class="section section-faq"><h2>Preguntas frecuentes</h2><article v-for="(item, i) in faqs" :key="item.q" class="faq-item"><button @click="faqOpen = faqOpen === i ? -1 : i">{{ item.q }}</button><p v-if="faqOpen===i">{{ item.a }}</p></article></section>
+  <section id="rsvp" class="section section-rsvp"><RSVPBlock :title="blockByType('rsvp').settings?.title || 'Confirma tu asistencia'" :button-label="blockByType('rsvp').settings?.buttonLabel || 'Enviar confirmación'" /></section>
+</article>
 </template>
