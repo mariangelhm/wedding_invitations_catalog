@@ -1059,3 +1059,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Contenido principal optimizado: microcopy, nombres grandes serif (`clamp(4rem,10vw,8rem)`), fecha/lugar y CTA RSVP ghost.
 - Se agregó indicador de scroll animado para reforzar narrativa one-page.
 - Se cuidó wrapping y overflow en móvil para evitar scroll horizontal.
+
+### Countdown editorial style fix
+- `CountdownBlock` ahora usa estructura explícita con 4 unidades visibles siempre: Días, Horas, Minutos, Segundos.
+- En variante `editorial` se removió el look de tarjetas pesadas y se priorizó tipografía grande para números + labels pequeños en mayúscula.
+- Desktop usa 4 columnas y móvil cambia automáticamente a grilla 2x2.
+- El bloque toma colores desde variables de tema (`--template-countdown-number`, `--template-countdown-label`, `--template-title-color`) para mantener contraste consistente.

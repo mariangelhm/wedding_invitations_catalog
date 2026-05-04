@@ -14,7 +14,7 @@ export function useCountdown(targetDate: string) {
 
   const breakdown = computed(() => {
     if (isExpired.value) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    const totalSeconds = Math.floor(remainingMs.value / 1000);
+    const totalSeconds = Math.max(0, Math.floor(remainingMs.value / 1000));
     return {
       days: Math.floor(totalSeconds / 86400),
       hours: Math.floor((totalSeconds % 86400) / 3600),

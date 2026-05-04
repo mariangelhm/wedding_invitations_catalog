@@ -15,3 +15,6 @@
 
 .hero-scroll-indicator{justify-self:start;width:1px;height:44px;background:var(--inv-hero-text);opacity:.7;animation:heroFloat 1.8s ease-in-out infinite;}
 @keyframes heroFloat{50%{transform:translateY(10px);opacity:.45;}}
+
+.romantic-section .countdown-block--editorial{background:inherit;}
+.romantic-section .countdown-block__title{color:var(--template-title-color,var(--inv-text-primary));}
