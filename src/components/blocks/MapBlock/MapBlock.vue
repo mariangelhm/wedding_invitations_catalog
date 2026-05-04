@@ -41,6 +41,6 @@ onMounted(() => {
         referrerpolicy="no-referrer-when-downgrade"
       ></iframe>
     </div>
-    <a v-else-if="mapUrl" class="map-btn" :href="mapUrl" target="_blank" rel="noopener noreferrer">Ver en Google Maps</a>
+    <a v-else-if="mapUrl" class="map-btn" :href="mapUrl" target="_blank" rel="noopener noreferrer">Abrir en Google Maps</a>
   </section>
 </template>
