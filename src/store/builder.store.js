@@ -52,7 +52,10 @@ const getRomanticDefaults = () => ({
 
 export const useBuilderStore = defineStore('builderStore', {
   state: () => ({ basePrice: 20000, invitation: null }),
-  getters: { totalPrice: (state) => !state.invitation ? state.basePrice : state.basePrice + state.invitation.addons.reduce((sum, addon) => sum + (addon.price || 0), 0) },
+  getters: {
+    enabledBlocksPrice: (state) => !state.invitation ? 0 : (state.invitation.blocks || []).filter((block) => block.enabled !== false).reduce((sum, block) => sum + (block.price || 0), 0),
+    totalPrice() { return (this.invitation?.basePrice || this.basePrice) + this.enabledBlocksPrice; },
+  },
   actions: {
     createDraftInvitation(template = null) {
       const createdAt = new Date(); const expiresAt = new Date(createdAt); expiresAt.setDate(expiresAt.getDate() + 30);
