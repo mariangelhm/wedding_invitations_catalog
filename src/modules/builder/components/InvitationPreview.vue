@@ -23,3 +23,8 @@ const activeTemplateComponent = computed(() => getTemplateComponent(invitation.v
     <RomanticTemplate v-else :names="invitation?.base?.names" :date="invitation?.base?.date" :location="invitation?.base?.location" :message="invitation?.base?.message" />
   </section>
 </template>
+
+<style scoped>
+.invitation-preview--desktop{max-width:920px;width:100%;margin:0 auto}
+.invitation-preview--mobile{max-width:390px;width:100%;margin:0 auto}
+</style>
