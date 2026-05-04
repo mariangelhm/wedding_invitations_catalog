@@ -1085,3 +1085,11 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Se añadió una sección parallax con cita central: "Cada historia de amor merece celebrarse", overlay suave y fallback responsive.
 - Desktop usa `background-attachment: fixed`; mobile usa `scroll` para compatibilidad iOS.
 - `GalleryBlock` ahora usa layout tipo masonry, placeholders elegantes, zoom hover y lightbox nativo (sin librerías externas).
+
+
+### Scroll reveal animations (Romantic Motion)
+- Se usa `IntersectionObserver` propio para revelar secciones una sola vez al entrar al viewport.
+- Clases activas: `motion-section`, `motion-left`, `motion-right`, `motion-fade`, `is-visible`.
+- Efectos: fade-up, entrada desde izquierda y entrada desde derecha con transición `all 0.6s cubic-bezier(0.4, 0, 0.2, 1)`.
+- Navegación interna mantiene desplazamiento suave (`scroll-behavior: smooth`).
+- TODO documentado en código: evaluar reemplazo por AOS en el futuro si se necesita.
