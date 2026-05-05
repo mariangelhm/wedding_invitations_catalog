@@ -10,6 +10,16 @@ const { computed, ref } = Vue;
 
 const props = defineProps({ invitationData: { type: Object, default: () => ({}) } });
 
+const sampleImages = [
+  '/assets/sample-gallery/wedding-1.jpg',
+  '/assets/sample-gallery/wedding-2.jpg',
+  '/assets/sample-gallery/wedding-3.jpg',
+  '/assets/sample-gallery/wedding-4.jpg',
+  '/assets/sample-gallery/wedding-5.jpg',
+  '/assets/sample-gallery/wedding-6.jpg',
+  '/assets/sample-gallery/wedding-7.jpg',
+];
+
 const fallbackEditorialTokens = {
   pageBg: '#F4F1EA',
   sectionBg: '#FFFFFF',
@@ -47,6 +57,7 @@ const base = computed(() => props.invitationData?.base || {});
 const tokens = computed(() => props.invitationData?.styles?.themeTokens || fallbackEditorialTokens);
 const blocks = computed(() => (props.invitationData?.blocks || []).filter((block) => block.enabled));
 const mapSettings = computed(() => props.invitationData?.mapSettings || {});
+const galleryImages = computed(() => sampleImages.map((src, index) => ({ src, alt: `Foto de boda ${index + 1}` })));
 
 const hasBlock = (type) => blocks.value.some((block) => block.type === type);
 const blockByType = (type) => blocks.value.find((block) => block.type === type) || {};
@@ -56,7 +67,6 @@ const nameParts = computed(() => names.value.split('&').map((part) => part.trim(
 const initials = computed(() => nameParts.value.map((part) => part[0] || '').join(' & ').toUpperCase() || 'M & C');
 const eventLocation = computed(() => base.value.location || mapSettings.value.locationName || 'Rose Garden Hall');
 const formattedDate = computed(() => new Date(base.value.date || '2027-06-14T18:00:00').toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' }));
-const weddingYear = computed(() => new Date(base.value.date || '2027-06-14T18:00:00').getFullYear());
 
 const faqs = [
   { q: '¿Puedo llevar acompañante?', a: 'Sí, puedes indicarlo en el formulario RSVP.' },
@@ -144,6 +154,10 @@ Vue.onMounted(() => {
   removeScrollListener = () => scrollParent.removeEventListener('scroll', onScroll);
   onScroll();
 
+  if (sampleImages.some((image) => !image)) {
+    console.error('Romantic Motion sample images failed to load', sampleImages);
+  }
+
   observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -182,33 +196,30 @@ Vue.onUnmounted(() => {
       </div>
     </header>
 
-    <section id="home" class="romantic-template__hero">
+    <section id="home" class="romantic-template__hero hero">
       <div class="hero-overlay"></div>
       <div class="hero-frame motion-left" :ref="setRevealRef">
         <p class="eyebrow">Nos vamos a casar</p>
-        <h1>{{ names }}</h1>
+        <h1 class="hero-names">{{ names }}</h1>
         <div class="hero-divider" aria-hidden="true"></div>
         <p class="hero-meta">{{ formattedDate }} · {{ eventLocation }}</p>
         <a href="#rsvp" class="romantic-btn romantic-btn--ghost">Confirmar asistencia</a>
       </div>
-      <aside class="hero-card motion-right" :ref="setRevealRef" aria-label="Resumen del evento">
-        <span>{{ initials }}</span>
-        <strong>{{ weddingYear }}</strong>
-        <small>{{ formattedDate }}</small>
-      </aside>
+      <div class="hero-media motion-right" :ref="setRevealRef">
+        <img :src="sampleImages[0]" alt="wedding" />
+      </div>
       <span class="hero-scroll-indicator" aria-hidden="true"></span>
     </section>
 
-    <section id="story" class="romantic-template__story motion-section" :ref="setRevealRef">
+    <section id="story" class="romantic-template__story story motion-section" :ref="setRevealRef">
       <div class="story-copy motion-left" :ref="setRevealRef">
         <p class="eyebrow">Nuestra historia</p>
         <h2 class="romantic-section-title">Un sí para celebrar con quienes más queremos</h2>
         <p>{{ base.storyMessage || 'Nuestra historia merece celebrarse contigo. Te esperamos para compartir una noche íntima, alegre y llena de detalles que recuerden este comienzo.' }}</p>
       </div>
-      <div class="story-media motion-right" :ref="setRevealRef" aria-hidden="true">
-        <div class="story-orb story-orb--large"></div>
+      <div class="story-media motion-right" :ref="setRevealRef">
+        <img :src="sampleImages[1]" alt="wedding" />
         <div class="story-monogram">{{ initials }}</div>
-        <div class="story-orb story-orb--small"></div>
       </div>
     </section>
 
@@ -220,35 +231,40 @@ Vue.onUnmounted(() => {
       />
     </section>
 
-    <section id="details" class="romantic-template__details motion-section" :ref="setRevealRef">
+    <section id="details" class="romantic-template__details details motion-section" :ref="setRevealRef">
       <div class="section-heading">
         <p class="eyebrow">Cuándo y dónde</p>
         <h2 class="romantic-section-title">Todo lo importante para acompañarnos</h2>
       </div>
-      <div class="details-grid">
-        <article class="detail-card">
-          <span>01</span>
-          <h3>Ceremonia</h3>
-          <p>{{ formattedDate }}</p>
-          <p>{{ eventLocation }}</p>
-          <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
-        </article>
-        <article class="detail-card detail-card--accent">
-          <span>02</span>
-          <h3>Celebración</h3>
-          <p>{{ formattedDate }}</p>
-          <p>{{ mapSettings.address || eventLocation }}</p>
-          <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
-        </article>
+      <div class="details-content">
+        <div class="details-grid">
+          <article class="detail-card">
+            <span>01</span>
+            <h3>Ceremonia</h3>
+            <p>{{ formattedDate }}</p>
+            <p>{{ eventLocation }}</p>
+            <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
+          </article>
+          <article class="detail-card detail-card--accent">
+            <span>02</span>
+            <h3>Celebración</h3>
+            <p>{{ formattedDate }}</p>
+            <p>{{ mapSettings.address || eventLocation }}</p>
+            <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
+          </article>
+        </div>
+        <div class="details-image">
+          <img :src="sampleImages[3]" alt="wedding" />
+        </div>
       </div>
     </section>
 
-    <section id="gallery" class="romantic-template__parallax motion-section" :ref="setRevealRef">
+    <section id="gallery" class="romantic-template__parallax gallery motion-section" :ref="setRevealRef" :style="{ '--motion-parallax-image': `url(${sampleImages[2]})` }">
       <p>Cada historia de amor merece celebrarse</p>
     </section>
 
-    <section v-if="hasBlock('gallery')" class="romantic-template__gallery romantic-section motion-section" :ref="setRevealRef">
-      <GalleryBlock :images="props.invitationData?.gallery || []" :title="blockByType('gallery').settings?.title || 'Galería'" integrated />
+    <section class="romantic-template__gallery gallery romantic-section motion-section" :ref="setRevealRef">
+      <GalleryBlock :images="galleryImages" :title="blockByType('gallery').settings?.title || 'Galería'" integrated />
     </section>
 
     <section id="rsvp" class="romantic-template__rsvp romantic-section motion-section" :ref="setRevealRef">

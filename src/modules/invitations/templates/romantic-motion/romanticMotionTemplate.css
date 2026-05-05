@@ -20,6 +20,13 @@
   max-width: 100%;
 }
 
+.romantic-template .hero,
+.romantic-template .story,
+.romantic-template .details,
+.romantic-template .gallery {
+  overflow: hidden;
+}
+
 .romantic-template__header {
   position: sticky;
   top: 0;
@@ -141,6 +148,7 @@
 }
 
 .hero-frame,
+.hero-media,
 .hero-card,
 .hero-scroll-indicator {
   position: relative;
@@ -163,13 +171,13 @@
   text-transform: uppercase;
 }
 
-.hero-frame h1 {
-  max-width: 900px;
+.hero-names {
+  max-width: 720px;
   margin: 0;
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(3.2rem, 8vw, 6.5rem);
+  font-size: clamp(2.8rem, 6vw, 5rem);
   font-weight: 500;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.04em;
   line-height: 0.95;
   overflow-wrap: break-word;
   text-wrap: balance;
@@ -186,6 +194,23 @@
   max-width: 520px;
   margin: 0;
   font-size: clamp(1rem, 1.6vw, 1.25rem);
+}
+
+.hero-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--theme-hero-text, #FFFFFF) 24%, transparent);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.18);
+}
+
+.hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .hero-card {
@@ -320,14 +345,25 @@
   min-height: 480px;
   display: grid;
   place-items: center;
+  overflow: hidden;
+  box-shadow: var(--motion-shadow);
+}
+
+.story-media img {
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  object-fit: cover;
+  display: block;
 }
 
 .story-media::before {
   content: '';
   position: absolute;
-  inset: 34px;
-  border: 1px solid var(--theme-border, #E6E2D8);
-  border-radius: 46% 54% 48% 52%;
+  inset: 28px;
+  z-index: 1;
+  border: 1px solid color-mix(in srgb, var(--theme-hero-text, #FFFFFF) 48%, transparent);
+  pointer-events: none;
 }
 
 .story-orb {
@@ -389,9 +425,16 @@
   padding: clamp(84px, 10vw, 140px) max(24px, 8vw);
 }
 
+.details-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
+  gap: clamp(18px, 3vw, 34px);
+  align-items: stretch;
+}
+
 .details-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(18px, 3vw, 34px);
 }
 
@@ -436,6 +479,21 @@
   color: var(--theme-body-text, #575757);
 }
 
+.details-image {
+  min-height: 100%;
+  overflow: hidden;
+  background: var(--theme-section-alt-bg, #F4F1EA);
+  box-shadow: var(--motion-soft-shadow);
+}
+
+.details-image img {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .romantic-link {
   margin-top: 22px;
   color: var(--theme-accent, #303030);
@@ -459,7 +517,7 @@
   display: grid;
   place-items: center;
   text-align: center;
-  background-image: linear-gradient(var(--theme-quote-overlay, rgba(0, 0, 0, 0.25)), var(--theme-quote-overlay, rgba(0, 0, 0, 0.25))), var(--theme-quote-bg, var(--theme-section-alt-bg, #EFEBE9));
+  background-image: linear-gradient(var(--theme-quote-overlay, rgba(0, 0, 0, 0.25)), var(--theme-quote-overlay, rgba(0, 0, 0, 0.25))), var(--motion-parallax-image), var(--theme-quote-bg, var(--theme-section-alt-bg, #EFEBE9));
   background-attachment: fixed;
   background-position: center;
   background-size: cover;
@@ -705,6 +763,7 @@
 
   .romantic-template__hero,
   .romantic-template__story,
+  .details-content,
   .details-grid,
   .romantic-template__rsvp,
   .romantic-template__map-faq {
@@ -716,9 +775,8 @@
     align-items: center;
   }
 
-  .hero-card {
-    justify-self: start;
-    width: min(100%, 360px);
+  .hero-media {
+    min-height: 360px;
   }
 
   .story-media {
@@ -731,14 +789,16 @@
   }
 }
 
+@media (max-width: 768px) {
+  .hero-names {
+    font-size: clamp(2.2rem, 10vw, 3.5rem);
+  }
+}
+
 @media (max-width: 560px) {
   .romantic-template__hero {
     min-height: 680px;
     padding-inline: 22px;
-  }
-
-  .hero-frame h1 {
-    font-size: clamp(2.6rem, 14vw, 4.5rem);
   }
 
   .detail-card h3 {
@@ -754,8 +814,8 @@
     min-height: 240px;
   }
 
-  .hero-card {
-    display: none;
+  .hero-media {
+    min-height: 300px;
   }
 
   .romantic-section,
