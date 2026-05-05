@@ -224,7 +224,7 @@ Vue.onUnmounted(() => {
       <div class="romantic-template__story-grid">
         <div class="romantic-template__story-content motion-left" :ref="setRevealRef">
           <p class="eyebrow">Nuestra historia</p>
-          <h2 class="romantic-section-title romantic-template__story-title">Un sí para celebrar con quienes más queremos</h2>
+          <h2 class="romantic-section-title romantic-template__section-title romantic-template__story-title">Un sí para celebrar con quienes más queremos</h2>
           <p>{{ base.storyMessage || 'Nuestra historia merece celebrarse contigo. Te esperamos para compartir una noche íntima, alegre y llena de detalles que recuerden este comienzo.' }}</p>
         </div>
         <div class="romantic-template__story-media motion-right" :ref="setRevealRef">
@@ -234,7 +234,13 @@ Vue.onUnmounted(() => {
       </div>
     </section>
 
-    <div class="romantic-template__parallax motion-section" :ref="setRevealRef" :style="{ '--motion-parallax-image': `url(${sampleImages[3]})` }" aria-label="Momento de la pareja"></div>
+    <!-- TODO: Move this pattern to a reusable ParallaxBlock extra later. Props should be: imageUrl, height, overlayOpacity, mobileHeight, backgroundPosition. -->
+    <section
+      class="romantic-parallax motion-section"
+      :ref="setRevealRef"
+      :style="{ '--parallax-image': `url(${sampleImages[3]})` }"
+      aria-label="Imagen destacada de la pareja"
+    ></section>
 
     <section v-if="hasBlock('countdown_wedding')" class="romantic-template__countdown romantic-section motion-section" :ref="setRevealRef">
       <CountdownBlock
@@ -247,7 +253,7 @@ Vue.onUnmounted(() => {
     <section id="details" class="romantic-template__details details motion-section" :ref="setRevealRef">
       <div class="section-heading">
         <p class="eyebrow">Cuándo y dónde</p>
-        <h2 class="romantic-section-title">Todo lo importante para acompañarnos</h2>
+        <h2 class="romantic-section-title romantic-template__section-title">Todo lo importante para acompañarnos</h2>
       </div>
       <div class="romantic-template__details-grid">
         <div class="romantic-template__details-list">
@@ -283,7 +289,7 @@ Vue.onUnmounted(() => {
     <section id="rsvp" class="romantic-template__rsvp romantic-section motion-section" :ref="setRevealRef">
       <div class="rsvp-intro">
         <p class="eyebrow">RSVP</p>
-        <h2 class="romantic-section-title">Confirma tu asistencia</h2>
+        <h2 class="romantic-section-title romantic-template__section-title">Confirma tu asistencia</h2>
         <p>Tu respuesta nos ayuda a preparar cada detalle de esta celebración.</p>
       </div>
       <RSVPBlock
@@ -305,7 +311,7 @@ Vue.onUnmounted(() => {
       </div>
       <div class="faq">
         <p class="eyebrow">Información útil</p>
-        <h2 class="romantic-section-title">Preguntas frecuentes</h2>
+        <h2 class="romantic-section-title romantic-template__section-title">Preguntas frecuentes</h2>
         <article v-for="(item, i) in faqs" :key="item.q" class="faq-item" :class="{ open: openFaq === i }">
           <button class="faq-trigger" type="button" @click="openFaq = openFaq === i ? -1 : i">
             <span>{{ item.q }}</span>

@@ -1,4 +1,6 @@
 .romantic-template {
+  --romantic-template-width: min(calc(100% - 24px), 1180px);
+  --romantic-section-y: 72px;
   --motion-shadow: 0 24px 70px color-mix(in srgb, var(--theme-title-text, #303030) 12%, transparent);
   --motion-soft-shadow: 0 14px 38px color-mix(in srgb, var(--theme-title-text, #303030) 10%, transparent);
   background: var(--theme-page-bg, #F4F1EA);
@@ -28,8 +30,7 @@
 }
 
 .romantic-template__header {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 50;
   color: var(--theme-title-text, #303030);
   transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
@@ -42,7 +43,7 @@
 }
 
 .romantic-template__header-inner {
-  width: min(1180px, calc(100% - 40px));
+  width: var(--romantic-template-width);
   min-height: 72px;
   margin: 0 auto;
   display: flex;
@@ -103,8 +104,8 @@
 
 .romantic-template__hero {
   position: relative;
-  min-height: clamp(640px, 88vh, 840px);
-  padding: clamp(72px, 9vw, 128px) max(24px, 7vw) clamp(54px, 7vw, 88px);
+  min-height: clamp(600px, 84vh, 800px);
+  padding: var(--romantic-section-y) 0;
   background: var(--theme-hero-bg, linear-gradient(135deg, #4D4A43 0%, #303030 100%));
   background-position: center;
   background-size: cover;
@@ -121,7 +122,7 @@
 .romantic-template__hero-grid {
   position: relative;
   z-index: 1;
-  width: min(1180px, 100%);
+  width: var(--romantic-template-width);
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 0.85fr) minmax(420px, 1.15fr);
@@ -153,10 +154,10 @@
 }
 
 .romantic-template__hero-names {
-  max-width: 560px;
+  max-width: 520px;
   margin: 0;
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.8rem, 4.8vw, 4.6rem);
+  font-size: clamp(2.3rem, 4.2vw, 4rem);
   font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 0.95;
@@ -271,15 +272,18 @@
 }
 
 .romantic-section {
-  padding: clamp(76px, 9vw, 128px) max(24px, 8vw);
+  width: var(--romantic-template-width);
+  margin: 0 auto;
+  padding: var(--romantic-section-y) 0;
 }
 
-.romantic-section-title {
+.romantic-section-title,
+.romantic-template__section-title {
   max-width: 100%;
   margin: 0;
   color: var(--theme-title-text, #303030);
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
   font-weight: 500;
   letter-spacing: -0.035em;
   line-height: 1.05;
@@ -288,8 +292,9 @@
 }
 
 .section-heading {
-  max-width: 760px;
-  margin-bottom: clamp(30px, 5vw, 54px);
+  width: var(--romantic-template-width);
+  max-width: var(--romantic-template-width);
+  margin: 0 auto clamp(28px, 4vw, 44px);
   display: grid;
   gap: 10px;
 }
@@ -306,11 +311,11 @@
   background:
     radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--theme-accent, #303030) 10%, transparent), transparent 30%),
     var(--theme-section-bg, #FFFFFF);
-  padding: clamp(88px, 10vw, 150px) max(24px, 8vw);
+  padding: var(--romantic-section-y) 0;
 }
 
 .romantic-template__story-grid {
-  width: min(1120px, 100%);
+  width: var(--romantic-template-width);
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.85fr);
@@ -325,7 +330,7 @@
 }
 
 .romantic-template__story-title {
-  font-size: clamp(2.4rem, 4vw, 3.8rem);
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
   line-height: 1.05;
 }
 
@@ -398,33 +403,43 @@
   text-align: center;
 }
 
-.romantic-template__parallax {
-  height: 65vh;
-  min-height: 420px;
-  background-image: var(--motion-parallax-image);
+.romantic-parallax {
+  height: 500px;
+  background-image: var(--parallax-image);
+  background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  background-attachment: fixed;
+  position: relative;
+  overflow: hidden;
+}
+
+.romantic-parallax::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.10);
+  pointer-events: none;
 }
 
 .romantic-template__details {
   background: var(--theme-page-bg, #F4F1EA);
-  padding: clamp(84px, 10vw, 140px) max(24px, 8vw);
+  padding: var(--romantic-section-y) 0;
 }
 
 .romantic-template__details-grid {
-  width: min(1120px, 100%);
+  width: var(--romantic-template-width);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
-  gap: clamp(32px, 5vw, 72px);
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 1fr);
+  gap: clamp(28px, 4vw, 56px);
   align-items: stretch;
 }
 
 .romantic-template__details-list {
   min-width: 0;
   display: grid;
+  grid-template-rows: 1fr 1fr;
   gap: 24px;
 }
 
@@ -457,7 +472,7 @@
   margin: auto 0 16px;
   color: var(--theme-title-text, #303030);
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(1.8rem, 2.4vw, 2.6rem);
+  font-size: clamp(1.7rem, 2.2vw, 2.4rem);
   font-weight: 500;
   line-height: 1.05;
   overflow-wrap: normal;
@@ -473,7 +488,8 @@
 
 .romantic-template__details-visual {
   min-width: 0;
-  height: 520px;
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
   background: var(--theme-section-alt-bg, #F4F1EA);
   box-shadow: var(--motion-soft-shadow);
@@ -521,7 +537,7 @@
   margin: 0;
   color: var(--theme-quote-text, var(--theme-title-text, #303030));
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.2rem, 5vw, 4.6rem);
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
   line-height: 1.04;
   text-wrap: balance;
 }
@@ -531,7 +547,7 @@
 }
 
 .romantic-template__gallery .gallery-block {
-  max-width: 1120px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: clamp(18px, 3vw, 30px);
   border-color: var(--theme-border, #E6E2D8);
@@ -548,7 +564,8 @@
   gap: clamp(30px, 6vw, 86px);
 }
 
-.romantic-template__rsvp .romantic-section-title {
+.romantic-template__rsvp .romantic-section-title,
+.romantic-template__rsvp .romantic-template__section-title {
   color: var(--theme-rsvp-text, #2F2E2E);
 }
 
@@ -590,8 +607,10 @@
 }
 
 .romantic-template__map-faq {
+  width: var(--romantic-template-width);
+  margin: 0 auto;
   background: var(--theme-section-bg, #FFFFFF);
-  padding: clamp(84px, 10vw, 140px) max(24px, 8vw);
+  padding: var(--romantic-section-y) 0;
 }
 
 .romantic-template__map-faq-grid {
@@ -601,8 +620,9 @@
   gap: clamp(28px, 5vw, 72px);
 }
 
-.romantic-template__map-faq .romantic-section-title {
-  font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+.romantic-template__map-faq .romantic-section-title,
+.romantic-template__map-faq .romantic-template__section-title {
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
   overflow-wrap: anywhere;
 }
 
@@ -769,6 +789,11 @@
 }
 
 @media (max-width: 768px) {
+  .romantic-template {
+    --romantic-template-width: min(calc(100% - 20px), 100%);
+    --romantic-section-y: 40px;
+  }
+
   .romantic-template__hero-grid,
   .romantic-template__story-grid,
   .romantic-template__details-grid,
@@ -781,7 +806,7 @@
   }
 
   .romantic-template__hero-names {
-    font-size: clamp(2.4rem, 11vw, 3.8rem);
+    font-size: clamp(2rem, 10vw, 3.2rem);
   }
 
   .romantic-template__hero-media {
@@ -789,7 +814,7 @@
   }
 
   .romantic-template__story-title {
-    font-size: clamp(2.4rem, 10vw, 3.8rem);
+    font-size: clamp(2rem, 9vw, 3.2rem);
   }
 
   .romantic-template__story-media,
@@ -797,17 +822,21 @@
     min-height: 360px;
   }
 
+  .romantic-template__details-list {
+    grid-template-rows: auto;
+  }
+
   .romantic-template__details-visual {
     height: 320px;
+    min-height: 0;
   }
 
   .romantic-template__detail-title {
-    font-size: clamp(2rem, 10vw, 3rem);
+    font-size: clamp(1.7rem, 8vw, 2.4rem);
   }
 
-  .romantic-template__parallax {
-    height: 360px;
-    min-height: 360px;
+  .romantic-parallax {
+    height: 340px;
     background-attachment: scroll;
   }
 
@@ -816,6 +845,7 @@
     min-height: 360px;
     background-attachment: scroll;
   }
+}
 
   .motion-left,
   .motion-right {
@@ -830,7 +860,7 @@
   .romantic-template__details,
   .romantic-template__rsvp,
   .romantic-template__map-faq {
-    padding-inline: 22px;
+    padding-inline: 0;
   }
 
   .romantic-template__detail-card {

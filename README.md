@@ -1143,3 +1143,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Hero, story, and detail typography were reduced to a calmer editorial scale so the template reads like a premium magazine layout instead of a poster.
 - A dedicated Wix-style parallax image section was added between story and details; it is the only scroll-depth image effect and falls back to normal scrolling on mobile.
 - Details imagery is kept clean with a fixed-height visual panel and no fake layers, sticky behavior, negative margins, or overlapping section tricks.
+
+## HU-113 Romantic Motion polish
+- Reduced Romantic Motion horizontal gutters to a narrower template width (`calc(100% - 24px)` on desktop and `calc(100% - 20px)` on mobile) with calmer 72px desktop and 40px mobile section rhythm.
+- Reduced hero names, section titles, story titles, detail titles, and quote typography so the invitation reads as editorial instead of poster-sized.
+- Aligned the details image panel to the combined height of the two stacked detail cards on desktop, with a safe 320px image height when stacked on mobile.
+- Introduced the internal `romantic-parallax` background-window pattern and documented the future `ParallaxBlock` extraction path without creating the reusable block yet.
