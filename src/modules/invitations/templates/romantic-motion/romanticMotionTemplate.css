@@ -124,8 +124,8 @@
   width: min(1180px, 100%);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
-  gap: clamp(32px, 6vw, 96px);
+  grid-template-columns: minmax(0, 0.85fr) minmax(420px, 1.15fr);
+  gap: clamp(32px, 5vw, 80px);
   align-items: center;
 }
 
@@ -147,11 +147,16 @@
   text-transform: uppercase;
 }
 
+.romantic-template__hero-eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+}
+
 .romantic-template__hero-names {
-  max-width: 720px;
+  max-width: 560px;
   margin: 0;
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(3rem, 5.8vw, 5.4rem);
+  font-size: clamp(2.8rem, 4.8vw, 4.6rem);
   font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 0.95;
@@ -176,8 +181,9 @@
   position: relative;
   z-index: 1;
   min-width: 0;
-  height: clamp(460px, 68vh, 720px);
+  height: clamp(580px, 80vh, 900px);
   overflow: hidden;
+  border-radius: 4px;
   border: 1px solid color-mix(in srgb, var(--theme-hero-text, #FFFFFF) 24%, transparent);
   background: color-mix(in srgb, var(--theme-hero-text, #FFFFFF) 8%, transparent);
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.18);
@@ -319,7 +325,7 @@
 }
 
 .romantic-template__story-title {
-  font-size: clamp(2.8rem, 5vw, 5rem);
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
   line-height: 1.05;
 }
 
@@ -392,6 +398,16 @@
   text-align: center;
 }
 
+.romantic-template__parallax {
+  height: 65vh;
+  min-height: 420px;
+  background-image: var(--motion-parallax-image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
 .romantic-template__details {
   background: var(--theme-page-bg, #F4F1EA);
   padding: clamp(84px, 10vw, 140px) max(24px, 8vw);
@@ -441,9 +457,9 @@
   margin: auto 0 16px;
   color: var(--theme-title-text, #303030);
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.2rem, 3vw, 3.3rem);
+  font-size: clamp(1.8rem, 2.4vw, 2.6rem);
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.05;
   overflow-wrap: normal;
   word-break: normal;
 }
@@ -457,7 +473,7 @@
 
 .romantic-template__details-visual {
   min-width: 0;
-  min-height: 560px;
+  height: 520px;
   overflow: hidden;
   background: var(--theme-section-alt-bg, #F4F1EA);
   box-shadow: var(--motion-soft-shadow);
@@ -487,7 +503,7 @@
   padding-bottom: 4px;
 }
 
-.romantic-template__parallax-break {
+.romantic-template__quote-break {
   height: 62vh;
   min-height: 420px;
   padding: max(60px, 8vw) 24px;
@@ -495,12 +511,12 @@
   place-items: center;
   text-align: center;
   background-image: linear-gradient(var(--theme-quote-overlay, rgba(0, 0, 0, 0.25)), var(--theme-quote-overlay, rgba(0, 0, 0, 0.25))), var(--motion-parallax-image), var(--theme-quote-bg, var(--theme-section-alt-bg, #EFEBE9));
-  background-attachment: fixed;
+  background-attachment: scroll;
   background-position: center;
   background-size: cover;
 }
 
-.romantic-template__parallax-break p {
+.romantic-template__quote-break p {
   max-width: 840px;
   margin: 0;
   color: var(--theme-quote-text, var(--theme-title-text, #303030));
@@ -782,14 +798,20 @@
   }
 
   .romantic-template__details-visual {
-    min-height: 320px;
+    height: 320px;
   }
 
   .romantic-template__detail-title {
     font-size: clamp(2rem, 10vw, 3rem);
   }
 
-  .romantic-template__parallax-break {
+  .romantic-template__parallax {
+    height: 360px;
+    min-height: 360px;
+    background-attachment: scroll;
+  }
+
+  .romantic-template__quote-break {
     height: 360px;
     min-height: 360px;
     background-attachment: scroll;

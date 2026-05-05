@@ -205,7 +205,7 @@ Vue.onUnmounted(() => {
       <div class="hero-overlay" aria-hidden="true"></div>
       <div class="romantic-template__hero-grid">
         <div class="romantic-template__hero-content motion-left" :ref="setRevealRef">
-          <p class="eyebrow">Nos vamos a casar</p>
+          <p class="eyebrow romantic-template__hero-eyebrow">Nos vamos a casar</p>
           <h1 class="romantic-template__hero-names">{{ names }}</h1>
           <div class="hero-divider" aria-hidden="true"></div>
           <p class="hero-meta">{{ formattedDate }} · {{ eventLocation }}</p>
@@ -233,6 +233,8 @@ Vue.onUnmounted(() => {
         </div>
       </div>
     </section>
+
+    <div class="romantic-template__parallax motion-section" :ref="setRevealRef" :style="{ '--motion-parallax-image': `url(${sampleImages[3]})` }" aria-label="Momento de la pareja"></div>
 
     <section v-if="hasBlock('countdown_wedding')" class="romantic-template__countdown romantic-section motion-section" :ref="setRevealRef">
       <CountdownBlock
@@ -265,12 +267,12 @@ Vue.onUnmounted(() => {
           </article>
         </div>
         <div class="romantic-template__details-visual">
-          <img :src="sampleImages[3]" alt="Mesa decorada para celebración de boda" />
+          <img :src="sampleImages[4]" alt="Mesa decorada para celebración de boda" />
         </div>
       </div>
     </section>
 
-    <section id="gallery" class="romantic-template__parallax-break gallery motion-section" :ref="setRevealRef" :style="{ '--motion-parallax-image': `url(${sampleImages[2]})` }">
+    <section id="gallery" class="romantic-template__quote-break gallery motion-section" :ref="setRevealRef" :style="{ '--motion-parallax-image': `url(${sampleImages[2]})` }">
       <p>Cada historia de amor merece celebrarse</p>
     </section>
 

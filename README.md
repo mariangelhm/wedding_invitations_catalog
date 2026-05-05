@@ -1137,3 +1137,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - The details section uses a safe grid with stacked detail cards on the left and a fixed-height image panel on the right, so the image fills its panel and does not leave gray empty space below.
 - The parallax break is the only scroll-layer image effect for now; details and story images are normal grid content instead of sticky or absolute overlapping layers.
 - Dangerous overlap rules were removed from the Romantic Motion layout, including hero negative margins, uncontrolled section-image overlap, and oversized title sizing that could cut text.
+
+## HU-112: Hero refinement + true parallax section added (Wix-style)
+- Romantic Motion keeps the safe two-column hero, but the media column is now larger and more visually dominant while remaining fully contained in its own grid column.
+- Hero, story, and detail typography were reduced to a calmer editorial scale so the template reads like a premium magazine layout instead of a poster.
+- A dedicated Wix-style parallax image section was added between story and details; it is the only scroll-depth image effect and falls back to normal scrolling on mobile.
+- Details imagery is kept clean with a fixed-height visual panel and no fake layers, sticky behavior, negative margins, or overlapping section tricks.
