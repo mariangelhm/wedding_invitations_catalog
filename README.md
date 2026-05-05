@@ -1130,3 +1130,12 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Los headers internos de plantillas renderizadas en el editor no deben usar posicionamiento fijo contra el viewport del navegador.
 - Para previews dentro del editor, usa `position: sticky` o `position: absolute` dentro del contenedor raíz de la plantilla.
 - El contenedor raíz de la plantilla debe aislar layout/overflow para que navegación, hamburguesa y overlays no se dibujen encima del toolbar del editor.
+
+## HU-109 Romantic Motion layout polish
+- Improved only the Romantic Motion template layout and responsive behavior.
+- Added a shared `.romantic-template__container` so header, hero, story, countdown, details, gallery, map/FAQ, RSVP, and footer now align to consistent horizontal margins.
+- Enlarged the desktop hero image with a two-column hero grid and intentional overlap into the following section.
+- Updated detail cards so titles stay one line on desktop (with ellipsis fallback) and wrap naturally on mobile.
+- Reworked the details visual into a sticky underlayer image stage on desktop, while keeping a non-sticky stacked layout on mobile.
+- Applied mobile safety updates to avoid horizontal overflow, improve spacing, stack grids (details/map-FAQ/gallery), and keep RSVP content full-width.
+- No editor layout, theme presets, builder store, reusable block architecture, or external libraries were changed.
