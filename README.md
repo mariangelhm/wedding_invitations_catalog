@@ -1130,3 +1130,10 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Los headers internos de plantillas renderizadas en el editor no deben usar posicionamiento fijo contra el viewport del navegador.
 - Para previews dentro del editor, usa `position: sticky` o `position: absolute` dentro del contenedor raíz de la plantilla.
 - El contenedor raíz de la plantilla debe aislar layout/overflow para que navegación, hamburguesa y overlays no se dibujen encima del toolbar del editor.
+
+## HU-111 Romantic Motion layout recovery
+- Romantic Motion now uses a controlled two-column hero: text remains in the left content column while the editorial image and decorative layers stay contained in the right media column.
+- Hero image layering is intentionally limited to the media wrapper: a subtle circle, the image, and a small cream initials caption use local z-index stacking without crossing over the names or CTA.
+- The details section uses a safe grid with stacked detail cards on the left and a fixed-height image panel on the right, so the image fills its panel and does not leave gray empty space below.
+- The parallax break is the only scroll-layer image effect for now; details and story images are normal grid content instead of sticky or absolute overlapping layers.
+- Dangerous overlap rules were removed from the Romantic Motion layout, including hero negative margins, uncontrolled section-image overlap, and oversized title sizing that could cut text.
