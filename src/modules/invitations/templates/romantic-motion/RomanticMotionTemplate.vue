@@ -10,6 +10,11 @@ const { computed, ref } = Vue;
 
 const props = defineProps({ invitationData: { type: Object, default: () => ({}) } });
 
+/**
+ * 👇 AQUÍ defines tus imágenes locales/manuales.
+ * Deben existir en /public/assets/sample-gallery/
+ * Ejemplo: public/assets/sample-gallery/wedding-1.jpg
+ */
 const sampleImages = [
   '/assets/sample-gallery/wedding-1.jpg',
   '/assets/sample-gallery/wedding-2.jpg',
