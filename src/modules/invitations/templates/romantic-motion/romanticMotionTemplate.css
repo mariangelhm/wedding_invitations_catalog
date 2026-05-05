@@ -1,4 +1,6 @@
 .romantic-template {
+  width: 100%;
+  max-width: 100%;
   --motion-shadow: 0 24px 70px color-mix(in srgb, var(--theme-title-text, #303030) 12%, transparent);
   --motion-soft-shadow: 0 14px 38px color-mix(in srgb, var(--theme-title-text, #303030) 10%, transparent);
   background: var(--theme-page-bg, #F4F1EA);
@@ -13,6 +15,12 @@
 .romantic-template *::before,
 .romantic-template *::after {
   box-sizing: border-box;
+}
+
+
+.romantic-template__container {
+  width: min(100% - 48px, 1180px);
+  margin: 0 auto;
 }
 
 .romantic-template img,
@@ -43,7 +51,6 @@
 }
 
 .romantic-template__header-inner {
-  width: min(1180px, calc(100% - 40px));
   min-height: 72px;
   margin: 0 auto;
   display: flex;
@@ -106,10 +113,7 @@
   position: relative;
   min-height: clamp(680px, 92vh, 860px);
   margin-top: -72px;
-  padding: 128px max(24px, 7vw) 72px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
-  align-items: end;
+  padding: 128px 0 72px;
   gap: clamp(28px, 6vw, 86px);
   background: var(--theme-hero-bg, linear-gradient(135deg, #4D4A43 0%, #303030 100%));
   background-position: center;
@@ -145,6 +149,15 @@
   position: absolute;
   inset: 0;
   background: var(--theme-hero-overlay, rgba(0, 0, 0, 0.3));
+}
+
+.romantic-template__hero-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.95fr);
+  align-items: end;
+  gap: clamp(28px, 6vw, 86px);
 }
 
 .hero-frame,
@@ -199,17 +212,22 @@
 .hero-media {
   position: relative;
   width: 100%;
-  height: 100%;
-  min-height: 520px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--theme-hero-text, #FFFFFF) 24%, transparent);
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.18);
+}
+
+.romantic-template__hero-media {
+  z-index: 2;
+  height: clamp(520px, 78vh, 860px);
+  margin-bottom: -120px;
 }
 
 .hero-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1.04);
   display: block;
 }
 
@@ -289,7 +307,7 @@
 }
 
 .romantic-section {
-  padding: clamp(76px, 9vw, 128px) max(24px, 8vw);
+  padding: clamp(76px, 9vw, 128px) 0;
 }
 
 .romantic-section-title {
@@ -325,7 +343,7 @@
   grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.8fr);
   align-items: center;
   gap: clamp(36px, 7vw, 96px);
-  padding: clamp(88px, 10vw, 150px) max(24px, 8vw);
+  padding: 160px 0 clamp(88px, 10vw, 150px);
 }
 
 .story-copy {
@@ -422,20 +440,20 @@
 
 .romantic-template__details {
   background: var(--theme-page-bg, #F4F1EA);
-  padding: clamp(84px, 10vw, 140px) max(24px, 8vw);
+  padding: clamp(84px, 10vw, 140px) 0;
 }
 
 .details-content {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
   gap: clamp(18px, 3vw, 34px);
   align-items: stretch;
 }
 
 .details-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(18px, 3vw, 34px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 48px;
 }
 
 .detail-card {
@@ -462,16 +480,17 @@
   letter-spacing: 0.18em;
 }
 
-.detail-card h3 {
+.romantic-template__detail-title {
   max-width: 100%;
   margin: auto 0 16px;
   color: var(--theme-title-text, #303030);
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
   font-weight: 500;
   line-height: 1;
-  overflow-wrap: break-word;
-  word-break: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .detail-card p {
@@ -479,11 +498,32 @@
   color: var(--theme-body-text, #575757);
 }
 
+.romantic-template__details-list {
+  position: relative;
+  z-index: 2;
+}
+
+.romantic-template__details-visual {
+  position: sticky;
+  top: 96px;
+  height: 72vh;
+  align-self: start;
+  overflow: hidden;
+  z-index: 1;
+}
+
 .details-image {
   min-height: 100%;
   overflow: hidden;
   background: var(--theme-section-alt-bg, #F4F1EA);
   box-shadow: var(--motion-soft-shadow);
+}
+
+.romantic-template__details-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0.2));
 }
 
 .details-image img {
@@ -597,7 +637,10 @@
 
 .romantic-template__map-faq {
   background: var(--theme-section-bg, #FFFFFF);
-  padding: clamp(84px, 10vw, 140px) max(24px, 8vw);
+  padding: clamp(84px, 10vw, 140px) 0;
+}
+
+.romantic-template__map-faq-grid {
   display: grid;
   grid-template-columns: minmax(420px, 1.15fr) minmax(320px, 0.85fr);
   align-items: start;
@@ -688,7 +731,7 @@
 }
 
 .romantic-template__footer {
-  padding: 64px 24px;
+  padding: 64px 0;
   display: grid;
   gap: 8px;
   background: var(--theme-footer-bg, #1A1A1A);
@@ -732,9 +775,6 @@
 }
 
 @media (max-width: 900px) {
-  .romantic-template__header-inner {
-    width: min(100% - 28px, 1180px);
-  }
 
   .romantic-template__nav {
     display: none;
@@ -761,22 +801,23 @@
     display: grid;
   }
 
-  .romantic-template__hero,
+  .romantic-template__hero-grid,
   .romantic-template__story,
   .details-content,
   .details-grid,
   .romantic-template__rsvp,
-  .romantic-template__map-faq {
+  .romantic-template__map-faq-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .romantic-template__hero {
-    min-height: 720px;
-    align-items: center;
+    min-height: auto;
+    padding: 96px 0 56px;
   }
 
-  .hero-media {
-    min-height: 360px;
+  .romantic-template__hero-media {
+    height: 420px;
+    margin-bottom: 0;
   }
 
   .story-media {
@@ -790,18 +831,37 @@
 }
 
 @media (max-width: 768px) {
+  .romantic-template__container {
+    width: min(100% - 32px, 100%);
+  }
+
   .hero-names {
-    font-size: clamp(2.2rem, 10vw, 3.5rem);
+    font-size: clamp(2.4rem, 13vw, 4rem);
+    line-height: 0.95;
+  }
+
+  .romantic-template__detail-title {
+    white-space: normal;
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .romantic-template__details-visual {
+    position: relative;
+    top: auto;
+    height: 320px;
+  }
+
+  .romantic-template__details-list {
+    z-index: 1;
+  }
+
+  .romantic-template__rsvp .rsvp-form {
+    width: 100%;
   }
 }
 
 @media (max-width: 560px) {
-  .romantic-template__hero {
-    min-height: 680px;
-    padding-inline: 22px;
-  }
-
-  .detail-card h3 {
+  .romantic-template__detail-title {
     font-size: clamp(2rem, 12vw, 3.1rem);
   }
 
@@ -818,13 +878,6 @@
     min-height: 300px;
   }
 
-  .romantic-section,
-  .romantic-template__story,
-  .romantic-template__details,
-  .romantic-template__rsvp,
-  .romantic-template__map-faq {
-    padding-inline: 22px;
-  }
 
   .detail-card {
     min-height: 260px;
