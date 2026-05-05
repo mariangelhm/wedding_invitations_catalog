@@ -206,7 +206,7 @@ Vue.onUnmounted(() => {
       <div class="romantic-template__container romantic-template__hero-grid">
         <div class="hero-frame romantic-template__hero-content motion-left" :ref="setRevealRef">
         <p class="eyebrow">Nos vamos a casar</p>
-        <h1 class="hero-names">{{ names }}</h1>
+        <h1 class="hero-names romantic-template__hero-names">{{ names }}</h1>
         <div class="hero-divider" aria-hidden="true"></div>
         <p class="hero-meta">{{ formattedDate }} · {{ eventLocation }}</p>
         <a href="#rsvp" class="romantic-btn romantic-btn--ghost">Confirmar asistencia</a>
@@ -218,7 +218,7 @@ Vue.onUnmounted(() => {
       <span class="hero-scroll-indicator" aria-hidden="true"></span>
     </section>
 
-    <section id="story" class="romantic-template__story story motion-section" :ref="setRevealRef">
+    <section id="story" class="romantic-template__story romantic-template__section story motion-section" :ref="setRevealRef">
       <div class="romantic-template__container romantic-template__story-grid">
       <div class="story-copy motion-left" :ref="setRevealRef">
         <p class="eyebrow">Nuestra historia</p>
@@ -232,7 +232,7 @@ Vue.onUnmounted(() => {
       </div>
     </section>
 
-    <section v-if="hasBlock('countdown_wedding')" class="romantic-template__countdown romantic-section motion-section" :ref="setRevealRef">
+    <section v-if="hasBlock('countdown_wedding')" class="romantic-template__countdown romantic-template__section romantic-section motion-section" :ref="setRevealRef">
       <div class="romantic-template__container">
       <CountdownBlock
         :target-date="base.date"
@@ -242,7 +242,7 @@ Vue.onUnmounted(() => {
       </div>
     </section>
 
-    <section id="details" class="romantic-template__details details motion-section" :ref="setRevealRef">
+    <section id="details" class="romantic-template__details romantic-template__section details motion-section" :ref="setRevealRef">
       <div class="romantic-template__container">
       <div class="section-heading">
         <p class="eyebrow">Cuándo y dónde</p>
@@ -276,13 +276,13 @@ Vue.onUnmounted(() => {
       <p>Cada historia de amor merece celebrarse</p>
     </section>
 
-    <section class="romantic-template__gallery gallery romantic-section motion-section" :ref="setRevealRef">
+    <section class="romantic-template__gallery romantic-template__section gallery romantic-section motion-section" :ref="setRevealRef">
       <div class="romantic-template__container">
       <GalleryBlock :images="galleryImages" :title="blockByType('gallery').settings?.title || 'Galería'" integrated />
       </div>
     </section>
 
-    <section id="rsvp" class="romantic-template__rsvp romantic-section motion-section" :ref="setRevealRef">
+    <section id="rsvp" class="romantic-template__rsvp romantic-template__section romantic-section motion-section" :ref="setRevealRef">
       <div class="romantic-template__container romantic-template__rsvp-grid">
       <div class="rsvp-intro">
         <p class="eyebrow">RSVP</p>
@@ -296,7 +296,7 @@ Vue.onUnmounted(() => {
       </div>
     </section>
 
-    <section id="map" class="romantic-template__map-faq motion-section" :ref="setRevealRef">
+    <section id="map" class="romantic-template__map-faq romantic-template__section motion-section" :ref="setRevealRef">
       <div class="romantic-template__container romantic-template__map-faq-grid">
       <div class="romantic-section map-wrap">
         <p class="eyebrow">Ubicación</p>
