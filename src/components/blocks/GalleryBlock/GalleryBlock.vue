@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import wedding1 from '../../../assets/sample-gallery/wedding-1.jpg';
-import wedding2 from '../../../assets/sample-gallery/wedding-2.jpg';
-import wedding3 from '../../../assets/sample-gallery/wedding-3.jpg';
-import wedding4 from '../../../assets/sample-gallery/wedding-4.jpg';
 import './galleryBlock.css';
 
 const props = withDefaults(defineProps<{ title?: string; images?: Array<{ src: string; alt?: string }>; integrated?: boolean; }>(), { title: 'Nuestros momentos', images: () => [], integrated: false });
-const localSampleImages = [{ src: wedding1, alt: 'Foto principal' }, { src: wedding2, alt: 'Momento especial' }, { src: wedding3, alt: 'Nuestra historia' }, { src: wedding4, alt: 'Celebración' }];
+const localSampleImages = [{ src: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1200&q=80', alt: 'Foto principal' }, { src: 'https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=1200&q=80', alt: 'Momento especial' }, { src: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80', alt: 'Nuestra historia' }, { src: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1200&q=80', alt: 'Celebración' }];
 const normalizedItems = computed(() => {
   const customItems = (props.images || []).map((item, index) => ({ src: (item?.src || '').trim(), alt: item?.alt || `Imagen ${index + 1}` }));
   if (customItems.some((i) => i.src)) return customItems.map((i) => ({ ...i, isRealImage: Boolean(i.src) }));
