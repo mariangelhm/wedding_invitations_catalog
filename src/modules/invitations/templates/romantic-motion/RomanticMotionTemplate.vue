@@ -316,4 +316,4 @@ Vue.onUnmounted(() => {
       <p>Gracias por ser parte de nuestra historia</p>
     </footer>
   </div>
-</template>
+</template> 
