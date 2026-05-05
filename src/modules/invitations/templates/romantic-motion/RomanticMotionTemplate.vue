@@ -206,7 +206,7 @@ Vue.onUnmounted(() => {
       <div class="romantic-template__container romantic-template__hero-grid">
         <div class="hero-frame romantic-template__hero-content motion-left" :ref="setRevealRef">
         <p class="eyebrow">Nos vamos a casar</p>
-        <h1 class="hero-names">{{ names }}</h1>
+        <h1 class="hero-names romantic-template__hero-names">{{ names }}</h1>
         <div class="hero-divider" aria-hidden="true"></div>
         <p class="hero-meta">{{ formattedDate }} · {{ eventLocation }}</p>
         <a href="#rsvp" class="romantic-btn romantic-btn--ghost">Confirmar asistencia</a>

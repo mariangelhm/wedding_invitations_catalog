@@ -843,39 +843,27 @@
 }
 
 .romantic-template__container {
-  width: min(100% - 48px, 1180px);
+  width: min(100% - 48px, 1120px);
   margin: 0 auto;
 }
 
-.romantic-template__header-inner,
-.romantic-template__hero,
-.romantic-template__story,
-.romantic-template__details,
-.romantic-template__countdown,
-.romantic-template__gallery,
-.romantic-template__map-faq,
-.romantic-template__rsvp,
-.romantic-template__footer {
-  padding-inline: 0;
-}
-
 .romantic-template__hero {
-  padding-block: 128px 72px;
+  min-height: clamp(680px, 90vh, 860px);
+  padding: 128px 0 72px;
 }
 
 .romantic-template__hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.92fr);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
   align-items: end;
-  gap: clamp(28px, 6vw, 86px);
+  gap: clamp(28px, 6vw, 72px);
 }
 
 .romantic-template__hero-media {
   position: relative;
-  z-index: 2;
-  height: clamp(520px, 78vh, 860px);
-  min-height: 0;
-  margin-bottom: -120px;
+  z-index: 1;
+  height: clamp(460px, 66vh, 680px);
+  margin-bottom: 0;
 }
 
 .romantic-template__hero-media img {
@@ -885,77 +873,134 @@
 }
 
 .romantic-template__story {
-  padding-block: clamp(88px, 10vw, 150px);
+  padding-inline: 0;
+  padding-top: clamp(88px, 10vw, 150px);
+  padding-bottom: clamp(88px, 10vw, 150px);
 }
 
-.romantic-template__story-grid { display:grid; grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.8fr); gap: clamp(36px, 7vw, 96px); align-items:center; padding-top: 160px; }
+.romantic-template__details {
+  padding: clamp(84px, 10vw, 140px) 0;
+}
 
-.romantic-template__details { padding-block: clamp(84px, 10vw, 140px); }
-.romantic-template__details-grid { grid-template-columns: minmax(0, 1fr) minmax(300px, 0.85fr); gap: clamp(24px, 4vw, 48px); }
-.romantic-template__details-list { position: relative; z-index: 2; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px; }
-.romantic-template__detail-title { font-size: clamp(2.2rem, 4vw, 3.6rem); line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.detail-card { padding: clamp(24px, 3.6vw, 40px); min-height: 280px; }
+.romantic-template__details-grid {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(24px, 3.6vw, 40px);
+  align-items: start;
+}
+
+.romantic-template__details-list {
+  position: relative;
+  z-index: 1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(18px, 3vw, 30px);
+}
+
+.detail-card {
+  min-height: 300px;
+  padding: clamp(24px, 3.2vw, 38px);
+}
+
+.romantic-template__detail-title {
+  font-size: clamp(1.9rem, 3.2vw, 2.8rem);
+  line-height: 1.08;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 
 .romantic-template__details-visual {
-  position: sticky;
-  top: 96px;
-  height: 72vh;
+  position: relative;
+  top: auto;
+  height: clamp(420px, 62vh, 620px);
   align-self: start;
   overflow: hidden;
   z-index: 1;
-}
-
-.romantic-template__details-visual::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.2));
 }
 
 .romantic-template__details-visual img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.04);
+  transform: none;
 }
 
-.romantic-template__rsvp { padding-block: clamp(76px, 8vw, 118px); }
-.romantic-template__rsvp-grid { display:grid; grid-template-columns: minmax(0, 0.85fr) minmax(280px, 1fr); align-items:start; gap: clamp(30px, 6vw, 86px); }
+.romantic-template__countdown,
+.romantic-template__gallery,
+.romantic-template__map-faq,
+.romantic-template__rsvp {
+  padding-inline: 0;
+}
 
-.romantic-template__map-faq { padding-block: clamp(84px, 10vw, 140px); }
-.romantic-template__map-faq-grid { display:grid; grid-template-columns: minmax(420px, 1.15fr) minmax(320px, 0.85fr); gap: clamp(28px, 5vw, 72px); align-items:start; }
+.romantic-template__map-faq {
+  padding-block: clamp(84px, 10vw, 140px);
+}
 
-.romantic-template__footer { padding-block: 64px; }
-
-@media (max-width: 900px) {
-  .romantic-template__story-grid,
-  .romantic-template__rsvp-grid,
-  .romantic-template__map-faq-grid,
-  .romantic-template__details-grid,
-  .romantic-template__details-list {
-    grid-template-columns: 1fr;
-  }
-
-  .romantic-template__hero-grid { grid-template-columns: 1fr; }
-  .romantic-template__hero-media { height: 420px; margin-bottom: 0; }
-  .romantic-template__story-grid { padding-top: 0; }
-  .romantic-template__details-visual { position: relative; top: auto; height: 320px; }
+.romantic-template__footer {
+  padding: 64px 0;
 }
 
 @media (max-width: 768px) {
-  .romantic-template__container { width: min(100% - 32px, 100%); }
-  .romantic-template__hero { min-height: auto; padding: 96px 0 56px; }
-  .romantic-template__hero-grid { grid-template-columns: 1fr; align-items: start; }
-  .hero-names { font-size: clamp(2.4rem, 13vw, 4rem); line-height: 0.95; }
-  .romantic-template__detail-title { white-space: normal; font-size: clamp(2rem, 10vw, 3rem); }
-  .romantic-template__map-faq-grid,
-  .romantic-template__details-grid,
-  .romantic-template__rsvp-grid,
-  .romantic-template__details-list { grid-template-columns: 1fr; gap: 24px; }
-  .romantic-section,
+  .romantic-template__container {
+    width: min(100% - 32px, 100%);
+  }
+
+  .romantic-template__hero {
+    min-height: auto;
+    padding: 96px 0 56px;
+  }
+
+  .romantic-template__hero-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .romantic-template__hero-names {
+    font-size: clamp(2.4rem, 13vw, 4rem);
+    line-height: 0.95;
+  }
+
+  .romantic-template__hero-media {
+    height: clamp(320px, 54vh, 420px);
+    margin-bottom: 0;
+  }
+
   .romantic-template__story,
+  .romantic-template__countdown,
   .romantic-template__details,
-  .romantic-template__rsvp,
+  .romantic-template__gallery,
   .romantic-template__map-faq,
-  .romantic-template__footer { padding-block: 56px; }
+  .romantic-template__rsvp {
+    padding-top: 56px;
+    padding-bottom: 56px;
+    padding-inline: 0;
+  }
+
+  .romantic-template__details-grid,
+  .romantic-template__map-faq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .romantic-template__details-list {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .romantic-template__detail-title {
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .romantic-template__details-visual {
+    position: static;
+    top: auto;
+    height: 320px;
+  }
+
+  .romantic-template__rsvp .rsvp-form {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .romantic-template__hero {
+    padding-inline: 0;
+  }
 }
