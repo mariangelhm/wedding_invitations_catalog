@@ -218,6 +218,16 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 ## Landing hero SaaS refactor
 - `Home.vue` hero was redesigned into a modern 2-column SaaS layout.
 - Left side now contains:
+
+## HU-109 Romantic Motion layout polish
+- Updated only the Romantic Motion template files:
+  - `src/modules/invitations/templates/romantic-motion/RomanticMotionTemplate.vue`
+  - `src/modules/invitations/templates/romantic-motion/romanticMotionTemplate.css`
+- Added a shared `.romantic-template__container` so header, hero, story, countdown, details, gallery, map/FAQ, RSVP, and footer share consistent horizontal margins.
+- Increased hero visual impact with a larger desktop image that overlaps into the next section, plus compensating story top padding.
+- Enforced one-line detail card titles on desktop with responsive fallback wrapping on mobile.
+- Converted the details image into a sticky underlayer-style visual on desktop, while keeping a non-sticky stacked flow on mobile.
+- Applied mobile-focused safety and spacing fixes (container width, single-column section stacking, reduced paddings, and full-width RSVP form behavior) without changing editor, themes, stores, or adding libraries.
   - title
   - subtitle
   - two CTAs: `Ver catálogo` and `Cómo funciona`
