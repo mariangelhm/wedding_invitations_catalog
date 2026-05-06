@@ -233,8 +233,28 @@ const revealRefs = ref([]);
 let observer = null;
 let removeScrollListener = null;
 
+const isElementInViewport = (el) => {
+  const rect = el.getBoundingClientRect();
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+  const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+  return rect.bottom >= 0 && rect.right >= 0 && rect.top <= viewportHeight && rect.left <= viewportWidth;
+};
+
+const observeRevealElement = (el) => {
+  if (!el) return;
+  observer?.observe(el);
+  requestAnimationFrame(() => {
+    if (isElementInViewport(el)) {
+      el.classList.add('is-visible');
+      observer?.unobserve(el);
+    }
+  });
+};
+
 const setRevealRef = (el) => {
-  if (el && !revealRefs.value.includes(el)) revealRefs.value.push(el);
+  if (!el) return;
+  if (!revealRefs.value.includes(el)) revealRefs.value.push(el);
+  observeRevealElement(el);
 };
 
 
@@ -279,6 +299,12 @@ watch([countdownBlock, mapBlock, rsvpBlock, dynamicExtraBlocks], () => {
   console.log('[BUILDER DEBUG] dynamicExtraBlocks', dynamicExtraBlocks.value);
 }, { deep: true, immediate: true });
 
+watch([countdownBlock, storyBlock, galleryBlock, mapBlock, rsvpBlock, dynamicExtraBlocks], async () => {
+  await nextTick();
+  revealRefs.value.forEach((el) => observeRevealElement(el));
+  templateRoot.value?.querySelectorAll('.motion-section, .motion-left, .motion-right').forEach((el) => observeRevealElement(el));
+}, { deep: true, flush: 'post' });
+
 const getTemplateScrollParent = () => {
   let parent = templateRoot.value?.parentElement;
 
@@ -314,7 +340,7 @@ Vue.onMounted(() => {
     });
   }, { threshold: 0.14 });
 
-  revealRefs.value.forEach((el) => observer?.observe(el));
+  revealRefs.value.forEach((el) => observeRevealElement(el));
 });
 
 Vue.onUnmounted(() => {

@@ -28,7 +28,7 @@ const resolvedTitle = computed(() => String(blockProps.value.title || 'Cuenta re
 const resolvedTargetDate = computed(() => String(blockProps.value.targetDate || blockProps.value.date || new Date(Date.now() + 86400000).toISOString()));
 const resolvedVariant = computed(() => String(blockProps.value.variant || 'primary'));
 const { days, hours, minutes, seconds } = useCountdown(resolvedTargetDate);
-const rootEl = ref<HTMLElement | null>(null); const isVisible = ref(false);
+const rootEl = ref<HTMLElement | null>(null); const isVisible = ref(true);
 onMounted(() => { const observer = new IntersectionObserver((entries) => { const [entry] = entries; if (entry.isIntersecting) { isVisible.value = true; observer.disconnect(); } }, { threshold: 0.2 }); if (rootEl.value) observer.observe(rootEl.value); });
 const two = (v:number) => String(v).padStart(2,'0');
 </script>
