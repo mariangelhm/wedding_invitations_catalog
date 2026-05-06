@@ -1082,3 +1082,199 @@
 
 .unsupported-block{border:1px dashed var(--custom-accent-color,#A67C52);border-radius:14px;padding:18px;display:grid;gap:4px;background:color-mix(in srgb,var(--custom-page-bg,#fff) 88%,#fff);color:var(--custom-body-color,#575757)}
 .unsupported-block strong{color:var(--custom-title-color,#303030);font-family:var(--font-headings,'Playfair Display'),Georgia,serif}
+
+.debug-extra-list {
+  border: 1px dashed #2563eb;
+  background: #eff6ff;
+  color: #1e3a8a;
+  font-family: monospace;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+
+@media (max-width: 768px) {
+  .romantic-template {
+    overflow-x: hidden;
+  }
+
+  .romantic-template__container {
+    width: min(calc(100% - 28px), 100%);
+  }
+
+  .romantic-template__header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .romantic-template__nav {
+    display: none;
+  }
+
+  .romantic-template__hero-grid,
+  .romantic-template__details-grid,
+  .romantic-template__map-faq-grid,
+  .romantic-template__rsvp-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .romantic-template__hero-names {
+    font-size: clamp(2.1rem, 10vw, 3.2rem);
+    line-height: 1;
+  }
+
+  .romantic-template__detail-title,
+  .romantic-template__section-title {
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+    line-height: 1.1;
+  }
+
+  .romantic-template img,
+  .romantic-template iframe {
+    max-width: 100%;
+  }
+}
+
+/* Mobile preview/device hardening: applies both in real mobile viewports and the editor phone canvas. */
+@media (max-width: 768px) {
+  .romantic-template-viewport,
+  .romantic-template {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 768px) {
+  .romantic-template__container,
+  .romantic-template__header-inner,
+  .romantic-template__hero-grid,
+  .romantic-template__story-grid,
+  .romantic-template__details-grid,
+  .romantic-template__map-faq-grid {
+    width: min(calc(100% - 28px), 100%);
+    max-width: calc(100% - 28px);
+    margin-inline: auto;
+  }
+}
+
+.preview-canvas--mobile .romantic-template-viewport,
+.preview-canvas--mobile .romantic-template {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.preview-canvas--mobile .romantic-template {
+  --romantic-template-width: min(calc(100% - 28px), 100%);
+  --romantic-section-y: 42px;
+  --romantic-content-gutter: 14px;
+}
+
+.preview-canvas--mobile .romantic-template__container,
+.preview-canvas--mobile .romantic-template__header-inner,
+.preview-canvas--mobile .romantic-template__hero-grid,
+.preview-canvas--mobile .romantic-template__story-grid,
+.preview-canvas--mobile .romantic-template__details-grid,
+.preview-canvas--mobile .romantic-template__map-faq-grid {
+  width: min(calc(100% - 28px), 100%);
+  max-width: calc(100% - 28px);
+  margin-inline: auto;
+}
+
+.preview-canvas--mobile .romantic-template__header {
+  position: relative;
+  background: color-mix(in srgb, var(--theme-section-bg, #FFFFFF) 96%, transparent);
+}
+
+.preview-canvas--mobile .romantic-template__header-inner {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.preview-canvas--mobile .romantic-template__initials,
+.preview-canvas--mobile .romantic-template__logo {
+  writing-mode: horizontal-tb;
+  white-space: nowrap;
+  letter-spacing: 0.14em;
+  line-height: 1;
+}
+
+.preview-canvas--mobile .romantic-template__nav,
+.preview-canvas--mobile .romantic-template__nav.open {
+  display: none;
+}
+
+.preview-canvas--mobile .romantic-template__hamburger,
+.preview-canvas--mobile .romantic-template__mobile-toggle {
+  display: grid;
+  flex: 0 0 auto;
+}
+
+.preview-canvas--mobile .romantic-template__hero {
+  min-height: auto;
+  padding: 42px 0 48px;
+}
+
+.preview-canvas--mobile .romantic-template__hero-grid,
+.preview-canvas--mobile .romantic-template__story-grid,
+.preview-canvas--mobile .romantic-template__details-grid,
+.preview-canvas--mobile .romantic-template__map-faq-grid,
+.preview-canvas--mobile .romantic-template__rsvp-grid,
+.preview-canvas--mobile .romantic-template__rsvp {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
+}
+
+.preview-canvas--mobile .romantic-template__hero-content {
+  order: 1;
+  width: 100%;
+  max-width: 100%;
+  justify-items: start;
+  text-align: left;
+}
+
+.preview-canvas--mobile .romantic-template__hero-media {
+  order: 2;
+  width: 100%;
+  max-width: 100%;
+  height: clamp(280px, 78vw, 420px);
+  min-height: 0;
+}
+
+.preview-canvas--mobile .romantic-template__hero-names {
+  max-width: 100%;
+  font-size: clamp(2.35rem, 13vw, 3.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.preview-canvas--mobile .hero-meta,
+.preview-canvas--mobile .hero-message {
+  max-width: 100%;
+  font-size: clamp(1rem, 5.6vw, 1.32rem);
+  line-height: 1.55;
+}
+
+.preview-canvas--mobile .romantic-btn {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
+
+.preview-canvas--mobile .romantic-template__detail-title,
+.preview-canvas--mobile .romantic-template__section-title {
+  font-size: clamp(1.8rem, 8vw, 2.8rem);
+  line-height: 1.1;
+}
+
+.preview-canvas--mobile .romantic-template img,
+.preview-canvas--mobile .romantic-template iframe {
+  max-width: 100%;
+}

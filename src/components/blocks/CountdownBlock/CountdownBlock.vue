@@ -1,18 +1,41 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useCountdown } from './useCountdown';
 import './countdownBlock.css';
 
-const props = withDefaults(defineProps<{ targetDate: string; title?: string; variant?: 'primary' | 'minimal' | 'editorial'; }>(), { title: '', variant: 'primary' });
-const { days, hours, minutes, seconds } = useCountdown(props.targetDate);
-const rootEl = ref<HTMLElement | null>(null); const isVisible = ref(false);
+type CountdownBlockData = {
+  props?: Record<string, unknown>;
+  settings?: Record<string, unknown>;
+};
+
+const props = defineProps<{
+  block?: CountdownBlockData;
+  title?: string;
+  targetDate?: string;
+  date?: string;
+  variant?: 'primary' | 'minimal' | 'editorial';
+}>();
+
+const blockProps = computed(() => ({
+  ...(props.block?.settings || {}),
+  ...(props.block?.props || {}),
+  ...(props.title !== undefined ? { title: props.title } : {}),
+  ...(props.targetDate !== undefined ? { targetDate: props.targetDate } : {}),
+  ...(props.date !== undefined ? { date: props.date } : {}),
+  ...(props.variant !== undefined ? { variant: props.variant } : {}),
+}));
+const resolvedTitle = computed(() => String(blockProps.value.title || 'Cuenta regresiva'));
+const resolvedTargetDate = computed(() => String(blockProps.value.targetDate || blockProps.value.date || new Date(Date.now() + 86400000).toISOString()));
+const resolvedVariant = computed(() => String(blockProps.value.variant || 'primary'));
+const { days, hours, minutes, seconds } = useCountdown(resolvedTargetDate);
+const rootEl = ref<HTMLElement | null>(null); const isVisible = ref(true);
 onMounted(() => { const observer = new IntersectionObserver((entries) => { const [entry] = entries; if (entry.isIntersecting) { isVisible.value = true; observer.disconnect(); } }, { threshold: 0.2 }); if (rootEl.value) observer.observe(rootEl.value); });
 const two = (v:number) => String(v).padStart(2,'0');
 </script>
 
 <template>
-  <section ref="rootEl" class="countdown-block" :class="[`countdown-block--${variant}`, { 'is-visible': isVisible }]">
-    <h3 v-if="title" class="countdown-block__title">{{ title }}</h3>
+  <section ref="rootEl" class="countdown-block" :class="[`countdown-block--${resolvedVariant}`, { 'is-visible': isVisible }]">
+    <h3 class="countdown-block__title">{{ resolvedTitle }}</h3>
     <div class="countdown-block__grid">
       <div class="countdown-block__item"><span class="countdown-block__number">{{ days }}</span><span class="countdown-block__label">Días</span></div>
       <div class="countdown-block__item"><span class="countdown-block__number">{{ two(hours) }}</span><span class="countdown-block__label">Horas</span></div>
