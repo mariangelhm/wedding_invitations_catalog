@@ -2,6 +2,47 @@ import { defineStore } from 'pinia';
 import { themePresets } from '../modules/builder/data/themePresets';
 import { romanticMotionConfig } from '../modules/invitations/templates/romantic-motion/romanticMotion.config';
 
+const DEBUG_BUILDER = true;
+const BLOCK_TYPE_ALIASES = {
+  countdown_wedding: 'countdown',
+  countdown_rsvp: 'countdown',
+  countdown_confirmation: 'countdown',
+  bitacora: 'timeline',
+  timeline: 'timeline',
+  story: 'story',
+  gallery: 'gallery',
+  map: 'map',
+  rsvp: 'rsvp',
+  registry: 'registry',
+  music: 'music',
+  parallax: 'parallax',
+};
+const normalizeBlockType = (type) => BLOCK_TYPE_ALIASES[type] || type;
+function debugGroup(label, payload = {}) {
+  if (!DEBUG_BUILDER) return;
+
+  try {
+    console.group(`[BUILDER DEBUG] ${label}`);
+    Object.entries(payload).forEach(([key, value]) => {
+      console.log(key, value);
+    });
+    console.groupEnd();
+  } catch (error) {
+    console.error(`[BUILDER DEBUG] Failed logging ${label}`, error);
+  }
+}
+function debugError(label, error, context = {}) {
+  console.error(`[BUILDER ERROR] ${label}`, {
+    error,
+    context,
+  });
+}
+const getPreviewTargetFromBlock = (block) => {
+  const normalizedType = normalizeBlockType(block?.type || block);
+  const targets = { countdown: 'countdown', gallery: 'gallery', map: 'map', rsvp: 'rsvp', story: 'story', timeline: 'extras' };
+  return targets[normalizedType] || 'extras';
+};
+
 const defaultCustomizableOptions = { colors: true, fonts: true, photos: true, music: false, map: true, components: true };
 let previewFocusTimeout = null;
 
@@ -148,18 +189,35 @@ const getRomanticDefaults = () => ({
   blocks: getDefaultBlocks(romanticMotionConfig.defaultBlocks),
 });
 
+const mergeBlockData = (defaultBlock, existing = {}) => ({
+  ...clone(defaultBlock),
+  ...existing,
+  settings: { ...(defaultBlock.settings || {}), ...(existing.props || {}), ...(existing.settings || {}) },
+  props: { ...(defaultBlock.settings || {}), ...(existing.settings || {}), ...(existing.props || {}) },
+  enabled: existing.enabled ?? defaultBlock.enabled ?? false,
+  included: existing.included ?? defaultBlock.included ?? false,
+});
 const normalizeInvitationBlocks = (blocks = []) => {
-  const byType = new Map(blocks.map((block) => [block.type, block]));
-  return Object.values(blockRegistry).map((defaultBlock) => {
-    const existing = byType.get(defaultBlock.type) || {};
-    return {
-      ...clone(defaultBlock),
-      ...existing,
-      settings: { ...(defaultBlock.settings || {}), ...(existing.settings || {}) },
-      enabled: existing.enabled ?? defaultBlock.enabled ?? false,
-      included: existing.included ?? defaultBlock.included ?? false,
-    };
-  }).sort((a, b) => (a.order || 0) - (b.order || 0)).map((block, index) => ({ ...block, order: index + 1 }));
+  const usedIndexes = new Set();
+  const defaults = Object.values(blockRegistry).map((defaultBlock) => {
+    const existingIndex = blocks.findIndex((block, index) => !usedIndexes.has(index) && (block?.id === defaultBlock.id || block?.type === defaultBlock.type));
+    const existing = existingIndex >= 0 ? blocks[existingIndex] : {};
+    if (existingIndex >= 0) usedIndexes.add(existingIndex);
+    return mergeBlockData(defaultBlock, existing);
+  });
+  const extraBlocks = blocks
+    .filter((block, index) => !usedIndexes.has(index))
+    .map((block) => ({
+      ...block,
+      settings: { ...(block.props || {}), ...(block.settings || {}) },
+      props: { ...(block.settings || {}), ...(block.props || {}) },
+      enabled: block.enabled ?? false,
+      included: block.included ?? false,
+    }));
+
+  return [...defaults, ...extraBlocks]
+    .sort((a, b) => (a.order || 0) - (b.order || 0))
+    .map((block, index) => ({ ...block, order: index + 1 }));
 };
 
 export const useBuilderStore = defineStore('builderStore', {
@@ -272,7 +330,11 @@ export const useBuilderStore = defineStore('builderStore', {
       const nextBase = { ...base, [field]: value };
       if (field === 'eventDate') nextBase.countdownTargetDate = value;
       const blocks = field === 'eventDate'
-        ? (this.invitation.blocks || []).map((block) => (block.type === 'countdown_wedding' ? { ...block, settings: { ...(block.settings || {}), targetDate: value } } : block))
+        ? (this.invitation.blocks || []).map((block) => (normalizeBlockType(block.type) === 'countdown' ? {
+          ...block,
+          settings: { ...(block.settings || {}), targetDate: value },
+          props: { ...(block.props || {}), targetDate: value },
+        } : block))
         : this.invitation.blocks;
       this.invitation = { ...this.invitation, base: nextBase, blocks };
       const targets = { coupleNames: 'hero', eventDate: 'hero', locationName: 'map', locationAddress: 'map', message: 'hero', storyMessage: 'story' };
@@ -286,46 +348,162 @@ export const useBuilderStore = defineStore('builderStore', {
       this.setActivePreviewTarget('details');
     },
     updateDetailField(section, field, value) {
-      if (!this.invitation) return;
-      const currentDetails = normalizeDetails(this.invitation.details);
-      const nextDetails = {
-        ...currentDetails,
-        [section]: {
-          ...(currentDetails?.[section] || {}),
-          [field]: value,
-        },
-      };
-      this.invitation = { ...this.invitation, details: normalizeDetails(nextDetails) };
-      this.setActivePreviewTarget('details');
+      try {
+        const currentDetails = this.invitation?.details || {};
+        const currentSection = currentDetails?.[section] || {};
+        const nextDetails = {
+          ...currentDetails,
+          [section]: {
+            ...currentSection,
+            [field]: value,
+          },
+        };
+
+        this.invitation = {
+          ...this.invitation,
+          details: nextDetails,
+        };
+        this.activePreviewTarget = 'details';
+
+        debugGroup('updateDetailField', {
+          section,
+          field,
+          value,
+          before: currentDetails,
+          after: nextDetails,
+        });
+      } catch (error) {
+        debugError('updateDetailField failed', error, {
+          section,
+          field,
+          value,
+          invitation: this.invitation,
+        });
+      }
     },
     updateMapField(field, value) {
-      if (!this.invitation) return;
-      const map = { ...normalizeMap(this.invitation.map || this.invitation.mapSettings), [field]: value };
-      this.invitation = { ...this.invitation, map, mapSettings: map };
-      this.updateBlockProps('map', map, false);
-      this.setActivePreviewTarget('map');
+      try {
+        const currentMap = {
+          ...(this.invitation?.mapSettings || {}),
+          ...(this.invitation?.map || {}),
+        };
+        const nextMap = {
+          ...currentMap,
+          [field]: value,
+        };
+
+        this.invitation = {
+          ...this.invitation,
+          map: nextMap,
+          mapSettings: {
+            ...(this.invitation?.mapSettings || {}),
+            [field]: value,
+          },
+        };
+        this.updateBlockProps('map', { [field]: value }, false);
+        this.activePreviewTarget = 'map';
+
+        debugGroup('updateMapField', {
+          field,
+          value,
+          before: currentMap,
+          after: nextMap,
+        });
+      } catch (error) {
+        debugError('updateMapField failed', error, {
+          field,
+          value,
+          invitation: this.invitation,
+        });
+      }
     },
-    updateFaqItem(index, field, value) {
-      if (!this.invitation) return;
-      const faq = normalizeFaq(this.invitation.faq).map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: value } : item));
-      this.invitation = { ...this.invitation, faq };
-      this.setActivePreviewTarget('faq');
+    updateFaqItem(idOrIndex, field, value) {
+      try {
+        const currentFaq = this.invitation?.faq || [];
+        const nextFaq = currentFaq.map((item, itemIndex) => (item.id === idOrIndex || itemIndex === idOrIndex ? { ...item, [field]: value } : item));
+
+        this.invitation = {
+          ...this.invitation,
+          faq: nextFaq,
+        };
+        this.activePreviewTarget = 'faq';
+
+        debugGroup('updateFaqItem', {
+          idOrIndex,
+          field,
+          value,
+          before: currentFaq,
+          after: nextFaq,
+        });
+      } catch (error) {
+        debugError('updateFaqItem failed', error, {
+          idOrIndex,
+          field,
+          value,
+          invitation: this.invitation,
+        });
+      }
     },
     updateImageField(field, value, metadata = null) {
-      if (!this.invitation) return;
-      const images = normalizeImages(this.invitation.images);
-      const imageFiles = { ...(this.invitation.imageFiles || {}) };
-      if (metadata) imageFiles[field] = metadata;
-      this.invitation = { ...this.invitation, images: { ...images, [field]: value }, imageFiles };
-      const targets = { heroImage: 'hero', storyImage: 'story', parallaxImage: 'story', detailsImage: 'details' };
-      this.setActivePreviewTarget(targets[field] || 'gallery');
+      try {
+        const currentImages = this.invitation?.images || {};
+        const imageFiles = { ...(this.invitation?.imageFiles || {}) };
+        if (metadata) imageFiles[field] = metadata;
+        const nextImages = { ...currentImages, [field]: value };
+
+        this.invitation = {
+          ...this.invitation,
+          images: nextImages,
+          imageFiles,
+        };
+        const targets = { heroImage: 'hero', storyImage: 'story', parallaxImage: 'story', detailsImage: 'details' };
+        this.activePreviewTarget = targets[field] || 'gallery';
+
+        debugGroup('updateImageField', {
+          field,
+          value,
+          metadata,
+          before: currentImages,
+          after: nextImages,
+        });
+      } catch (error) {
+        debugError('updateImageField failed', error, {
+          field,
+          value,
+          metadata,
+          invitation: this.invitation,
+        });
+      }
     },
     updateGalleryImage(index, value, metadata = null) {
-      if (!this.invitation) return;
-      const images = normalizeImages(this.invitation.images);
-      const galleryImages = (images.galleryImages || []).map((image, imageIndex) => (imageIndex === index ? { ...image, src: value, file: metadata || image.file } : image));
-      this.invitation = { ...this.invitation, images: { ...images, galleryImages } };
-      this.setActivePreviewTarget('gallery');
+      try {
+        const currentImages = this.invitation?.images || {};
+        const currentGalleryImages = Array.isArray(currentImages.galleryImages) ? currentImages.galleryImages : [];
+        const galleryImages = currentGalleryImages.map((image, imageIndex) => (imageIndex === index ? { ...image, src: value, file: metadata || image.file } : image));
+        if (!galleryImages[index]) galleryImages[index] = { src: value, alt: `Imagen ${index + 1}`, file: metadata || null };
+        const nextImages = { ...currentImages, galleryImages };
+
+        this.invitation = {
+          ...this.invitation,
+          images: nextImages,
+        };
+        this.activePreviewTarget = 'gallery';
+
+        debugGroup('updateGalleryImage', {
+          index,
+          value,
+          metadata,
+          before: currentGalleryImages,
+          after: galleryImages,
+        });
+      } catch (error) {
+        debugError('updateGalleryImage failed', error, {
+          index,
+          value,
+          metadata,
+          invitation: this.invitation,
+        });
+      }
     },
     updateStyleColor(key, value) {
       if (!this.invitation) return;
@@ -361,19 +539,45 @@ export const useBuilderStore = defineStore('builderStore', {
       return blocks;
     },
     toggleBlock(blockId, enabled) {
-      if (!this.invitation) return;
-      const currentBlocks = this.invitation?.blocks || [];
-      const changedBlock = currentBlocks.find((block) => block.id === blockId || block.type === blockId);
+      try {
+        const nextEnabled = Boolean(enabled);
+        const currentBlocks = this.invitation?.blocks || [];
+        const targetBefore = currentBlocks.find((block) => block.id === blockId);
 
-      this.invitation = {
-        ...this.invitation,
-        blocks: currentBlocks.map((block) => (block.id === blockId || block.type === blockId
-          ? { ...block, enabled: Boolean(enabled) }
-          : block)),
-      };
+        if (!targetBefore) {
+          console.warn('[BUILDER DEBUG] toggleBlock target not found', {
+            blockId,
+            currentBlocks,
+          });
+          return;
+        }
 
-      const targetAliases = { countdown_wedding: 'countdown', countdown: 'countdown', gallery: 'gallery', map: 'map', rsvp: 'rsvp', story: 'story' };
-      this.setActivePreviewTarget(targetAliases[changedBlock?.type] || 'extras');
+        const updatedBlocks = currentBlocks.map((block) => (block.id === blockId
+          ? { ...block, enabled: nextEnabled }
+          : block));
+        const targetAfter = updatedBlocks.find((block) => block.id === blockId);
+
+        this.invitation = {
+          ...this.invitation,
+          blocks: updatedBlocks,
+        };
+        this.activePreviewTarget = getPreviewTargetFromBlock(targetAfter);
+
+        debugGroup('toggleBlock', {
+          blockId,
+          receivedEnabled: enabled,
+          nextEnabled,
+          targetBefore,
+          targetAfter,
+          enabledBlocksAfter: updatedBlocks.filter((block) => block.enabled),
+        });
+      } catch (error) {
+        debugError('toggleBlock failed', error, {
+          blockId,
+          enabled,
+          invitation: this.invitation,
+        });
+      }
     },
     updateBlockOrder(blockId, direction) {
       if (!this.invitation) return;
@@ -386,17 +590,40 @@ export const useBuilderStore = defineStore('builderStore', {
       this.invitation = { ...this.invitation, blocks: reordered.map((block, orderIndex) => ({ ...block, order: orderIndex + 1 })) };
     },
     updateBlockProps(blockId, props, focusPreview = true) {
-      if (!this.invitation) return;
-      const blocks = this.ensureBlocks();
-      const nextBlocks = blocks.map((block) => (block.id === blockId || block.type === blockId ? { ...block, settings: { ...(block.settings || {}), ...props } } : block));
-      const mapBlock = nextBlocks.find((block) => block.type === 'map');
-      this.invitation = {
-        ...this.invitation,
-        blocks: nextBlocks,
-        mapSettings: mapBlock ? { ...(this.invitation.mapSettings || {}), ...(mapBlock.settings || {}) } : this.invitation.mapSettings,
-        map: mapBlock ? { ...(this.invitation.map || {}), ...(mapBlock.settings || {}) } : this.invitation.map,
-      };
-      if (focusPreview) this.setActivePreviewTarget(blockId === 'map' ? 'map' : blockId);
+      try {
+        const blocks = this.ensureBlocks();
+        const targetBefore = blocks.find((block) => block.id === blockId || block.type === blockId || normalizeBlockType(block.type) === blockId);
+        const nextBlocks = blocks.map((block) => (block.id === blockId || block.type === blockId || normalizeBlockType(block.type) === blockId ? {
+          ...block,
+          props: { ...(block.props || {}), ...props },
+          settings: { ...(block.settings || {}), ...props },
+        } : block));
+        const targetAfter = nextBlocks.find((block) => block.id === blockId || block.type === blockId || normalizeBlockType(block.type) === blockId);
+        const mapBlock = nextBlocks.find((block) => normalizeBlockType(block.type) === 'map');
+
+        this.invitation = {
+          ...this.invitation,
+          blocks: nextBlocks,
+          mapSettings: mapBlock ? { ...(this.invitation?.mapSettings || {}), ...(mapBlock.props || {}), ...(mapBlock.settings || {}) } : this.invitation?.mapSettings,
+          map: mapBlock ? { ...(this.invitation?.map || {}), ...(mapBlock.props || {}), ...(mapBlock.settings || {}) } : this.invitation?.map,
+        };
+        if (focusPreview) this.activePreviewTarget = getPreviewTargetFromBlock(targetAfter || blockId);
+
+        debugGroup('updateBlockProps', {
+          blockId,
+          props,
+          targetBefore,
+          targetAfter,
+          focusPreview,
+        });
+      } catch (error) {
+        debugError('updateBlockProps failed', error, {
+          blockId,
+          props,
+          focusPreview,
+          invitation: this.invitation,
+        });
+      }
     },
     getEnabledBlocksSorted() { return this.enabledBlocksSorted; },
     getTotalPrice() { return this.totalPrice; },

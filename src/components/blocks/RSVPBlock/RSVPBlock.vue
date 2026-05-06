@@ -1,9 +1,26 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import './rsvpBlock.css';
 
-const props = withDefaults(defineProps<{ title?: string; buttonLabel?: string; }>(), { title: '¿Nos acompañas?', buttonLabel: 'Confirmar asistencia' });
+type RSVPBlockData = {
+  props?: Record<string, unknown>;
+  settings?: Record<string, unknown>;
+};
+
+const props = defineProps<{
+  block?: RSVPBlockData;
+  title?: string;
+  buttonLabel?: string;
+}>();
 const emit = defineEmits<{ (e: 'confirm', payload: { fullName: string; attendance: 'yes' | 'no'; guestsCount: number; foodRestrictions: string }): void; }>();
+const blockProps = computed(() => ({
+  ...(props.block?.settings || {}),
+  ...(props.block?.props || {}),
+  ...(props.title !== undefined ? { title: props.title } : {}),
+  ...(props.buttonLabel !== undefined ? { buttonLabel: props.buttonLabel } : {}),
+}));
+const resolvedTitle = computed(() => String(blockProps.value.title || '¿Nos acompañas?'));
+const resolvedButtonLabel = computed(() => String(blockProps.value.buttonLabel || 'Confirmar asistencia'));
 
 const fullName = ref('');
 const attendance = ref<'yes' | 'no'>('yes');
@@ -18,8 +35,8 @@ const submitConfirmation = () => { if (!fullName.value.trim()) { errorMessage.va
 
 <template>
   <section ref="rootEl" class="rsvp-block" :class="{ 'is-visible': isVisible }">
-    <h3>{{ title }}</h3>
-    <button v-if="!isFormVisible && !isConfirmed" type="button" class="rsvp-btn" @click="isFormVisible = true">{{ buttonLabel }}</button>
+    <h3>{{ resolvedTitle }}</h3>
+    <button v-if="!isFormVisible && !isConfirmed" type="button" class="rsvp-btn" @click="isFormVisible = true">{{ resolvedButtonLabel }}</button>
     <form v-else-if="!isConfirmed" class="rsvp-form" @submit.prevent="submitConfirmation">
       <label for="rsvpName">Nombre y apellido</label>
       <input id="rsvpName" v-model="fullName" type="text" placeholder="Escribe tu nombre" class="rsvp-input" />
