@@ -1082,3 +1082,13 @@
 
 .unsupported-block{border:1px dashed var(--custom-accent-color,#A67C52);border-radius:14px;padding:18px;display:grid;gap:4px;background:color-mix(in srgb,var(--custom-page-bg,#fff) 88%,#fff);color:var(--custom-body-color,#575757)}
 .unsupported-block strong{color:var(--custom-title-color,#303030);font-family:var(--font-headings,'Playfair Display'),Georgia,serif}
+
+.debug-extra-list {
+  border: 1px dashed #2563eb;
+  background: #eff6ff;
+  color: #1e3a8a;
+  font-family: monospace;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+}

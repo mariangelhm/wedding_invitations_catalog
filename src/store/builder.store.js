@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 import { themePresets } from '../modules/builder/data/themePresets';
 import { romanticMotionConfig } from '../modules/invitations/templates/romantic-motion/romanticMotion.config';
 
+const DEBUG_BUILDER = true;
+
 const defaultCustomizableOptions = { colors: true, fonts: true, photos: true, music: false, map: true, components: true };
 let previewFocusTimeout = null;
 
@@ -295,7 +297,21 @@ export const useBuilderStore = defineStore('builderStore', {
           [field]: value,
         },
       };
-      this.invitation = { ...this.invitation, details: normalizeDetails(nextDetails) };
+
+      if (DEBUG_BUILDER) {
+        console.group('[BUILDER DEBUG] updateDetailField');
+        console.log('section:', section);
+        console.log('field:', field);
+        console.log('value:', value);
+        console.log('details BEFORE:', JSON.parse(JSON.stringify(this.invitation.details)));
+        console.log('details AFTER:', JSON.parse(JSON.stringify(nextDetails)));
+        console.groupEnd();
+      }
+
+      const normalizedDetails = normalizeDetails(nextDetails);
+      if (DEBUG_BUILDER && !normalizedDetails) console.warn('[BUILDER DEBUG] details object missing after update');
+      this.invitation = { ...this.invitation, details: normalizedDetails };
+      if (DEBUG_BUILDER && !this.invitation.details) console.warn('[BUILDER DEBUG] details object missing after update');
       this.setActivePreviewTarget('details');
     },
     updateMapField(field, value) {
@@ -364,12 +380,25 @@ export const useBuilderStore = defineStore('builderStore', {
       if (!this.invitation) return;
       const currentBlocks = this.invitation?.blocks || [];
       const changedBlock = currentBlocks.find((block) => block.id === blockId || block.type === blockId);
+      const updatedBlocks = currentBlocks.map((block) => (block.id === blockId || block.type === blockId
+        ? { ...block, enabled: Boolean(enabled) }
+        : block));
+
+      if (DEBUG_BUILDER && !changedBlock) console.warn('[BUILDER DEBUG] Block not found:', blockId);
+      if (DEBUG_BUILDER) {
+        console.group('[BUILDER DEBUG] toggleBlock');
+        console.log('blockId:', blockId);
+        console.log('enabled:', enabled);
+        console.log('blocks BEFORE:', JSON.parse(JSON.stringify(this.invitation.blocks)));
+        console.log('target BEFORE:', this.invitation.blocks.find((block) => block.id === blockId));
+        console.log('target AFTER:', updatedBlocks.find((block) => block.id === blockId));
+        console.log('blocks AFTER:', JSON.parse(JSON.stringify(updatedBlocks)));
+        console.groupEnd();
+      }
 
       this.invitation = {
         ...this.invitation,
-        blocks: currentBlocks.map((block) => (block.id === blockId || block.type === blockId
-          ? { ...block, enabled: Boolean(enabled) }
-          : block)),
+        blocks: updatedBlocks,
       };
 
       const targetAliases = { countdown_wedding: 'countdown', countdown: 'countdown', gallery: 'gallery', map: 'map', rsvp: 'rsvp', story: 'story' };
