@@ -11,6 +11,8 @@ const props = defineProps<{
   block?: RSVPBlockData;
   title?: string;
   buttonLabel?: string;
+  disabled?: boolean;
+  disabledMessage?: string;
 }>();
 const emit = defineEmits<{ (e: 'confirm', payload: { fullName: string; attendance: 'yes' | 'no'; guestsCount: number; foodRestrictions: string }): void; }>();
 const blockProps = computed(() => ({
@@ -18,9 +20,13 @@ const blockProps = computed(() => ({
   ...(props.block?.props || {}),
   ...(props.title !== undefined ? { title: props.title } : {}),
   ...(props.buttonLabel !== undefined ? { buttonLabel: props.buttonLabel } : {}),
+  ...(props.disabled !== undefined ? { disabled: props.disabled } : {}),
+  ...(props.disabledMessage !== undefined ? { disabledMessage: props.disabledMessage } : {}),
 }));
 const resolvedTitle = computed(() => String(blockProps.value.title || '¿Nos acompañas?'));
 const resolvedButtonLabel = computed(() => String(blockProps.value.buttonLabel || 'Confirmar asistencia'));
+const isDisabled = computed(() => Boolean(blockProps.value.disabled));
+const resolvedDisabledMessage = computed(() => String(blockProps.value.disabledMessage || 'El plazo de confirmación ya finalizó.'));
 
 const fullName = ref('');
 const attendance = ref<'yes' | 'no'>('yes');
@@ -30,24 +36,25 @@ const isFormVisible = ref(false); const isConfirmed = ref(false); const errorMes
 const rootEl = ref<HTMLElement | null>(null); const isVisible = ref(false);
 
 onMounted(() => { const observer = new IntersectionObserver((entries) => { const [entry] = entries; if (entry.isIntersecting) { isVisible.value = true; observer.disconnect(); } }, { threshold: 0.2 }); if (rootEl.value) observer.observe(rootEl.value); });
-const submitConfirmation = () => { if (!fullName.value.trim()) { errorMessage.value = 'Ingresa tu nombre completo'; return; } emit('confirm', { fullName: fullName.value.trim(), attendance: attendance.value, guestsCount: Number(guestsCount.value) || 0, foodRestrictions: foodRestrictions.value.trim() }); isConfirmed.value = true; errorMessage.value = ''; };
+const submitConfirmation = () => { if (isDisabled.value) { errorMessage.value = resolvedDisabledMessage.value; return; } if (!fullName.value.trim()) { errorMessage.value = 'Ingresa tu nombre completo'; return; } emit('confirm', { fullName: fullName.value.trim(), attendance: attendance.value, guestsCount: Number(guestsCount.value) || 0, foodRestrictions: foodRestrictions.value.trim() }); isConfirmed.value = true; errorMessage.value = ''; };
 </script>
 
 <template>
-  <section ref="rootEl" class="rsvp-block" :class="{ 'is-visible': isVisible }">
+  <section ref="rootEl" class="rsvp-block" :class="[{ 'is-visible': isVisible }, { 'rsvp-block--disabled': isDisabled }]">
     <h3>{{ resolvedTitle }}</h3>
-    <button v-if="!isFormVisible && !isConfirmed" type="button" class="rsvp-btn" @click="isFormVisible = true">{{ resolvedButtonLabel }}</button>
+    <p v-if="isDisabled" class="rsvp-disabled-message">{{ resolvedDisabledMessage }}</p>
+    <button v-if="!isFormVisible && !isConfirmed" type="button" class="rsvp-btn" :disabled="isDisabled" @click="isFormVisible = true">{{ resolvedButtonLabel }}</button>
     <form v-else-if="!isConfirmed" class="rsvp-form" @submit.prevent="submitConfirmation">
       <label for="rsvpName">Nombre y apellido</label>
-      <input id="rsvpName" v-model="fullName" type="text" placeholder="Escribe tu nombre" class="rsvp-input" />
+      <input id="rsvpName" v-model="fullName" type="text" placeholder="Escribe tu nombre" class="rsvp-input" :disabled="isDisabled" />
       <label for="rsvpAttend">¿Asistirás?</label>
-      <select id="rsvpAttend" v-model="attendance" class="rsvp-input"><option value="yes">Sí</option><option value="no">No</option></select>
+      <select id="rsvpAttend" v-model="attendance" class="rsvp-input" :disabled="isDisabled"><option value="yes">Sí</option><option value="no">No</option></select>
       <label for="rsvpGuests">Número de acompañantes</label>
-      <input id="rsvpGuests" v-model="guestsCount" type="number" min="0" max="8" class="rsvp-input" />
+      <input id="rsvpGuests" v-model="guestsCount" type="number" min="0" max="8" class="rsvp-input" :disabled="isDisabled" />
       <label for="rsvpDietary">Restricciones alimenticias</label>
-      <input id="rsvpDietary" v-model="foodRestrictions" type="text" placeholder="Opcional" class="rsvp-input" />
+      <input id="rsvpDietary" v-model="foodRestrictions" type="text" placeholder="Opcional" class="rsvp-input" :disabled="isDisabled" />
       <p v-if="errorMessage" class="rsvp-error">{{ errorMessage }}</p>
-      <button type="submit" class="rsvp-btn">Enviar confirmación</button>
+      <button type="submit" class="rsvp-btn" :disabled="isDisabled">Enviar confirmación</button>
     </form>
     <p v-else class="rsvp-success">Gracias por confirmar tu asistencia</p>
   </section>

@@ -213,3 +213,81 @@ const useMapSearchLocation = () => {
 .editor-advanced-toggle { justify-self: start; background: #374151; }
 @media (max-width: 640px) { .editor-field__inline { grid-template-columns: 1fr; } }
 </style>
+<style scoped>
+.basic-editor-form {
+  display: grid;
+  gap: 18px;
+}
+
+.basic-editor-form h2 {
+  margin: 0;
+  color: #111827;
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  letter-spacing: -0.02em;
+}
+
+.form-fields {
+  display: grid;
+  gap: 14px;
+}
+
+.basic-editor-form h3 {
+  margin: 18px 0 2px;
+  padding: 10px 12px;
+  border: 1px solid #f6d8e3;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fff4f8 0%, #ffffff 100%);
+  color: #9f1f46;
+  font-size: 0.98rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+:deep(.ui-field),
+.editor-field {
+  display: grid;
+  gap: 0.45rem;
+  padding: 12px;
+  border: 1px solid #e8dce2;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.04);
+}
+
+:deep(.ui-field__label),
+.editor-field span {
+  color: #374151;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+:deep(.ui-field__control),
+.editor-field input {
+  min-height: 44px;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid #d6c8cf;
+  border-radius: 12px;
+  outline: none;
+  background: #fff;
+  color: #111827;
+  font-size: 0.95rem;
+}
+
+:deep(textarea.ui-field__control) {
+  min-height: 110px;
+  line-height: 1.45;
+}
+
+:deep(.ui-field__control:focus),
+.editor-field input:focus {
+  border-color: #c7355c;
+  box-shadow: 0 0 0 3px rgba(199, 53, 92, 0.14);
+}
+
+.editor-field small {
+  color: #6b7280;
+  font-size: 0.78rem;
+}
+</style>

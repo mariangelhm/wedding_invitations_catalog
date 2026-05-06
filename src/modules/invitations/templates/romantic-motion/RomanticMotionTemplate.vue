@@ -117,6 +117,7 @@ function findEnabledBlockByType(type) {
   return normalizedEnabledBlocks.value.find((block) => block.normalizedType === type) || null;
 }
 const countdownBlock = computed(() => findEnabledBlockByType('countdown'));
+const rsvpCountdownBlock = computed(() => findEnabledBlockByType('countdown_rsvp'));
 const storyBlock = computed(() => findEnabledBlockByType('story'));
 const galleryBlock = computed(() => findEnabledBlockByType('gallery'));
 const mapBlock = computed(() => findEnabledBlockByType('map'));
@@ -138,7 +139,7 @@ const galleryImages = computed(() => {
 });
 const imageSrc = (field, fallbackIndex) => userImages.value?.[field] || sampleImages[fallbackIndex];
 
-const fixedTypes = ['countdown', 'story', 'gallery', 'map', 'rsvp'];
+const fixedTypes = ['countdown', 'countdown_rsvp', 'story', 'gallery', 'map', 'rsvp'];
 const dynamicExtraBlocks = computed(() => normalizedEnabledBlocks.value.filter((block) => !fixedTypes.includes(block.normalizedType)));
 const blockProps = (block) => ({ ...(block?.settings || {}), ...(block?.props || {}) });
 const names = computed(() => base.value.coupleNames || base.value.names || templateDefaults.base.coupleNames);
@@ -148,6 +149,14 @@ const eventLocation = computed(() => base.value.locationName || base.value.locat
 const eventAddress = computed(() => base.value.locationAddress || mapSettings.value.address || eventLocation.value);
 const eventDate = computed(() => base.value.eventDate || base.value.date || templateDefaults.base.eventDate);
 const countdownTargetDate = computed(() => base.value.countdownTargetDate || eventDate.value);
+const currentTime = ref(Date.now());
+let rsvpClockInterval = null;
+const rsvpCountdownTargetDate = computed(() => rsvpCountdownBlock.value?.props?.targetDate || rsvpCountdownBlock.value?.settings?.targetDate || '');
+const isRsvpClosed = computed(() => {
+  if (!rsvpCountdownBlock.value || !rsvpCountdownTargetDate.value) return false;
+  const target = new Date(rsvpCountdownTargetDate.value).getTime();
+  return Number.isFinite(target) && currentTime.value >= target;
+});
 const hasTime = (value) => /T\d{2}:\d{2}/.test(String(value || ''));
 const formatEventDateTime = (value) => {
   const dateValue = value || eventDate.value;
@@ -291,15 +300,16 @@ watch(
   { deep: true },
 );
 
-watch([countdownBlock, mapBlock, rsvpBlock, dynamicExtraBlocks], () => {
+watch([countdownBlock, rsvpCountdownBlock, mapBlock, rsvpBlock, dynamicExtraBlocks], () => {
   if (!DEBUG_BUILDER) return;
   console.log('[BUILDER DEBUG] countdownBlock', countdownBlock.value);
+  console.log('[BUILDER DEBUG] rsvpCountdownBlock', rsvpCountdownBlock.value);
   console.log('[BUILDER DEBUG] mapBlock', mapBlock.value);
   console.log('[BUILDER DEBUG] rsvpBlock', rsvpBlock.value);
   console.log('[BUILDER DEBUG] dynamicExtraBlocks', dynamicExtraBlocks.value);
 }, { deep: true, immediate: true });
 
-watch([countdownBlock, storyBlock, galleryBlock, mapBlock, rsvpBlock, dynamicExtraBlocks], async () => {
+watch([countdownBlock, rsvpCountdownBlock, storyBlock, galleryBlock, mapBlock, rsvpBlock, dynamicExtraBlocks], async () => {
   await nextTick();
   revealRefs.value.forEach((el) => observeRevealElement(el));
   templateRoot.value?.querySelectorAll('.motion-section, .motion-left, .motion-right').forEach((el) => observeRevealElement(el));
@@ -326,6 +336,8 @@ Vue.onMounted(() => {
   scrollParent.addEventListener('scroll', onScroll, { passive: true });
   removeScrollListener = () => scrollParent.removeEventListener('scroll', onScroll);
   onScroll();
+  currentTime.value = Date.now();
+  rsvpClockInterval = setInterval(() => { currentTime.value = Date.now(); }, 1000);
 
   if (sampleImages.some((image) => !image)) {
     console.error('Romantic Motion sample images failed to load', sampleImages);
@@ -346,6 +358,7 @@ Vue.onMounted(() => {
 Vue.onUnmounted(() => {
   observer?.disconnect();
   removeScrollListener?.();
+  if (rsvpClockInterval) clearInterval(rsvpClockInterval);
 });
 </script>
 
@@ -464,11 +477,23 @@ Vue.onUnmounted(() => {
         <h2 class="romantic-section-title romantic-template__section-title">Confirma tu asistencia</h2>
         <p>Tu respuesta nos ayuda a preparar cada detalle de esta celebración.</p>
       </div>
+      <div v-if="rsvpCountdownBlock" class="romantic-template__rsvp-countdown">
+        <CountdownBlock
+          :block="rsvpCountdownBlock"
+          v-bind="blockProps(rsvpCountdownBlock)"
+          :target-date="rsvpCountdownTargetDate"
+          :title="rsvpCountdownBlock?.props?.title || 'Tiempo para confirmar'"
+          variant="editorial"
+        />
+        <p v-if="isRsvpClosed" class="rsvp-closed-message">El plazo de confirmación ya finalizó.</p>
+      </div>
       <RSVPBlock
         :block="rsvpBlock"
         v-bind="blockProps(rsvpBlock)"
         :title="rsvpBlock?.props?.title || 'Confirma tu asistencia'"
         :button-label="rsvpBlock?.props?.buttonLabel || 'Enviar confirmación'"
+        :disabled="isRsvpClosed"
+        disabled-message="El plazo de confirmación ya finalizó."
       />
     </section>
 

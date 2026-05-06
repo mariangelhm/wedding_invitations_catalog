@@ -129,6 +129,13 @@ const onToggleExtra = (block, event) => {
   });
   builderStore.toggleBlock(block.id, nextEnabled);
 };
+const toDateTimeLocal = (value) => {
+  if (!value) return '';
+  const normalized = String(value).replace('Z', '');
+  return normalized.includes('T') ? normalized.slice(0, 16) : normalized;
+};
+const blockPropValue = (block, key) => block?.props?.[key] ?? block?.settings?.[key] ?? '';
+const updateBlockProp = (block, key, value) => { if (block?.id) builderStore.updateBlockProps(block.id, { [key]: value }); };
 const updateMapBlockProp = (key, value) => { if (mapBlock.value) builderStore.updateBlockProps(mapBlock.value.id, { [key]: value }); };
 const onDragStart = (block) => { if (!block.enabled) return; draggingBlockId.value = block.id; };
 const onDropOver = (block) => { if (!block.enabled || !draggingBlockId.value || draggingBlockId.value === block.id) return; dropTargetBlockId.value = block.id; };
@@ -242,6 +249,17 @@ const applyThemePreset = (preset) => {
               </div>
             </div>
             <p class="block-description">{{ block.description || blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p>
+            <div v-if="block.enabled && block.type === 'countdown_rsvp'" class="block-config block-config--rsvp-countdown">
+              <label class="block-config-field">
+                <span>Fecha límite para confirmar</span>
+                <input
+                  type="datetime-local"
+                  :value="toDateTimeLocal(blockPropValue(block, 'targetDate'))"
+                  @change="updateBlockProp(block, 'targetDate', $event.target.value)"
+                />
+                <small>Cuando llegue esta fecha se bloqueará la confirmación de asistencia.</small>
+              </label>
+            </div>
             <div class="block-footer">
               <label class="switch" :aria-label="`Activar ${block.type}`">
                 <input type="checkbox" :checked="block.enabled" @change="onToggleExtra(block, $event)" />

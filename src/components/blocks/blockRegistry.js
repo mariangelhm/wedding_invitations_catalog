@@ -31,7 +31,7 @@ export function debugError(label, error, context = {}) {
 
 export const BLOCK_TYPE_ALIASES = {
   countdown_wedding: 'countdown',
-  countdown_rsvp: 'countdown',
+  countdown_rsvp: 'countdown_rsvp',
   countdown_confirmation: 'countdown',
   bitacora: 'timeline',
   timeline: 'timeline',
@@ -55,6 +55,13 @@ export const blockRegistry = {
   countdown: {
     component: CountdownBlock,
     label: 'Cuenta regresiva',
+    previewType: 'countdown',
+    draggable: true,
+    configurableProps: ['targetDate', 'title', 'variant'],
+  },
+  countdown_rsvp: {
+    component: CountdownBlock,
+    label: 'Cuenta regresiva confirmación',
     previewType: 'countdown',
     draggable: true,
     configurableProps: ['targetDate', 'title', 'variant'],

@@ -105,3 +105,9 @@
 .background-option-preview{height:44px;border-radius:10px;border:1px solid rgba(0,0,0,.08)}
 .background-option-card span:not(.background-option-preview){font-weight:700;font-size:.86rem}
 .background-option-card small{color:#6b7280;font-size:.74rem}
+.block-config{border:1px solid #ead6df;background:#fff;border-radius:12px;padding:10px;display:grid;gap:8px}
+.block-config-field{display:grid;gap:6px;color:#374151}
+.block-config-field span{font-size:.74rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9f1f46}
+.block-config-field input{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:9px 10px;background:#fff;color:#111827}
+.block-config-field input:focus{outline:none;border-color:#c7355c;box-shadow:0 0 0 3px rgba(199,53,92,.14)}
+.block-config-field small{color:#6b7280;font-size:.78rem;line-height:1.35}

@@ -1278,3 +1278,28 @@
 .preview-canvas--mobile .romantic-template iframe {
   max-width: 100%;
 }
+
+.romantic-template__rsvp-countdown {
+  display: grid;
+  gap: 12px;
+  max-width: 760px;
+  margin: 0 auto 28px;
+  padding: 24px;
+  border: 1px solid var(--theme-border, #E6E2D8);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--theme-rsvp-bg, #EFEBE9) 72%, #fff);
+}
+
+.romantic-template__rsvp-countdown .countdown-block__title {
+  text-align: center;
+}
+
+.rsvp-closed-message {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--theme-accent, #303030) 10%, #fff);
+  color: var(--custom-title-color, var(--theme-title-text, #303030));
+  font-weight: 800;
+  text-align: center;
+}

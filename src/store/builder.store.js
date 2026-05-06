@@ -5,7 +5,7 @@ import { romanticMotionConfig } from '../modules/invitations/templates/romantic-
 const DEBUG_BUILDER = true;
 const BLOCK_TYPE_ALIASES = {
   countdown_wedding: 'countdown',
-  countdown_rsvp: 'countdown',
+  countdown_rsvp: 'countdown_rsvp',
   countdown_confirmation: 'countdown',
   bitacora: 'timeline',
   timeline: 'timeline',
@@ -39,7 +39,7 @@ function debugError(label, error, context = {}) {
 }
 const getPreviewTargetFromBlock = (block) => {
   const normalizedType = normalizeBlockType(block?.type || block);
-  const targets = { countdown: 'countdown', gallery: 'gallery', map: 'map', rsvp: 'rsvp', story: 'story', timeline: 'extras' };
+  const targets = { countdown: 'countdown', countdown_rsvp: 'rsvp', gallery: 'gallery', map: 'map', rsvp: 'rsvp', story: 'story', timeline: 'extras' };
   return targets[normalizedType] || 'extras';
 };
 
