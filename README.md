@@ -1167,3 +1167,8 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Restored full-width section ownership of backgrounds while keeping horizontal breathing room inside `romantic-template__container`.
 - Kept padding in inner content containers/sections instead of the root template, preventing visible borders around the invitation.
 - Recovered mobile header and hero behavior so the logo stays horizontal, nav links are hidden, the toggle remains visible, and hero text/image stack safely without overlap.
+
+## HU-117 Romantic Motion mobile edge padding fix
+- Removed the remaining narrow mobile edge effect by keeping RSVP and map/FAQ backgrounds full-width while adding internal content gutters.
+- Added a shared `--romantic-content-gutter` so text-heavy full-width sections have safe left/right breathing space without creating white borders.
+- Preserved section-owned backgrounds and mobile stacking while preventing RSVP text from sitting against or clipping at the viewport edge.

@@ -7,6 +7,7 @@
 .romantic-template {
   --romantic-template-width: min(calc(100% - 40px), 1140px);
   --romantic-section-y: 72px;
+  --romantic-content-gutter: max(20px, calc((100% - 1140px) / 2));
   --motion-shadow: 0 24px 70px color-mix(in srgb, var(--theme-title-text, #303030) 12%, transparent);
   --motion-soft-shadow: 0 14px 38px color-mix(in srgb, var(--theme-title-text, #303030) 10%, transparent);
   width: 100%;
@@ -577,6 +578,10 @@
 .romantic-template__rsvp {
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding-inline: var(--romantic-content-gutter);
   background: var(--theme-rsvp-bg, #EFEBE9);
   color: var(--theme-rsvp-text, #2F2E2E);
   display: grid;
@@ -630,8 +635,11 @@
 .romantic-template__map-faq {
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: var(--romantic-section-y) var(--romantic-content-gutter);
   background: var(--theme-section-bg, #FFFFFF);
-  padding: var(--romantic-section-y) 0;
 }
 
 .romantic-template__map-faq-grid {
@@ -813,6 +821,7 @@
   .romantic-template {
     --romantic-template-width: min(calc(100% - 28px), 100%);
     --romantic-section-y: 48px;
+    --romantic-content-gutter: 24px;
     width: 100%;
     padding: 0;
     overflow-x: hidden;
@@ -885,21 +894,24 @@
     height: 340px;
     overflow: hidden;
   }
-}
 
   .romantic-template__hero-media img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+}
 
   .romantic-template__section,
   .romantic-section,
   .romantic-template__story,
-  .romantic-template__details,
+  .romantic-template__details {
+    padding: 48px 0;
+  }
+
   .romantic-template__rsvp,
   .romantic-template__map-faq {
-    padding: 48px 0;
+    padding: 48px var(--romantic-content-gutter);
   }
 
   .romantic-template__section-title,
@@ -953,9 +965,7 @@
   .romantic-template__hero,
   .romantic-section,
   .romantic-template__story,
-  .romantic-template__details,
-  .romantic-template__rsvp,
-  .romantic-template__map-faq {
+  .romantic-template__details {
     padding-inline: 0;
   }
 
