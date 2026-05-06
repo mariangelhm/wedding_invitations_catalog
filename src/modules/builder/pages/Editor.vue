@@ -42,8 +42,26 @@ const blockOptions = [
 ];
 
 const backgroundSwatches = ['#C7355C', '#F97316', '#2563EB', '#16A34A', '#7C3AED', '#111827', '#FBE8EE', '#FFFFFF'];
-const titleColorSwatches = ['#111827', '#374151', '#4B5563', '#6B7280', '#C7355C', '#B76E79', '#9A6B4F', '#B88A44', '#D4AF37', '#FFFFFF', '#F8FAFC', '#1F2937'];
-const bodyColorSwatches = ['#111827', '#374151', '#4B5563', '#6B7280', '#C7355C', '#B76E79', '#9A6B4F', '#B88A44', '#D4AF37', '#FFFFFF', '#F8FAFC', '#1F2937'];
+const letterColorSwatches = [
+  '#1A1A1A',
+  '#2F2E2E',
+  '#4A3F35',
+  '#57534E',
+  '#6B4242',
+  '#7A2E45',
+  '#A67C52',
+  '#C5A059',
+  '#354F52',
+  '#2C3E50',
+  '#84A59D',
+  '#B5838D',
+  '#D4A373',
+  '#FFFFFF',
+  '#F7F7F5',
+  '#EFEBE9',
+];
+const titleColorSwatches = letterColorSwatches;
+const bodyColorSwatches = letterColorSwatches;
 const fontStacks = {
   'Playfair Display': "'Playfair Display', Georgia, serif",
   'Cormorant Garamond': "'Cormorant Garamond', Georgia, serif",
@@ -70,7 +88,7 @@ watch(selectedTemplate, (template) => {
 const invitation = computed(() => builderStore.invitation);
 const orderedBlocks = computed(() => (invitation.value?.blocks || []).slice().sort((a, b) => a.order - b.order));
 const mapBlock = computed(() => orderedBlocks.value.find((block) => block.type === 'map'));
-const selectedExtras = computed(() => orderedBlocks.value.filter((block) => block.enabled && (block.price || 0) > 0));
+const selectedExtras = computed(() => orderedBlocks.value.filter((block) => block.enabled && !block.included && (block.price || 0) > 0));
 
 const formatPrice = (value = 0) => `$${Number(value || 0).toLocaleString('es-CL')}`;
 const goToCheckout = () => {
@@ -155,12 +173,14 @@ const applyThemePreset = (preset) => {
           <template v-if="selectedTypographyTab==='names'">
             <h4>Fuente para nombres</h4>
             <div class="font-card-list"><button v-for="font in fontOptions" :key="`couple-${font}`" class="font-card" :class="{ selected: invitation.styles.fonts?.namesFont===font || invitation.styles.coupleFontFamily===font }" :style="{ fontFamily: fontStacks[font] }" @click="builderStore.updateStyleFont('namesFont', font)">{{ font }}</button></div>
-            <h4>Color de nombres/títulos</h4>
-            <div class="swatch-grid text-swatches"><button v-for="color in titleColorSwatches" :key="`title-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.colors?.titleColor===color || invitation.styles.titleColor===color }" @click="builderStore.updateStyleColor('titleColor', color)" /></div>
+            <h4>Color de nombres</h4>
+            <div class="swatch-grid text-swatches"><button v-for="color in letterColorSwatches" :key="`names-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.colors?.namesColor===color || invitation.styles.namesColor===color }" @click="builderStore.updateStyleColor('namesColor', color)" /></div>
           </template>
           <template v-else-if="selectedTypographyTab==='headings'">
             <h4>Fuente para títulos</h4>
             <div class="font-card-list"><button v-for="font in fontOptions" :key="`heading-${font}`" class="font-card" :class="{ selected: invitation.styles.fonts?.headingsFont===font }" :style="{ fontFamily: fontStacks[font] }" @click="builderStore.updateStyleFont('headingsFont', font)">{{ font }}</button></div>
+            <h4>Color de títulos</h4>
+            <div class="swatch-grid text-swatches"><button v-for="color in titleColorSwatches" :key="`title-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.colors?.titleColor===color || invitation.styles.titleColor===color }" @click="builderStore.updateStyleColor('titleColor', color)" /></div>
           </template>
           <template v-else>
             <h4>Fuente general</h4>
@@ -176,8 +196,9 @@ const applyThemePreset = (preset) => {
               <div class="extra-preview" :class="`extra-preview--${blockOptions.find((i)=>i.type===block.type)?.preview}`"></div>
               <div class="block-head-meta">
                 <h4>{{ block.label || blockOptions.find((i)=>i.type===block.type)?.label || block.type }}</h4>
-                <small v-if="block.price > 0" class="price-badge">${{ block.price }}</small>
-                <small v-else class="price-badge price-badge--free">Incluido</small>
+                <small v-if="block.included" class="price-badge price-badge--free">Incluido</small>
+                <small v-else-if="block.price > 0" class="price-badge">${{ block.price }}</small>
+                <small v-else class="price-badge price-badge--free">Sin costo</small>
               </div>
             </div>
             <p class="block-description">{{ block.description || blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p>

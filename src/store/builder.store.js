@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { themePresets } from '../modules/builder/data/themePresets';
+import { romanticMotionConfig } from '../modules/invitations/templates/romantic-motion/romanticMotion.config';
 
 const defaultCustomizableOptions = { colors: true, fonts: true, photos: true, music: false, map: true, components: true };
 
@@ -15,15 +16,37 @@ export const blockRegistry = {
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 const getTheme = (themeId = 'editorialClassic') => themePresets.find((preset) => preset.id === themeId) || themePresets.find((preset) => preset.id === 'editorialClassic') || themePresets[0] || { id: themeId, tokens: {} };
-const getDefaultBlocks = () => Object.values(blockRegistry).map((block) => clone({ ...block, enabled: true }));
+const getDefaultBlocks = (defaultBlocks = null) => {
+  const defaultsByType = new Map((defaultBlocks || []).map((block) => [block.type, block]));
+  return Object.values(blockRegistry).map((block) => {
+    const templateBlock = defaultsByType.get(block.type) || {};
+    return clone({ ...block, ...templateBlock, settings: { ...(block.settings || {}), ...(templateBlock.settings || {}) }, enabled: templateBlock.enabled ?? false, included: templateBlock.included ?? block.included ?? false });
+  });
+};
 
-const normalizeBase = (base = {}) => ({
-  coupleNames: base.coupleNames || base.names || 'María & Carlos',
-  eventDate: base.eventDate || base.date || '2027-06-14T18:00:00',
-  locationName: base.locationName || base.location || 'Rose Garden Hall',
-  locationAddress: base.locationAddress || base.address || 'Santiago, Chile',
-  message: base.message || base.heroMessage || 'Nos encantaría que seas parte de este día tan especial.',
-  storyMessage: base.storyMessage || 'Nuestra historia está llena de momentos simples, valientes y hermosos que queremos celebrar contigo.',
+const romanticDefaults = romanticMotionConfig.defaults;
+
+const normalizeBase = (base = {}, defaults = romanticDefaults.base) => ({
+  coupleNames: base.coupleNames || base.names || defaults.coupleNames || '',
+  eventDate: base.eventDate || base.date || defaults.eventDate || '',
+  locationName: base.locationName || base.location || defaults.locationName || '',
+  locationAddress: base.locationAddress || base.address || defaults.locationAddress || '',
+  message: base.message || base.heroMessage || defaults.message || '',
+  storyMessage: base.storyMessage || defaults.storyMessage || '',
+  countdownTargetDate: base.countdownTargetDate || base.eventDate || defaults.countdownTargetDate || defaults.eventDate || '',
+});
+
+const normalizeDetails = (details = {}, defaults = romanticDefaults.details) => ({ ...defaults, ...details });
+const normalizeMap = (map = {}, defaults = romanticDefaults.map) => ({ ...defaults, ...map });
+const normalizeFaq = (faq = [], defaults = romanticDefaults.faq) => (Array.isArray(faq) && faq.length ? faq : defaults).map((item, index) => ({
+  id: item.id || `faq-${index + 1}`,
+  question: item.question || item.q || '',
+  answer: item.answer || item.a || '',
+}));
+const normalizeImages = (images = {}, defaults = romanticDefaults.images) => ({
+  ...defaults,
+  ...images,
+  galleryImages: Array.isArray(images.galleryImages) && images.galleryImages.length ? images.galleryImages : defaults.galleryImages,
 });
 
 const buildStylesFromTheme = (theme = getTheme()) => {
@@ -39,6 +62,7 @@ const buildStylesFromTheme = (theme = getTheme()) => {
       buttonColor: tokens.buttonBg || '#303030',
       buttonTextColor: tokens.buttonText || '#FFFFFF',
       backgroundColor: tokens.pageBg || '#F4F1EA',
+      namesColor: tokens.titleText || '#303030',
     },
     fonts: {
       namesFont: 'Playfair Display',
@@ -59,7 +83,11 @@ const buildStylesFromTheme = (theme = getTheme()) => {
 };
 
 const getRomanticDefaults = () => ({
-  base: normalizeBase(),
+  base: normalizeBase(romanticDefaults.base),
+  details: normalizeDetails(),
+  map: normalizeMap(),
+  faq: normalizeFaq(),
+  images: normalizeImages(),
   timeline: [
     { time: '17:00', title: 'Ceremonia', place: 'Jardín principal' },
     { time: '19:00', title: 'Cena', place: 'Salón principal' },
@@ -77,7 +105,7 @@ const getRomanticDefaults = () => ({
     mapUrl: 'https://maps.google.com',
     embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3329.1789740216627!2d-70.65865812458385!3d-33.44464339721427!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662c5a7b81bab67%3A0x7cf5cd1956dd49f7!2sTorre%20Entel!5e0!3m2!1ses-419!2scl!4v1777782339212!5m2!1ses-419!2scl',
   },
-  blocks: getDefaultBlocks(),
+  blocks: getDefaultBlocks(romanticMotionConfig.defaultBlocks),
 });
 
 const normalizeInvitationBlocks = (blocks = []) => {
@@ -88,7 +116,7 @@ const normalizeInvitationBlocks = (blocks = []) => {
       ...clone(defaultBlock),
       ...existing,
       settings: { ...(defaultBlock.settings || {}), ...(existing.settings || {}) },
-      enabled: existing.enabled ?? true,
+      enabled: existing.enabled ?? defaultBlock.enabled ?? false,
       included: existing.included ?? defaultBlock.included ?? false,
     };
   }).sort((a, b) => (a.order || 0) - (b.order || 0)).map((block, index) => ({ ...block, order: index + 1 }));
@@ -106,7 +134,10 @@ export const useBuilderStore = defineStore('builderStore', {
       const createdAt = new Date();
       const expiresAt = new Date(createdAt);
       expiresAt.setDate(expiresAt.getDate() + 30);
-      const defaults = template?.id === 'romantic-01' ? getRomanticDefaults() : { base: normalizeBase({ coupleNames: '', eventDate: '', locationName: '', locationAddress: '', message: '', storyMessage: '' }), blocks: getDefaultBlocks(), timeline: [], gallery: [], mapSettings: { locationName: '', address: '', mapUrl: '', embedUrl: '' } };
+      const usesRomanticMotion = template?.id === romanticMotionConfig.templateId || template?.templateComponent === 'romantic-motion';
+      const defaults = usesRomanticMotion
+        ? getRomanticDefaults()
+        : { base: normalizeBase({ coupleNames: '', eventDate: '', locationName: '', locationAddress: '', message: '', storyMessage: '' }, {}), details: {}, map: { locationName: '', address: '', mapUrl: '', embedUrl: '' }, faq: [], images: {}, blocks: getDefaultBlocks(), timeline: [], gallery: [], mapSettings: { locationName: '', address: '', mapUrl: '', embedUrl: '' } };
       const theme = getTheme('modernRustic');
       const invitation = {
         id: Date.now(),
@@ -119,6 +150,10 @@ export const useBuilderStore = defineStore('builderStore', {
         basePrice: template?.basePrice || this.basePrice,
         base: defaults.base,
         styles: buildStylesFromTheme(theme),
+        details: normalizeDetails(defaults.details),
+        map: normalizeMap(defaults.map),
+        faq: normalizeFaq(defaults.faq),
+        images: normalizeImages(defaults.images),
         blocks: normalizeInvitationBlocks(defaults.blocks),
         addons: [],
         customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
@@ -139,6 +174,10 @@ export const useBuilderStore = defineStore('builderStore', {
       this.invitation = {
         ...this.invitation,
         base: normalizeBase(this.invitation.base),
+        details: normalizeDetails(this.invitation.details),
+        map: normalizeMap(this.invitation.map || this.invitation.mapSettings),
+        faq: normalizeFaq(this.invitation.faq),
+        images: normalizeImages(this.invitation.images),
         styles: {
           ...styles,
           ...(this.invitation.styles || {}),
@@ -167,6 +206,7 @@ export const useBuilderStore = defineStore('builderStore', {
             buttonColor: tokens.buttonBg || '#303030',
             buttonTextColor: tokens.buttonText || '#FFFFFF',
             backgroundColor: tokens.pageBg || '#F4F1EA',
+            namesColor: tokens.titleText || '#303030',
           },
           titleColor: tokens.titleText,
           bodyTextColor: tokens.bodyText,
@@ -181,12 +221,39 @@ export const useBuilderStore = defineStore('builderStore', {
       const base = normalizeBase(this.invitation.base);
       this.invitation = { ...this.invitation, base: { ...base, [field]: value } };
     },
+    updateDetailsField(field, value) {
+      if (!this.invitation) return;
+      this.invitation = { ...this.invitation, details: { ...normalizeDetails(this.invitation.details), [field]: value } };
+    },
+    updateMapField(field, value) {
+      if (!this.invitation) return;
+      const map = { ...normalizeMap(this.invitation.map || this.invitation.mapSettings), [field]: value };
+      this.invitation = { ...this.invitation, map, mapSettings: map };
+      this.updateBlockProps('map', map);
+    },
+    updateFaqItem(index, field, value) {
+      if (!this.invitation) return;
+      const faq = normalizeFaq(this.invitation.faq).map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: value } : item));
+      this.invitation = { ...this.invitation, faq };
+    },
+    updateImageField(field, value) {
+      if (!this.invitation) return;
+      const images = normalizeImages(this.invitation.images);
+      this.invitation = { ...this.invitation, images: { ...images, [field]: value } };
+    },
+    updateGalleryImage(index, value) {
+      if (!this.invitation) return;
+      const images = normalizeImages(this.invitation.images);
+      const galleryImages = (images.galleryImages || []).map((image, imageIndex) => (imageIndex === index ? { ...image, src: value } : image));
+      this.invitation = { ...this.invitation, images: { ...images, galleryImages } };
+    },
     updateStyleColor(key, value) {
       if (!this.invitation) return;
       const styles = this.invitation.styles || {};
       const colors = { ...(styles.colors || {}), [key]: value };
       const legacy = {
         ...(key === 'titleColor' ? { titleColor: value } : {}),
+        ...(key === 'namesColor' ? { namesColor: value } : {}),
         ...(key === 'bodyColor' ? { bodyTextColor: value, textColor: value } : {}),
         ...(key === 'accentColor' ? { primaryColor: value } : {}),
         ...(key === 'buttonColor' ? { rsvpButtonBackground: value } : {}),
@@ -236,6 +303,7 @@ export const useBuilderStore = defineStore('builderStore', {
         ...this.invitation,
         blocks: nextBlocks,
         mapSettings: mapBlock ? { ...(this.invitation.mapSettings || {}), ...(mapBlock.settings || {}) } : this.invitation.mapSettings,
+        map: mapBlock ? { ...(this.invitation.map || {}), ...(mapBlock.settings || {}) } : this.invitation.map,
       };
     },
     getEnabledBlocksSorted() { return this.enabledBlocksSorted; },

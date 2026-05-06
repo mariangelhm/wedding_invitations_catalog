@@ -4,26 +4,16 @@ import CountdownBlock from '../../../../components/blocks/CountdownBlock/Countdo
 import GalleryBlock from '../../../../components/blocks/GalleryBlock/GalleryBlock.vue';
 import MapBlock from '../../../../components/blocks/MapBlock/MapBlock.vue';
 import RSVPBlock from '../../../../components/blocks/RSVPBlock/RSVPBlock.vue';
+import { getBlockConfig } from '../../../../components/blocks/index.js';
+import { romanticMotionConfig } from './romanticMotion.config';
 import './romanticMotionTemplate.css';
 
 const { computed, ref } = Vue;
 
 const props = defineProps({ invitationData: { type: Object, default: () => ({}) } });
 
-/**
- * 👇 AQUÍ defines tus imágenes locales/manuales.
- * Deben existir en /public/assets/sample-gallery/
- * Ejemplo: public/assets/sample-gallery/wedding-1.jpg
- */
-const sampleImages = [
-  '/assets/sample-gallery/wedding-1.jpg',
-  '/assets/sample-gallery/wedding-2.jpg',
-  '/assets/sample-gallery/wedding-3.jpg',
-  '/assets/sample-gallery/wedding-4.jpg',
-  '/assets/sample-gallery/wedding-5.jpg',
-  '/assets/sample-gallery/wedding-6.jpg',
-  '/assets/sample-gallery/wedding-7.jpg',
-];
+const templateDefaults = romanticMotionConfig.defaults;
+const sampleImages = romanticMotionConfig.sampleImages;
 
 const fallbackEditorialTokens = {
   pageBg: '#F4F1EA',
@@ -58,38 +48,63 @@ const fallbackEditorialTokens = {
   heroButtonHoverText: '#1A1A1A',
 };
 
-const base = computed(() => props.invitationData?.base || {});
+const base = computed(() => ({ ...templateDefaults.base, ...(props.invitationData?.base || {}) }));
+const details = computed(() => ({ ...templateDefaults.details, ...(props.invitationData?.details || {}) }));
+const userMap = computed(() => ({ ...templateDefaults.map, ...(props.invitationData?.mapSettings || {}), ...(props.invitationData?.map || {}) }));
+const faqItems = computed(() => (Array.isArray(props.invitationData?.faq) && props.invitationData.faq.length ? props.invitationData.faq : templateDefaults.faq).map((item, index) => ({
+  id: item.id || `faq-${index + 1}`,
+  question: item.question || item.q || '',
+  answer: item.answer || item.a || '',
+})));
+const userImages = computed(() => ({ ...templateDefaults.images, ...(props.invitationData?.images || {}) }));
 const styles = computed(() => props.invitationData?.styles || {});
 const tokens = computed(() => ({ ...fallbackEditorialTokens, ...(styles.value?.themeTokens || {}) }));
 const styleColors = computed(() => styles.value?.colors || {});
 const styleFonts = computed(() => styles.value?.fonts || {});
-const blocks = computed(() => (props.invitationData?.blocks || []).filter((block) => block.enabled).slice().sort((a, b) => (a.order || 0) - (b.order || 0)));
+const enabledBlocks = computed(() => (props.invitationData?.blocks || [])
+  .filter((block) => block.enabled)
+  .slice()
+  .sort((a, b) => (a.order || 0) - (b.order || 0)));
+const blocks = enabledBlocks;
 const mapBlockSettings = computed(() => blockByType('map').settings || {});
-const mapSettings = computed(() => ({ ...(props.invitationData?.mapSettings || {}), ...mapBlockSettings.value }));
-const galleryImages = computed(() => sampleImages.map((src, index) => ({ src, alt: `Foto de boda ${index + 1}` })));
+const withoutEmptyValues = (value) => Object.fromEntries(Object.entries(value || {}).filter(([, entryValue]) => entryValue !== undefined && entryValue !== null && entryValue !== ''));
+const mapSettings = computed(() => ({ ...userMap.value, ...withoutEmptyValues(mapBlockSettings.value) }));
+const galleryImages = computed(() => {
+  const configuredImages = blockByType('gallery').settings?.images;
+  if (Array.isArray(configuredImages) && configuredImages.some((image) => image?.src)) return configuredImages;
+  return Array.isArray(userImages.value.galleryImages) && userImages.value.galleryImages.length
+    ? userImages.value.galleryImages
+    : sampleImages.map((src, index) => ({ src, alt: `Foto de boda ${index + 1}` }));
+});
+const imageSrc = (field, fallbackIndex) => userImages.value?.[field] || sampleImages[fallbackIndex];
 
 const hasBlock = (type) => blocks.value.some((block) => block.type === type);
 const blockByType = (type) => blocks.value.find((block) => block.type === type) || {};
 
-const names = computed(() => base.value.coupleNames || base.value.names || 'María & Carlos');
+const fixedBlockTypes = ['countdown_wedding', 'story', 'gallery', 'map', 'rsvp'];
+const dynamicExtraBlocks = computed(() => enabledBlocks.value.filter((block) => !fixedBlockTypes.includes(block.type) && getBlockConfig(block.type)?.component));
+const blockComponent = (type) => getBlockConfig(type)?.component || null;
+const blockProps = (block) => ({ ...(block.props || {}), ...(block.settings || {}) });
+
+const names = computed(() => base.value.coupleNames || base.value.names || templateDefaults.base.coupleNames);
 const nameParts = computed(() => names.value.split('&').map((part) => part.trim()).filter(Boolean));
 const initials = computed(() => nameParts.value.map((part) => part[0] || '').join(' & ').toUpperCase() || 'M & C');
-const eventLocation = computed(() => base.value.locationName || base.value.location || mapSettings.value.locationName || 'Rose Garden Hall');
+const eventLocation = computed(() => base.value.locationName || base.value.location || mapSettings.value.locationName || templateDefaults.base.locationName);
 const eventAddress = computed(() => base.value.locationAddress || mapSettings.value.address || eventLocation.value);
-const eventDate = computed(() => base.value.eventDate || base.value.date || '2027-06-14T18:00:00');
-const formattedDate = computed(() => new Date(eventDate.value).toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' }));
+const eventDate = computed(() => base.value.eventDate || base.value.date || templateDefaults.base.eventDate);
+const countdownTargetDate = computed(() => base.value.countdownTargetDate || eventDate.value);
+const formatDate = (value) => new Date(value || eventDate.value).toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
+const formattedDate = computed(() => formatDate(eventDate.value));
+const ceremonyDate = computed(() => formatDate(details.value.ceremonyDate || eventDate.value));
+const receptionDate = computed(() => formatDate(details.value.receptionDate || eventDate.value));
 
-const faqs = [
-  { q: '¿Puedo llevar acompañante?', a: 'Sí, puedes indicarlo en el formulario RSVP.' },
-  { q: '¿Cuál es el código de vestimenta?', a: 'Formal elegante.' },
-  { q: '¿Hasta cuándo puedo confirmar?', a: 'Hasta una semana antes del evento.' },
-  { q: '¿Hay estacionamiento?', a: 'Sí, hay estacionamiento disponible en el lugar.' },
-];
+const themeVars = computed(() => {
+  const backgroundColor = styleColors.value.backgroundColor || tokens.value.pageBg;
 
-const themeVars = computed(() => ({
-  '--theme-page-bg': styleColors.value.backgroundColor || tokens.value.pageBg,
-  '--theme-section-bg': tokens.value.sectionBg,
-  '--theme-section-alt-bg': tokens.value.sectionAltBg,
+  return {
+  '--theme-page-bg': backgroundColor,
+  '--theme-section-bg': styleColors.value.backgroundColor || tokens.value.sectionBg,
+  '--theme-section-alt-bg': styleColors.value.backgroundColor || tokens.value.sectionAltBg,
   '--theme-hero-bg': tokens.value.heroBg,
   '--theme-hero-overlay': tokens.value.heroOverlay,
   '--theme-hero-text': tokens.value.heroText,
@@ -116,7 +131,11 @@ const themeVars = computed(() => ({
   '--theme-quote-bg': tokens.value.quoteBackground || tokens.value.quoteBg || tokens.value.sectionAltBg,
   '--theme-quote-text': tokens.value.quoteText || tokens.value.heroText,
   '--theme-quote-overlay': tokens.value.quoteOverlay || tokens.value.heroOverlay,
+  '--custom-page-bg': backgroundColor,
+  '--custom-section-bg': styleColors.value.backgroundColor || tokens.value.sectionBg || '#FFFFFF',
+  '--custom-section-alt-bg': styleColors.value.backgroundColor || tokens.value.sectionAltBg || '#F4F1EA',
   '--custom-title-color': styleColors.value.titleColor || tokens.value.titleText || '#303030',
+  '--custom-names-color': styleColors.value.namesColor || styleColors.value.titleColor || tokens.value.titleText || '#303030',
   '--custom-body-color': styleColors.value.bodyColor || tokens.value.bodyText || '#575757',
   '--custom-accent-color': styleColors.value.accentColor || tokens.value.accent || '#303030',
   '--custom-button-bg': styleColors.value.buttonColor || tokens.value.buttonBg || '#303030',
@@ -137,7 +156,8 @@ const themeVars = computed(() => ({
   '--template-surface-text': tokens.value.surfaceText,
   '--template-border-color': tokens.value.border,
   '--template-link-color': tokens.value.accent,
-}));
+};
+});
 
 const headerScrolled = ref(false);
 const menuOpen = ref(false);
@@ -224,11 +244,12 @@ Vue.onUnmounted(() => {
           <h1 class="romantic-template__hero-names">{{ names }}</h1>
           <div class="hero-divider" aria-hidden="true"></div>
           <p class="hero-meta">{{ formattedDate }} · {{ eventLocation }}</p>
+          <p class="hero-message">{{ base.message }}</p>
           <a href="#rsvp" class="romantic-btn romantic-btn--ghost">Confirmar asistencia</a>
         </div>
         <div class="romantic-template__hero-media motion-right" :ref="setRevealRef">
           <div class="romantic-template__hero-circle" aria-hidden="true"></div>
-          <img :src="sampleImages[0]" alt="Retrato editorial de boda" />
+          <img :src="imageSrc('heroImage', 0)" alt="Retrato editorial de boda" />
           <div class="romantic-template__hero-caption">{{ initials }}</div>
         </div>
       </div>
@@ -240,10 +261,10 @@ Vue.onUnmounted(() => {
         <div class="romantic-template__story-content motion-left" :ref="setRevealRef">
           <p class="eyebrow">Nuestra historia</p>
           <h2 class="romantic-section-title romantic-template__section-title romantic-template__story-title">Un sí para celebrar con quienes más queremos</h2>
-          <p>{{ blockByType('story').settings?.message || base.storyMessage || 'Nuestra historia merece celebrarse contigo. Te esperamos para compartir una noche íntima, alegre y llena de detalles que recuerden este comienzo.' }}</p>
+          <p>{{ blockByType('story').settings?.message || base.storyMessage || templateDefaults.base.storyMessage }}</p>
         </div>
         <div class="romantic-template__story-media motion-right" :ref="setRevealRef">
-          <img :src="sampleImages[1]" alt="Momento romántico de la pareja" />
+          <img :src="imageSrc('storyImage', 1)" alt="Momento romántico de la pareja" />
           <div class="story-monogram">{{ initials }}</div>
         </div>
       </div>
@@ -253,13 +274,13 @@ Vue.onUnmounted(() => {
     <section
       class="romantic-parallax motion-section"
       :ref="setRevealRef"
-      :style="{ '--parallax-image': `url(${sampleImages[3]})` }"
+      :style="{ '--parallax-image': `url(${imageSrc('parallaxImage', 3)})` }"
       aria-label="Imagen destacada de la pareja"
     ></section>
 
     <section v-if="hasBlock('countdown_wedding')" class="romantic-template__countdown romantic-section motion-section" :ref="setRevealRef">
       <CountdownBlock
-        :target-date="blockByType('countdown_wedding').settings?.targetDate || eventDate"
+        :target-date="blockByType('countdown_wedding').settings?.targetDate || countdownTargetDate"
         :title="blockByType('countdown_wedding').settings?.title || 'Cuenta regresiva'"
         variant="editorial"
       />
@@ -274,21 +295,21 @@ Vue.onUnmounted(() => {
         <div class="romantic-template__details-list">
           <article class="romantic-template__detail-card">
             <span>01</span>
-            <h3 class="romantic-template__detail-title">Ceremonia</h3>
-            <p>{{ formattedDate }}</p>
-            <p>{{ eventLocation }}</p>
+            <h3 class="romantic-template__detail-title">{{ details.ceremonyTitle }}</h3>
+            <p>{{ ceremonyDate }}</p>
+            <p>{{ details.ceremonyLocation || eventLocation }}</p>
             <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
           </article>
           <article class="romantic-template__detail-card romantic-template__detail-card--accent">
             <span>02</span>
-            <h3 class="romantic-template__detail-title">Celebración</h3>
-            <p>{{ formattedDate }}</p>
-            <p>{{ eventAddress }}</p>
+            <h3 class="romantic-template__detail-title">{{ details.receptionTitle }}</h3>
+            <p>{{ receptionDate }}</p>
+            <p>{{ details.receptionLocation || eventAddress }}</p>
             <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
           </article>
         </div>
         <div class="romantic-template__details-visual">
-          <img :src="sampleImages[4]" alt="Mesa decorada para celebración de boda" />
+          <img :src="imageSrc('detailsImage', 4)" alt="Mesa decorada para celebración de boda" />
         </div>
       </div>
     </section>
@@ -326,16 +347,25 @@ Vue.onUnmounted(() => {
       <div class="faq">
         <p class="eyebrow">Información útil</p>
         <h2 class="romantic-section-title romantic-template__section-title">Preguntas frecuentes</h2>
-        <article v-for="(item, i) in faqs" :key="item.q" class="faq-item" :class="{ open: openFaq === i }">
+        <article v-for="(item, i) in faqItems" :key="item.id" class="faq-item" :class="{ open: openFaq === i }">
           <button class="faq-trigger" type="button" @click="openFaq = openFaq === i ? -1 : i">
-            <span>{{ item.q }}</span>
+            <span>{{ item.question }}</span>
             <span class="faq-icon">{{ openFaq === i ? '−' : '+' }}</span>
           </button>
           <div class="faq-answer" :style="{ maxHeight: openFaq === i ? '140px' : '0px' }">
-            <p>{{ item.a }}</p>
+            <p>{{ item.answer }}</p>
           </div>
         </article>
       </div>
+    </section>
+
+    <section v-if="dynamicExtraBlocks.length" class="romantic-template__extras romantic-section motion-section" :ref="setRevealRef">
+      <component
+        :is="blockComponent(block.type)"
+        v-for="block in dynamicExtraBlocks"
+        :key="block.id"
+        v-bind="blockProps(block)"
+      />
     </section>
 
     <footer class="romantic-template__footer">
