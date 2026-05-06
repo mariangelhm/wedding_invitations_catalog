@@ -21,7 +21,7 @@ const activeTemplateComponent = computed(() => getTemplateComponent(invitation.v
     <div class="invitation-preview__canvas">
       <p v-if="!invitation">No invitation selected</p>
       <component :is="activeTemplateComponent" v-else-if="activeTemplateComponent" :invitationData="invitation" />
-      <RomanticTemplate v-else :names="invitation?.base?.names" :date="invitation?.base?.date" :location="invitation?.base?.location" :message="invitation?.base?.message" />
+      <RomanticTemplate v-else :names="invitation?.base?.coupleNames || invitation?.base?.names" :date="invitation?.base?.eventDate || invitation?.base?.date" :location="invitation?.base?.locationName || invitation?.base?.location" :message="invitation?.base?.message" />
     </div>
   </section>
 </template>

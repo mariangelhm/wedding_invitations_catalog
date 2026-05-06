@@ -1,103 +1,93 @@
 import { defineStore } from 'pinia';
 import { themePresets } from '../modules/builder/data/themePresets';
+import { romanticMotionConfig } from '../modules/invitations/templates/romantic-motion/romanticMotion.config';
 
 const defaultCustomizableOptions = { colors: true, fonts: true, photos: true, music: false, map: true, components: true };
-// Typography values are stored as font labels; template maps labels to CSS stacks.
-// titleColor styles couple names/headings, while bodyTextColor styles general body text.
 
-const defaultBlocks = [
-  { id: 'block-countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, price: 3000, settings: {} },
-  { id: 'block-story', type: 'story', enabled: true, order: 2, price: 0, settings: {} },
-  { id: 'block-gallery', type: 'gallery', enabled: true, order: 3, price: 5000, settings: {} },
-  { id: 'block-timeline', type: 'timeline', enabled: true, order: 4, price: 2000, settings: {} },
-  { id: 'block-map', type: 'map', enabled: false, order: 5, price: 3000, settings: {} },
-  { id: 'block-countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, price: 2500, settings: {} },
-  { id: 'block-rsvp', type: 'rsvp', enabled: true, order: 7, price: 2000, settings: {} },
-];
-const romanticDefaultBlocks = [
-  { id: 'countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, price: 3000, settings: { targetDate: '2027-06-14T18:00:00', title: 'Faltan para nuestra boda' } },
-  { id: 'story', type: 'story', enabled: true, order: 2, price: 0, settings: {} },
-  { id: 'gallery', type: 'gallery', enabled: true, order: 3, price: 5000, settings: {} },
-  { id: 'timeline', type: 'timeline', enabled: true, order: 4, price: 2000, settings: {} },
-  { id: 'map', type: 'map', enabled: true, order: 5, price: 3000, settings: {} },
-  { id: 'countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, price: 2000, settings: { targetDate: '2027-05-20T23:59:59', title: 'Tiempo para confirmar' } },
-  { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, settings: {} },
-];
-const getDefaultBlocks = () => defaultBlocks.map((b) => ({ ...b }));
-const modernRusticTheme = themePresets.find((preset) => preset.id === 'modernRustic') || {};
-const editorialClassicTheme = themePresets.find((preset) => preset.id === 'editorialClassic') || {};
-const buildStylesFromTheme = (theme = {}) => {
+export const blockRegistry = {
+  countdown_wedding: { id: 'countdown-wedding', type: 'countdown_wedding', label: 'Cuenta regresiva boda', description: 'Cuenta regresiva al evento principal.', order: 1, price: 3000, included: false, settings: { targetDate: '2027-06-14T18:00:00', title: 'Faltan para nuestra boda', variant: 'editorial' } },
+  story: { id: 'story', type: 'story', label: 'Historia', description: 'Cuenta su historia de amor.', order: 2, price: 0, included: true, settings: { title: 'Nuestra historia', message: '' } },
+  gallery: { id: 'gallery', type: 'gallery', label: 'Galería', description: 'Muestra fotos destacadas.', order: 3, price: 5000, included: false, settings: { title: 'Nuestros momentos', images: [] } },
+  timeline: { id: 'timeline', type: 'timeline', label: 'Bitácora', description: 'Agenda del evento.', order: 4, price: 2000, included: false, settings: { title: 'Cuándo y dónde', items: [] } },
+  map: { id: 'map', type: 'map', label: 'Mapa', description: 'Ubicación del evento.', order: 5, price: 3000, included: false, settings: { locationName: '', address: '', mapUrl: '', embedUrl: '' } },
+  countdown_rsvp: { id: 'countdown-rsvp', type: 'countdown_rsvp', label: 'Cuenta regresiva confirmación', description: 'Tiempo restante para confirmar.', order: 6, price: 2000, included: false, settings: { targetDate: '2027-05-20T23:59:59', title: 'Tiempo para confirmar', variant: 'editorial' } },
+  rsvp: { id: 'rsvp', type: 'rsvp', label: 'RSVP', description: 'Confirmación de asistencia.', order: 7, price: 0, included: true, settings: { title: 'Confirma tu asistencia', buttonLabel: 'Enviar confirmación' } },
+};
+
+const clone = (value) => JSON.parse(JSON.stringify(value));
+const getTheme = (themeId = 'editorialClassic') => themePresets.find((preset) => preset.id === themeId) || themePresets.find((preset) => preset.id === 'editorialClassic') || themePresets[0] || { id: themeId, tokens: {} };
+const getDefaultBlocks = (defaultBlocks = null) => {
+  const defaultsByType = new Map((defaultBlocks || []).map((block) => [block.type, block]));
+  return Object.values(blockRegistry).map((block) => {
+    const templateBlock = defaultsByType.get(block.type) || {};
+    return clone({ ...block, ...templateBlock, settings: { ...(block.settings || {}), ...(templateBlock.settings || {}) }, enabled: templateBlock.enabled ?? false, included: templateBlock.included ?? block.included ?? false });
+  });
+};
+
+const romanticDefaults = romanticMotionConfig.defaults;
+
+const normalizeBase = (base = {}, defaults = romanticDefaults.base) => ({
+  coupleNames: base.coupleNames || base.names || defaults.coupleNames || '',
+  eventDate: base.eventDate || base.date || defaults.eventDate || '',
+  locationName: base.locationName || base.location || defaults.locationName || '',
+  locationAddress: base.locationAddress || base.address || defaults.locationAddress || '',
+  message: base.message || base.heroMessage || defaults.message || '',
+  storyMessage: base.storyMessage || defaults.storyMessage || '',
+  countdownTargetDate: base.countdownTargetDate || base.eventDate || defaults.countdownTargetDate || defaults.eventDate || '',
+});
+
+const normalizeDetails = (details = {}, defaults = romanticDefaults.details) => ({ ...defaults, ...details });
+const normalizeMap = (map = {}, defaults = romanticDefaults.map) => ({ ...defaults, ...map });
+const normalizeFaq = (faq = [], defaults = romanticDefaults.faq) => (Array.isArray(faq) && faq.length ? faq : defaults).map((item, index) => ({
+  id: item.id || `faq-${index + 1}`,
+  question: item.question || item.q || '',
+  answer: item.answer || item.a || '',
+}));
+const normalizeImages = (images = {}, defaults = romanticDefaults.images) => ({
+  ...defaults,
+  ...images,
+  galleryImages: Array.isArray(images.galleryImages) && images.galleryImages.length ? images.galleryImages : defaults.galleryImages,
+});
+
+const buildStylesFromTheme = (theme = getTheme()) => {
   const tokens = theme.tokens || {};
   return {
-  backgroundTheme: theme.id || 'editorialClassic',
-  themeTokens: { ...tokens },
-  primaryColor: tokens.accent || theme.primaryColor || '#303030',
-  secondaryColor: tokens.sectionAltBg || theme.secondaryColor || '#F4F1EA',
-  accentShape: theme.accentShape || '#E6E2D8',
-  heroBackground: tokens.heroBg || theme.heroBackground || 'linear-gradient(135deg, #4D4A43 0%, #303030 100%)',
-  heroOverlay: tokens.heroOverlay || theme.heroOverlay || 'rgba(0,0,0,0.30)',
-  heroTextColor: tokens.heroText || theme.heroTextColor || '#FFFFFF',
-  heroAccentColor: tokens.accentContrast || theme.heroAccentColor || '#FFFFFF',
-  quoteBackground: tokens.quoteBg || tokens.quoteBackground || theme.quoteBackground || (tokens.heroBg || theme.heroBackground || 'linear-gradient(135deg, #4D4A43 0%, #303030 100%)'),
-  quoteOverlay: tokens.quoteOverlay || theme.quoteOverlay || 'rgba(0,0,0,0.25)',
-  quoteTextColor: tokens.quoteText || theme.quoteTextColor || (tokens.heroText || theme.heroTextColor || '#FFFFFF'),
-  heroButtonBorder: tokens.heroButtonBorder || (tokens.heroText || theme.heroTextColor || '#FFFFFF'),
-  heroButtonText: tokens.heroButtonText || (tokens.heroText || theme.heroTextColor || '#FFFFFF'),
-  heroButtonHoverBg: tokens.heroButtonHoverBg || (tokens.heroText || theme.heroTextColor || '#FFFFFF'),
-  heroButtonHoverText: tokens.heroButtonHoverText || (tokens.pageBg || theme.secondaryColor || '#F4F1EA'),
-  countdownBackground: theme.countdownBackground || '#F4F1EA',
-  countdownNumberColor: theme.countdownNumberColor || '#303030',
-  countdownLabelColor: theme.countdownLabelColor || '#757575',
-  storyBackground: tokens.sectionBg || theme.storyBackground || '#FFFFFF',
-  galleryBackground: tokens.sectionAltBg || theme.galleryBackground || '#F4F1EA',
-  eventBackground: tokens.sectionAltBg || theme.eventBackground || '#F4F1EA',
-  registryBackground: theme.registryBackground || '#FFFFFF',
-  rsvpBackground: tokens.rsvpBg || theme.rsvpBackground || '#EFEBE9',
-  titleColor: tokens.titleText || theme.titleColor || '#303030',
-  bodyTextColor: tokens.bodyText || theme.bodyTextColor || '#575757',
-  mutedTextColor: tokens.mutedText || theme.mutedTextColor || '#757575',
-  surfaceColor: tokens.surfaceBg || theme.surfaceColor || '#FFFFFF',
-  surfaceTextColor: tokens.surfaceText || theme.surfaceTextColor || '#303030',
-  linkColor: theme.linkColor || '#303030',
-  borderColor: tokens.border || theme.borderColor || '#E6E2D8',
-  rsvpTextColor: tokens.rsvpText || theme.rsvpTextColor || '#2F2E2E',
-  rsvpInputBorderColor: theme.rsvpInputBorderColor || '#D8D2CA',
-  rsvpButtonBackground: tokens.buttonBg || theme.rsvpButtonBackground || '#2F2E2E',
-  rsvpButtonTextColor: tokens.buttonText || theme.rsvpButtonTextColor || '#FFFFFF',
-  palette: Array.isArray(theme.palette) ? [...theme.palette] : ['#F4F1EA', '#FFFFFF', '#E6E2D8', '#303030'],
-  background: tokens.pageBg || theme.secondaryColor || '#F4F1EA',
-  backgroundGradient: tokens.pageBg || theme.secondaryColor || '#F4F1EA',
-  textColor: tokens.bodyText || theme.bodyTextColor || '#575757',
-  coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial',
-};
-};
-const createDefaultBlock = (blockType, invitation = null) => {
-  const baseDate = invitation?.base?.date || '2027-06-14T18:00:00';
-  const storyMessage = invitation?.base?.storyMessage || '';
-  const gallery = invitation?.gallery || [];
-  const timeline = invitation?.timeline || [];
-  const mapSettings = invitation?.mapSettings || { locationName: '', address: '', mapUrl: '', embedUrl: '' };
-  const blockCatalog = {
-    countdown_wedding: { id: 'countdown-wedding', type: 'countdown_wedding', enabled: true, order: 1, price: 3000, label: 'Cuenta regresiva boda', description: 'Cuenta regresiva al evento principal.', settings: { targetDate: baseDate, title: 'Faltan para nuestra boda', variant: 'editorial' } },
-    story: { id: 'story', type: 'story', enabled: true, order: 2, price: 0, label: 'Historia', description: 'Cuenta su historia de amor.', settings: { title: 'Nuestra historia', message: storyMessage } },
-    gallery: { id: 'gallery', type: 'gallery', enabled: true, order: 3, price: 5000, label: 'Galería', description: 'Muestra fotos destacadas.', settings: { title: 'Nuestros momentos', images: gallery } },
-    timeline: { id: 'timeline', type: 'timeline', enabled: true, order: 4, price: 2000, label: 'Bitácora', description: 'Agenda del evento.', settings: { title: 'Cuándo y dónde', items: timeline } },
-    map: { id: 'map', type: 'map', enabled: true, order: 5, price: 3000, label: 'Mapa', description: 'Ubicación del evento.', settings: { ...mapSettings } },
-    countdown_rsvp: { id: 'countdown-rsvp', type: 'countdown_rsvp', enabled: true, order: 6, price: 2000, label: 'Cuenta regresiva confirmación', description: 'Tiempo restante para confirmar.', settings: { targetDate: '2027-05-20T23:59:59', title: 'Tiempo para confirmar', variant: 'editorial' } },
-    rsvp: { id: 'rsvp', type: 'rsvp', enabled: true, order: 7, price: 0, label: 'RSVP', description: 'Confirmación de asistencia.', settings: { title: 'Confirma tu asistencia', buttonLabel: 'Enviar confirmación' } },
+    themeId: theme.id || 'editorialClassic',
+    backgroundTheme: theme.id || 'editorialClassic',
+    themeTokens: { ...tokens },
+    colors: {
+      titleColor: tokens.titleText || '#303030',
+      bodyColor: tokens.bodyText || '#575757',
+      accentColor: tokens.accent || '#303030',
+      buttonColor: tokens.buttonBg || '#303030',
+      buttonTextColor: tokens.buttonText || '#FFFFFF',
+      backgroundColor: tokens.pageBg || '#F4F1EA',
+      namesColor: tokens.titleText || '#303030',
+    },
+    fonts: {
+      namesFont: 'Playfair Display',
+      headingsFont: 'Playfair Display',
+      bodyFont: 'Montserrat',
+    },
+    // Legacy aliases kept so existing UI/templates continue to read sensible values.
+    primaryColor: tokens.accent || '#303030',
+    secondaryColor: tokens.sectionAltBg || tokens.pageBg || '#F4F1EA',
+    titleColor: tokens.titleText || '#303030',
+    bodyTextColor: tokens.bodyText || '#575757',
+    textColor: tokens.bodyText || '#575757',
+    background: tokens.pageBg || '#F4F1EA',
+    backgroundGradient: tokens.pageBg || '#F4F1EA',
+    coupleFontFamily: 'Playfair Display',
+    bodyFontFamily: 'Montserrat',
   };
-  if (!blockCatalog[blockType]) return null;
-  const uniqueId = globalThis.crypto?.randomUUID?.() || `${blockType}-${Date.now()}`;
-  return { ...blockCatalog[blockType], id: uniqueId };
 };
+
 const getRomanticDefaults = () => ({
-  base: {
-    names: 'María & Carlos',
-    date: '2027-06-14T18:00:00',
-    location: 'Rose Garden Hall',
-    heroMessage: 'Nos encantaría que seas parte de este día tan especial.',
-    storyMessage: 'Nuestra historia está llena de momentos simples, valientes y hermosos que queremos celebrar contigo.',
-  },
+  base: normalizeBase(romanticDefaults.base),
+  details: normalizeDetails(),
+  map: normalizeMap(),
+  faq: normalizeFaq(),
+  images: normalizeImages(),
   timeline: [
     { time: '17:00', title: 'Ceremonia', place: 'Jardín principal' },
     { time: '19:00', title: 'Cena', place: 'Salón principal' },
@@ -115,95 +105,228 @@ const getRomanticDefaults = () => ({
     mapUrl: 'https://maps.google.com',
     embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3329.1789740216627!2d-70.65865812458385!3d-33.44464339721427!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662c5a7b81bab67%3A0x7cf5cd1956dd49f7!2sTorre%20Entel!5e0!3m2!1ses-419!2scl!4v1777782339212!5m2!1ses-419!2scl',
   },
-  blocks: romanticDefaultBlocks.map((b) => ({ ...b })),
+  blocks: getDefaultBlocks(romanticMotionConfig.defaultBlocks),
 });
+
+const normalizeInvitationBlocks = (blocks = []) => {
+  const byType = new Map(blocks.map((block) => [block.type, block]));
+  return Object.values(blockRegistry).map((defaultBlock) => {
+    const existing = byType.get(defaultBlock.type) || {};
+    return {
+      ...clone(defaultBlock),
+      ...existing,
+      settings: { ...(defaultBlock.settings || {}), ...(existing.settings || {}) },
+      enabled: existing.enabled ?? defaultBlock.enabled ?? false,
+      included: existing.included ?? defaultBlock.included ?? false,
+    };
+  }).sort((a, b) => (a.order || 0) - (b.order || 0)).map((block, index) => ({ ...block, order: index + 1 }));
+};
 
 export const useBuilderStore = defineStore('builderStore', {
   state: () => ({ basePrice: 20000, invitation: null }),
   getters: {
-    enabledBlocksPrice: (state) => !state.invitation ? 0 : (state.invitation.blocks || []).filter((block) => block.enabled !== false).reduce((sum, block) => sum + (block.price || 0), 0),
+    enabledBlocksSorted: (state) => (state.invitation?.blocks || []).filter((block) => block.enabled).slice().sort((a, b) => (a.order || 0) - (b.order || 0)),
+    enabledBlocksPrice: (state) => (state.invitation?.blocks || []).filter((block) => block.enabled && !block.included).reduce((sum, block) => sum + Number(block.price || 0), 0),
     totalPrice() { return (this.invitation?.basePrice || this.basePrice) + this.enabledBlocksPrice; },
   },
   actions: {
-
+    createDraftInvitation(template = null) {
+      const createdAt = new Date();
+      const expiresAt = new Date(createdAt);
+      expiresAt.setDate(expiresAt.getDate() + 30);
+      const usesRomanticMotion = template?.id === romanticMotionConfig.templateId || template?.templateComponent === 'romantic-motion';
+      const defaults = usesRomanticMotion
+        ? getRomanticDefaults()
+        : { base: normalizeBase({ coupleNames: '', eventDate: '', locationName: '', locationAddress: '', message: '', storyMessage: '' }, {}), details: {}, map: { locationName: '', address: '', mapUrl: '', embedUrl: '' }, faq: [], images: {}, blocks: getDefaultBlocks(), timeline: [], gallery: [], mapSettings: { locationName: '', address: '', mapUrl: '', embedUrl: '' } };
+      const theme = getTheme('modernRustic');
+      const invitation = {
+        id: Date.now(),
+        templateId: template?.id || null,
+        status: 'draft',
+        templateComponent: template?.templateComponent || null,
+        templateName: template?.name || 'Invitación base',
+        category: template?.category || 'general',
+        level: template?.level || 'basic',
+        basePrice: template?.basePrice || this.basePrice,
+        base: defaults.base,
+        styles: buildStylesFromTheme(theme),
+        details: normalizeDetails(defaults.details),
+        map: normalizeMap(defaults.map),
+        faq: normalizeFaq(defaults.faq),
+        images: normalizeImages(defaults.images),
+        blocks: normalizeInvitationBlocks(defaults.blocks),
+        addons: [],
+        customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
+        timeline: defaults.timeline || [],
+        gallery: defaults.gallery || [],
+        mapSettings: defaults.mapSettings || { locationName: '', address: '', mapUrl: '', embedUrl: '' },
+        expiresAt,
+        createdAt,
+      };
+      this.basePrice = invitation.basePrice;
+      this.invitation = invitation;
+      return invitation;
+    },
+    ensureInvitationShape() {
+      if (!this.invitation) return;
+      const theme = getTheme(this.invitation.styles?.themeId || this.invitation.styles?.backgroundTheme || 'modernRustic');
+      const styles = buildStylesFromTheme(theme);
+      this.invitation = {
+        ...this.invitation,
+        base: normalizeBase(this.invitation.base),
+        details: normalizeDetails(this.invitation.details),
+        map: normalizeMap(this.invitation.map || this.invitation.mapSettings),
+        faq: normalizeFaq(this.invitation.faq),
+        images: normalizeImages(this.invitation.images),
+        styles: {
+          ...styles,
+          ...(this.invitation.styles || {}),
+          colors: { ...styles.colors, ...(this.invitation.styles?.colors || {}) },
+          fonts: { ...styles.fonts, ...(this.invitation.styles?.fonts || {}) },
+        },
+        blocks: normalizeInvitationBlocks(this.invitation.blocks || []),
+      };
+    },
     applyTheme(themeId) {
       if (!this.invitation) return;
-      const theme = themePresets.find((item) => item.id === themeId);
-      if (!theme?.tokens) return;
-      const tokens = structuredClone(theme.tokens);
+      const theme = getTheme(themeId);
+      const tokens = clone(theme.tokens || {});
       this.invitation = {
         ...this.invitation,
         styles: {
           ...(this.invitation.styles || {}),
+          themeId: theme.id,
           backgroundTheme: theme.id,
           themeTokens: tokens,
-          primaryColor: tokens.accent,
-          secondaryColor: tokens.sectionAltBg,
+          colors: {
+            ...(this.invitation.styles?.colors || {}),
+            titleColor: tokens.titleText || '#303030',
+            bodyColor: tokens.bodyText || '#575757',
+            accentColor: tokens.accent || '#303030',
+            buttonColor: tokens.buttonBg || '#303030',
+            buttonTextColor: tokens.buttonText || '#FFFFFF',
+            backgroundColor: tokens.pageBg || '#F4F1EA',
+            namesColor: tokens.titleText || '#303030',
+          },
           titleColor: tokens.titleText,
           bodyTextColor: tokens.bodyText,
-          heroBackground: tokens.heroBg,
-          heroTextColor: tokens.heroText,
+          textColor: tokens.bodyText,
+          primaryColor: tokens.accent,
+          secondaryColor: tokens.sectionAltBg || tokens.pageBg,
         },
       };
     },
-    createDraftInvitation(template = null) {
-      const createdAt = new Date(); const expiresAt = new Date(createdAt); expiresAt.setDate(expiresAt.getDate() + 30);
-      const romanticDefaults = template?.id === 'romantic-01' ? getRomanticDefaults() : null;
-      const invitation = {
-        id: Date.now(), status: 'draft', templateId: template?.id || null, templateComponent: template?.templateComponent || null,
-        templateName: template?.name || 'Invitación base', category: template?.category || 'general', level: template?.level || 'basic', basePrice: template?.basePrice || this.basePrice,
-        base: romanticDefaults?.base || { names: '', date: '', location: '', heroMessage: '', storyMessage: '' },
-        styles: romanticDefaults ? buildStylesFromTheme(modernRusticTheme) : { primaryColor: template?.previewStyle?.accentColor || '#303030', secondaryColor: template?.previewStyle?.background || '#F4F1EA', backgroundTheme: 'editorialClassic', coupleFontFamily: 'Playfair Display', bodyFontFamily: 'Arial', textColor: '#575757', titleColor: '#303030', bodyTextColor: '#575757', accentShape: '#E6E2D8', background: '#F4F1EA', backgroundGradient: '#F4F1EA', surfaceColor: '#FFFFFF', surfaceTextColor: '#303030', mutedTextColor: '#757575' },
-        addons: [], blocks: romanticDefaults?.blocks || getDefaultBlocks(), customizableOptions: { ...defaultCustomizableOptions, ...(template?.customizableOptions || {}) },
-        timeline: romanticDefaults?.timeline || [], gallery: romanticDefaults?.gallery || [], mapSettings: romanticDefaults?.mapSettings || { locationName: '', address: '', mapUrl: '', embedUrl: '' }, expiresAt, createdAt,
-      };
-      this.basePrice = invitation.basePrice; this.invitation = invitation; return invitation;
+    updateBaseField(field, value) {
+      if (!this.invitation) return;
+      const base = normalizeBase(this.invitation.base);
+      this.invitation = { ...this.invitation, base: { ...base, [field]: value } };
     },
-    toggleAddon(type, label, price, checked) { if (!this.invitation) return; const exists = this.invitation.addons.some((a) => a.type === type); if (checked && !exists) this.invitation.addons.push(type === 'map' ? { type, label, price, enabled: true, settings: { ...this.invitation.mapSettings } } : { type, label, price, enabled: true }); if (!checked) this.invitation.addons = this.invitation.addons.filter((a) => a.type !== type); },
+    updateDetailsField(field, value) {
+      if (!this.invitation) return;
+      this.invitation = { ...this.invitation, details: { ...normalizeDetails(this.invitation.details), [field]: value } };
+    },
+    updateMapField(field, value) {
+      if (!this.invitation) return;
+      const map = { ...normalizeMap(this.invitation.map || this.invitation.mapSettings), [field]: value };
+      this.invitation = { ...this.invitation, map, mapSettings: map };
+      this.updateBlockProps('map', map);
+    },
+    updateFaqItem(index, field, value) {
+      if (!this.invitation) return;
+      const faq = normalizeFaq(this.invitation.faq).map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: value } : item));
+      this.invitation = { ...this.invitation, faq };
+    },
+    updateImageField(field, value) {
+      if (!this.invitation) return;
+      const images = normalizeImages(this.invitation.images);
+      this.invitation = { ...this.invitation, images: { ...images, [field]: value } };
+    },
+    updateGalleryImage(index, value) {
+      if (!this.invitation) return;
+      const images = normalizeImages(this.invitation.images);
+      const galleryImages = (images.galleryImages || []).map((image, imageIndex) => (imageIndex === index ? { ...image, src: value } : image));
+      this.invitation = { ...this.invitation, images: { ...images, galleryImages } };
+    },
+    updateStyleColor(key, value) {
+      if (!this.invitation) return;
+      const styles = this.invitation.styles || {};
+      const colors = { ...(styles.colors || {}), [key]: value };
+      const legacy = {
+        ...(key === 'titleColor' ? { titleColor: value } : {}),
+        ...(key === 'namesColor' ? { namesColor: value } : {}),
+        ...(key === 'bodyColor' ? { bodyTextColor: value, textColor: value } : {}),
+        ...(key === 'accentColor' ? { primaryColor: value } : {}),
+        ...(key === 'buttonColor' ? { rsvpButtonBackground: value } : {}),
+        ...(key === 'buttonTextColor' ? { rsvpButtonTextColor: value } : {}),
+        ...(key === 'backgroundColor' ? { secondaryColor: value, background: value, backgroundGradient: value } : {}),
+      };
+      this.invitation = { ...this.invitation, styles: { ...styles, colors, ...legacy } };
+    },
+    updateStyleFont(key, value) {
+      if (!this.invitation) return;
+      const styles = this.invitation.styles || {};
+      const fonts = { ...(styles.fonts || {}), [key]: value };
+      const legacy = {
+        ...(key === 'namesFont' ? { coupleFontFamily: value } : {}),
+        ...(key === 'bodyFont' ? { bodyFontFamily: value } : {}),
+      };
+      this.invitation = { ...this.invitation, styles: { ...styles, fonts, ...legacy } };
+    },
     ensureBlocks() {
       if (!this.invitation) return [];
-      if (!Array.isArray(this.invitation.blocks) || this.invitation.blocks.length === 0) this.invitation.blocks = getDefaultBlocks();
-      return this.invitation.blocks;
+      const blocks = normalizeInvitationBlocks(this.invitation.blocks || []);
+      this.invitation = { ...this.invitation, blocks };
+      return blocks;
     },
-    // Extras are reusable blocks shared by templates.
-    // This ordered blocks API is the base for future drag & drop support.
-    normalizeBlockOrders() {
+    toggleBlock(blockId, enabled) {
+      if (!this.invitation) return;
       const blocks = this.ensureBlocks();
-      blocks.sort((a, b) => (a.order || 0) - (b.order || 0));
-      blocks.forEach((block, index) => { block.order = index + 1; });
+      const nextBlocks = blocks.map((block) => (block.id === blockId || block.type === blockId ? { ...block, enabled: enabled ?? !block.enabled } : block));
+      this.invitation = { ...this.invitation, blocks: nextBlocks };
     },
-    toggleBlock(blockType) {
+    updateBlockOrder(blockId, direction) {
+      if (!this.invitation) return;
+      const blocks = this.ensureBlocks().slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+      const index = blocks.findIndex((block) => block.id === blockId || block.type === blockId);
+      const target = direction === 'up' ? index - 1 : index + 1;
+      if (index < 0 || target < 0 || target >= blocks.length) return;
+      const reordered = blocks.slice();
+      [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
+      this.invitation = { ...this.invitation, blocks: reordered.map((block, orderIndex) => ({ ...block, order: orderIndex + 1 })) };
+    },
+    updateBlockProps(blockId, props) {
+      if (!this.invitation) return;
       const blocks = this.ensureBlocks();
-      const b = blocks.find((it) => it.type === blockType);
-      if (b) {
-        // We do NOT delete blocks from invitation.blocks.
-        // Keeping the block object preserves order/settings and allows instant re-enable in preview.
-        b.enabled = !b.enabled;
-        this.normalizeBlockOrders();
-        return;
-      }
-      // If a block is missing (legacy data), recreate from defaults instead of silently failing.
-      const recreated = createDefaultBlock(blockType, this.invitation);
-      if (!recreated) return;
-      const lastOrder = blocks.length ? Math.max(...blocks.map((item) => item.order || 0)) : 0;
-      recreated.order = lastOrder + 1;
-      recreated.enabled = true;
-      blocks.push(recreated);
-      this.normalizeBlockOrders();
+      const nextBlocks = blocks.map((block) => (block.id === blockId || block.type === blockId ? { ...block, settings: { ...(block.settings || {}), ...props } } : block));
+      const mapBlock = nextBlocks.find((block) => block.type === 'map');
+      this.invitation = {
+        ...this.invitation,
+        blocks: nextBlocks,
+        mapSettings: mapBlock ? { ...(this.invitation.mapSettings || {}), ...(mapBlock.settings || {}) } : this.invitation.mapSettings,
+        map: mapBlock ? { ...(this.invitation.map || {}), ...(mapBlock.settings || {}) } : this.invitation.map,
+      };
     },
-    moveBlockUp(blockId) { const items = this.invitation?.blocks; if (!items) return; items.sort((a,b)=>a.order-b.order); const i = items.findIndex((b)=>b.id===blockId); if (i<=0) return; [items[i-1].order, items[i].order] = [items[i].order, items[i-1].order]; },
-    moveBlockDown(blockId) { const items = this.invitation?.blocks; if (!items) return; items.sort((a,b)=>a.order-b.order); const i = items.findIndex((b)=>b.id===blockId); if (i<0 || i===items.length-1) return; [items[i+1].order, items[i].order] = [items[i].order, items[i+1].order]; },
+    getEnabledBlocksSorted() { return this.enabledBlocksSorted; },
+    getTotalPrice() { return this.totalPrice; },
+    moveBlockUp(blockId) { this.updateBlockOrder(blockId, 'up'); },
+    moveBlockDown(blockId) { this.updateBlockOrder(blockId, 'down'); },
     reorderBlocks(draggedBlockId, targetBlockId) {
-      const items = this.invitation?.blocks;
-      if (!items?.length || !draggedBlockId || !targetBlockId || draggedBlockId === targetBlockId) return;
-      const ordered = items.slice().sort((a, b) => a.order - b.order);
+      if (!this.invitation) return;
+      const ordered = this.ensureBlocks().slice().sort((a, b) => (a.order || 0) - (b.order || 0));
       const draggedIndex = ordered.findIndex((item) => item.id === draggedBlockId);
       const targetIndex = ordered.findIndex((item) => item.id === targetBlockId);
-      if (draggedIndex < 0 || targetIndex < 0) return;
+      if (draggedIndex < 0 || targetIndex < 0 || draggedIndex === targetIndex) return;
       const [dragged] = ordered.splice(draggedIndex, 1);
       ordered.splice(targetIndex, 0, dragged);
-      ordered.forEach((item, index) => { item.order = index + 1; });
-      this.invitation.blocks = ordered;
+      this.invitation = { ...this.invitation, blocks: ordered.map((item, index) => ({ ...item, order: index + 1 })) };
+    },
+    toggleAddon(type, label, price, checked) {
+      if (!this.invitation) return;
+      const exists = (this.invitation.addons || []).some((addon) => addon.type === type);
+      const addons = checked && !exists
+        ? [...(this.invitation.addons || []), { type, label, price, enabled: true }]
+        : (this.invitation.addons || []).filter((addon) => addon.type !== type);
+      this.invitation = { ...this.invitation, addons };
     },
   },
 });
