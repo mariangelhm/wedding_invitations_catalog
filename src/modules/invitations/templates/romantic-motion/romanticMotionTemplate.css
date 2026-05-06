@@ -1,8 +1,7 @@
 .romantic-template-viewport {
   width: 100%;
-  background: #f3f3f3;
-  display: flex;
-  justify-content: center;
+  background: transparent;
+  display: block;
 }
 
 .romantic-template {
@@ -10,11 +9,11 @@
   --romantic-section-y: 72px;
   --motion-shadow: 0 24px 70px color-mix(in srgb, var(--theme-title-text, #303030) 12%, transparent);
   --motion-soft-shadow: 0 14px 38px color-mix(in srgb, var(--theme-title-text, #303030) 10%, transparent);
-  width: min(100%, 1140px);
+  width: 100%;
   max-width: 100%;
-  padding: 24px;
+  padding: 0;
   box-sizing: border-box;
-  background: #ffffff;
+  background: var(--theme-page-bg, #F7F7F5);
   color: var(--theme-body-text, #575757);
   font-family: Inter, system-ui, sans-serif;
   line-height: 1.65;
@@ -121,7 +120,7 @@
   position: relative;
   min-height: clamp(600px, 84vh, 800px);
   padding: var(--romantic-section-y) 0;
-  background: var(--theme-hero-bg, linear-gradient(135deg, #4D4A43 0%, #303030 100%));
+  background: var(--theme-hero-bg, #F7F7F5);
   background-position: center;
   background-size: cover;
   color: var(--theme-hero-text, #FFFFFF);
@@ -398,6 +397,14 @@
   box-shadow: var(--motion-soft-shadow);
 }
 
+
+.romantic-template__countdown,
+.romantic-template__gallery,
+.romantic-template__rsvp {
+  width: 100%;
+  margin: 0;
+}
+
 .romantic-template__countdown {
   background: var(--theme-section-alt-bg, #F4F1EA);
   border-block: 1px solid var(--theme-border, #E6E2D8);
@@ -437,7 +444,7 @@
 .romantic-template__details {
   position: relative;
   z-index: 1;
-  background: var(--theme-page-bg, #F4F1EA);
+  background: var(--theme-details-bg, #F7F7F7);
   padding: var(--romantic-section-y) 0;
 }
 
@@ -668,7 +675,7 @@
   overflow: hidden;
   border-radius: 6px;
   border: 1px solid var(--theme-border, #E6E2D8);
-  background: var(--theme-page-bg, #F4F1EA);
+  background: var(--theme-details-bg, #F7F7F7);
 }
 
 .map-wrap .map-embed {
@@ -807,8 +814,14 @@
     --romantic-template-width: min(calc(100% - 28px), 100%);
     --romantic-section-y: 48px;
     width: 100%;
-    padding: 16px;
+    padding: 0;
     overflow-x: hidden;
+  }
+
+  .romantic-template,
+  .romantic-template * {
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .romantic-template__header-inner {
@@ -821,6 +834,9 @@
 
   .romantic-template__logo {
     writing-mode: horizontal-tb;
+    white-space: nowrap;
+    display: inline-flex;
+    gap: 4px;
   }
 
   .romantic-template__nav {
@@ -834,9 +850,11 @@
   .romantic-template__hero-grid,
   .romantic-template__story-grid,
   .romantic-template__details-grid,
-  .romantic-template__map-faq-grid {
+  .romantic-template__map-faq-grid,
+  .romantic-template__rsvp-grid,
+  .romantic-template__rsvp {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
   }
 
   .romantic-template__hero {
@@ -845,24 +863,35 @@
   }
 
   .romantic-template__hero-grid {
-    gap: 32px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
   }
 
   .romantic-template__hero-content {
+    position: relative;
+    z-index: 2;
     text-align: left;
   }
 
   .romantic-template__hero-names {
     max-width: 100%;
-    font-size: clamp(2.1rem, 10vw, 3.4rem);
+    font-size: clamp(2rem, 10vw, 3.2rem);
     line-height: 1;
   }
 
   .romantic-template__hero-media {
     width: 100%;
     height: 340px;
+    overflow: hidden;
   }
 }
+
+  .romantic-template__hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
   .romantic-template__section,
   .romantic-section,
@@ -874,9 +903,11 @@
   }
 
   .romantic-template__section-title,
-  .romantic-template__story-title {
-    font-size: clamp(2rem, 9vw, 3rem);
+  .romantic-template__story-title,
+  .romantic-template__detail-title {
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
     line-height: 1.08;
+    overflow-wrap: break-word;
   }
 
   .romantic-template__story-media,
@@ -892,11 +923,6 @@
   .romantic-template__details-visual {
     height: 320px;
     min-height: 0;
-  }
-
-  .romantic-template__detail-title {
-    font-size: clamp(1.9rem, 8vw, 2.7rem);
-    line-height: 1.05;
   }
 
   .romantic-parallax {

@@ -1161,3 +1161,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Applied template-level width and padding (`min(100%, 1140px)`, 24px desktop, 16px mobile) for consistent breathing space like a Wix-style preview.
 - Improved the mobile header layout with horizontal logo mode, hidden nav, and visible mobile toggle while preserving the existing section order.
 - Reinforced responsive overflow safety so Romantic Motion stays within the viewport on mobile.
+
+## HU-116 Romantic Motion full background and mobile recovery
+- Removed the root white-border effect so `romantic-template-viewport` is transparent and the root template no longer uses white background or padding.
+- Restored full-width section ownership of backgrounds while keeping horizontal breathing room inside `romantic-template__container`.
+- Kept padding in inner content containers/sections instead of the root template, preventing visible borders around the invitation.
+- Recovered mobile header and hero behavior so the logo stays horizontal, nav links are hidden, the toggle remains visible, and hero text/image stack safely without overlap.
