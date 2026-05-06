@@ -1,15 +1,36 @@
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Input from '../../../components/ui/Input.vue';
 import TextArea from '../../../components/ui/TextArea.vue';
 import { useBuilderStore } from '../../../store/builder.store';
 
 const builderStore = useBuilderStore();
-onMounted(() => { if (!builderStore.invitation) builderStore.createDraftInvitation(); });
+const isMobileEditor = ref(false);
+
+onMounted(() => {
+  if (!builderStore.invitation) builderStore.createDraftInvitation();
+  isMobileEditor.value = window.matchMedia?.('(max-width: 768px)').matches || false;
+});
+
+const toDateTimeLocal = (value) => {
+  if (!value) return '';
+  const normalized = String(value).replace('Z', '');
+  return normalized.includes('T') ? normalized.slice(0, 16) : normalized;
+};
 
 const baseFieldModel = (field) => computed({
   get: () => builderStore.invitation?.base?.[field] || '',
   set: (value) => builderStore.updateBaseField(field, value),
+});
+
+const weddingDate = computed({
+  get: () => toDateTimeLocal(builderStore.invitation?.base?.eventDate),
+  set: (value) => builderStore.updateBaseField('eventDate', value),
+});
+
+const detailsDateModel = (field) => computed({
+  get: () => toDateTimeLocal(builderStore.invitation?.details?.[field]),
+  set: (value) => builderStore.updateDetailsField(field, value),
 });
 
 const detailsFieldModel = (field) => computed({
@@ -22,43 +43,55 @@ const mapFieldModel = (field) => computed({
   set: (value) => builderStore.updateMapField(field, value),
 });
 
-const imageFieldModel = (field) => computed({
-  get: () => builderStore.invitation?.images?.[field] || '',
-  set: (value) => builderStore.updateImageField(field, value),
-});
-
-const galleryImageModel = (index) => computed({
-  get: () => builderStore.invitation?.images?.galleryImages?.[index]?.src || '',
-  set: (value) => builderStore.updateGalleryImage(index, value),
-});
-
 const faqModel = (index, field) => computed({
   get: () => builderStore.invitation?.faq?.[index]?.[field] || '',
   set: (value) => builderStore.updateFaqItem(index, field, value),
 });
 
 const coupleNames = baseFieldModel('coupleNames');
-const eventDate = baseFieldModel('eventDate');
 const locationName = baseFieldModel('locationName');
 const locationAddress = baseFieldModel('locationAddress');
 const message = baseFieldModel('message');
 const storyMessage = baseFieldModel('storyMessage');
-const countdownTargetDate = baseFieldModel('countdownTargetDate');
 
 const ceremonyTitle = detailsFieldModel('ceremonyTitle');
-const ceremonyDate = detailsFieldModel('ceremonyDate');
+const ceremonyDate = detailsDateModel('ceremonyDate');
 const ceremonyLocation = detailsFieldModel('ceremonyLocation');
 const receptionTitle = detailsFieldModel('receptionTitle');
-const receptionDate = detailsFieldModel('receptionDate');
+const receptionDate = detailsDateModel('receptionDate');
 const receptionLocation = detailsFieldModel('receptionLocation');
 
+const mapSearchText = mapFieldModel('mapSearchText');
+const mapLocationName = mapFieldModel('locationName');
+const mapLocationAddress = mapFieldModel('address');
 const mapUrl = mapFieldModel('mapUrl');
 const embedUrl = mapFieldModel('embedUrl');
 
-const heroImage = imageFieldModel('heroImage');
-const storyImage = imageFieldModel('storyImage');
-const parallaxImage = imageFieldModel('parallaxImage');
-const detailsImage = imageFieldModel('detailsImage');
+const uploadLabel = computed(() => (isMobileEditor.value ? 'Subir desde el teléfono' : 'Subir desde la computadora'));
+const selectedFileNames = ref({});
+
+const fileMetadata = (file) => (file ? { name: file.name, size: file.size, type: file.type, lastModified: file.lastModified } : null);
+const onImageFileSelected = (field, event) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const previewUrl = URL.createObjectURL(file);
+  selectedFileNames.value = { ...selectedFileNames.value, [field]: file.name };
+  builderStore.updateImageField(field, previewUrl, fileMetadata(file));
+};
+const onGalleryFilesSelected = (event) => {
+  Array.from(event.target.files || []).forEach((file, index) => {
+    const previewUrl = URL.createObjectURL(file);
+    builderStore.updateGalleryImage(index, previewUrl, fileMetadata(file));
+  });
+  selectedFileNames.value = { ...selectedFileNames.value, galleryImages: Array.from(event.target.files || []).map((file) => file.name).join(', ') };
+};
+
+const openMapSearch = () => {
+  const query = mapSearchText.value || `${locationName.value} ${locationAddress.value}`.trim();
+  if (!query) return;
+  window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, '_blank', 'noopener,noreferrer');
+  builderStore.setActivePreviewTarget('map');
+};
 </script>
 
 <template>
@@ -66,8 +99,11 @@ const detailsImage = imageFieldModel('detailsImage');
     <h2>Información de la tarjeta</h2>
     <div v-if="builderStore.invitation" class="form-fields">
       <Input v-model="coupleNames" label="Nombres" />
-      <Input v-model="eventDate" label="Fecha" />
-      <Input v-model="countdownTargetDate" label="Fecha para cuenta regresiva" />
+      <label class="editor-field">
+        <span>Fecha de la boda</span>
+        <input v-model="weddingDate" type="datetime-local" placeholder="Ejemplo: 14/06/2027 18:00" />
+        <small>Ejemplo: 14/06/2027 18:00</small>
+      </label>
       <Input v-model="locationName" label="Lugar" />
       <Input v-model="locationAddress" label="Dirección" />
       <TextArea v-model="message" label="Mensaje principal" :rows="3" />
@@ -75,28 +111,60 @@ const detailsImage = imageFieldModel('detailsImage');
 
       <h3>Detalles del evento</h3>
       <Input v-model="ceremonyTitle" label="Título ceremonia" />
-      <Input v-model="ceremonyDate" label="Fecha ceremonia" />
+      <label class="editor-field">
+        <span>Fecha y hora de ceremonia</span>
+        <input v-model="ceremonyDate" type="datetime-local" placeholder="Ejemplo: 14/06/2027 18:00" />
+        <small>Ejemplo: 14/06/2027 18:00</small>
+      </label>
       <Input v-model="ceremonyLocation" label="Lugar ceremonia" />
       <Input v-model="receptionTitle" label="Título recepción" />
-      <Input v-model="receptionDate" label="Fecha recepción" />
+      <label class="editor-field">
+        <span>Fecha y hora de celebración</span>
+        <input v-model="receptionDate" type="datetime-local" placeholder="Ejemplo: 14/06/2027 18:00" />
+        <small>Ejemplo: 14/06/2027 18:00</small>
+      </label>
       <Input v-model="receptionLocation" label="Lugar recepción" />
 
       <h3>Mapa</h3>
+      <label class="editor-field editor-field--map-search">
+        <span>Buscar ubicación en Google Maps</span>
+        <div class="editor-field__inline">
+          <input v-model="mapSearchText" type="search" placeholder="Nombre del lugar o dirección" />
+          <button type="button" @click="openMapSearch">Buscar mapa</button>
+        </div>
+        <small>Busca la dirección, abre Compartir &gt; Insertar un mapa y pega la URL de inserción si quieres mostrar el mapa embebido.</small>
+      </label>
+      <Input v-model="mapLocationName" label="Nombre del lugar en mapa" />
+      <Input v-model="mapLocationAddress" label="Dirección del mapa" />
       <Input v-model="mapUrl" label="URL de Google Maps" />
       <Input v-model="embedUrl" label="URL de insertar mapa" />
 
       <h3>Imágenes</h3>
-      <Input v-model="heroImage" label="Imagen hero" />
-      <Input v-model="storyImage" label="Imagen historia" />
-      <Input v-model="parallaxImage" label="Imagen parallax" />
-      <Input v-model="detailsImage" label="Imagen detalles" />
-      <Input
-        v-for="(image, index) in builderStore.invitation.images.galleryImages"
-        :key="`gallery-image-${index}`"
-        :model-value="galleryImageModel(index).value"
-        :label="`Imagen galería ${index + 1}`"
-        @update:model-value="galleryImageModel(index).value = $event"
-      />
+      <label class="editor-field editor-field--file">
+        <span>Imagen principal</span>
+        <input type="file" accept="image/*" @change="onImageFileSelected('heroImage', $event)" />
+        <small>{{ selectedFileNames.heroImage || uploadLabel }}</small>
+      </label>
+      <label class="editor-field editor-field--file">
+        <span>Imagen de historia</span>
+        <input type="file" accept="image/*" @change="onImageFileSelected('storyImage', $event)" />
+        <small>{{ selectedFileNames.storyImage || uploadLabel }}</small>
+      </label>
+      <label class="editor-field editor-field--file">
+        <span>Imagen parallax</span>
+        <input type="file" accept="image/*" @change="onImageFileSelected('parallaxImage', $event)" />
+        <small>{{ selectedFileNames.parallaxImage || uploadLabel }}</small>
+      </label>
+      <label class="editor-field editor-field--file">
+        <span>Imagen de detalles</span>
+        <input type="file" accept="image/*" @change="onImageFileSelected('detailsImage', $event)" />
+        <small>{{ selectedFileNames.detailsImage || uploadLabel }}</small>
+      </label>
+      <label class="editor-field editor-field--file">
+        <span>Imágenes de galería</span>
+        <input type="file" accept="image/*" multiple @change="onGalleryFilesSelected" />
+        <small>{{ selectedFileNames.galleryImages || uploadLabel }}</small>
+      </label>
 
       <h3>Preguntas frecuentes</h3>
       <div v-for="(item, index) in builderStore.invitation.faq" :key="item.id" class="form-fields">
@@ -106,3 +174,15 @@ const detailsImage = imageFieldModel('detailsImage');
     </div>
   </section>
 </template>
+
+<style scoped>
+.editor-field { display: grid; gap: 0.35rem; }
+.editor-field span { font-size: 0.9rem; }
+.editor-field input { padding: 0.6rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.55rem; outline: none; }
+.editor-field input:focus { border-color: #8b5a7a; box-shadow: 0 0 0 3px rgba(139, 90, 122, 0.15); }
+.editor-field small { color: #6b7280; font-size: 0.78rem; }
+.editor-field__inline { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem; }
+.editor-field__inline button { border: 0; border-radius: 0.55rem; background: #111827; color: #fff; cursor: pointer; padding: 0.6rem 0.8rem; font-weight: 700; }
+.editor-field--file input { background: #fff; }
+@media (max-width: 640px) { .editor-field__inline { grid-template-columns: 1fr; } }
+</style>

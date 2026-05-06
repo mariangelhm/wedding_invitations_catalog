@@ -59,6 +59,7 @@ export const romanticMotionConfig = {
       receptionLocation: 'Santiago, Chile',
     },
     map: {
+      mapSearchText: 'Rose Garden Hall, Santiago, Chile',
       locationName: 'Rose Garden Hall',
       address: 'Santiago, Chile',
       mapUrl: 'https://maps.google.com',
@@ -75,7 +76,7 @@ export const romanticMotionConfig = {
     { id: 'countdown-wedding', type: 'countdown_wedding', enabled: true, included: true, order: 1, price: 3000, settings: { targetDate: '2027-06-14T18:00:00', title: 'Faltan para nuestra boda', variant: 'editorial' } },
     { id: 'story', type: 'story', enabled: true, included: true, order: 2, price: 0, settings: { title: 'Nuestra historia', message: '' } },
     { id: 'gallery', type: 'gallery', enabled: true, included: false, order: 3, price: 5000, settings: { title: 'Nuestros momentos', images: [] } },
-    { id: 'map', type: 'map', enabled: true, included: true, order: 4, price: 3000, settings: { locationName: 'Rose Garden Hall', address: 'Santiago, Chile', mapUrl: 'https://maps.google.com', embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3329.1789740216627!2d-70.65865812458385!3d-33.44464339721427!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662c5a7b81bab67%3A0x7cf5cd1956dd49f7!2sTorre%20Entel!5e0!3m2!1ses-419!2scl!4v1777782339212!5m2!1ses-419!2scl' } },
+    { id: 'map', type: 'map', enabled: true, included: true, order: 4, price: 3000, settings: { mapSearchText: 'Rose Garden Hall, Santiago, Chile', locationName: 'Rose Garden Hall', address: 'Santiago, Chile', mapUrl: 'https://maps.google.com', embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3329.1789740216627!2d-70.65865812458385!3d-33.44464339721427!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662c5a7b81bab67%3A0x7cf5cd1956dd49f7!2sTorre%20Entel!5e0!3m2!1ses-419!2scl!4v1777782339212!5m2!1ses-419!2scl' } },
     { id: 'rsvp', type: 'rsvp', enabled: true, included: true, order: 5, price: 0, settings: { title: 'Confirma tu asistencia', buttonLabel: 'Enviar confirmación' } },
     { id: 'timeline', type: 'timeline', enabled: false, included: false, order: 6, price: 2000, settings: { title: 'Cuándo y dónde', items: [] } },
     { id: 'countdown-rsvp', type: 'countdown_rsvp', enabled: false, included: false, order: 7, price: 2000, settings: { targetDate: '2027-05-20T23:59:59', title: 'Tiempo para confirmar', variant: 'editorial' } },

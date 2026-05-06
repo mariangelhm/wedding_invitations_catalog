@@ -3,6 +3,7 @@ import { themePresets } from '../modules/builder/data/themePresets';
 import { romanticMotionConfig } from '../modules/invitations/templates/romantic-motion/romanticMotion.config';
 
 const defaultCustomizableOptions = { colors: true, fonts: true, photos: true, music: false, map: true, components: true };
+let previewFocusTimeout = null;
 
 export const blockRegistry = {
   countdown_wedding: { id: 'countdown-wedding', type: 'countdown_wedding', label: 'Cuenta regresiva boda', description: 'Cuenta regresiva al evento principal.', order: 1, price: 3000, included: false, settings: { targetDate: '2027-06-14T18:00:00', title: 'Faltan para nuestra boda', variant: 'editorial' } },
@@ -37,7 +38,7 @@ const normalizeBase = (base = {}, defaults = romanticDefaults.base) => ({
 });
 
 const normalizeDetails = (details = {}, defaults = romanticDefaults.details) => ({ ...defaults, ...details });
-const normalizeMap = (map = {}, defaults = romanticDefaults.map) => ({ ...defaults, ...map });
+const normalizeMap = (map = {}, defaults = romanticDefaults.map) => ({ ...defaults, mapSearchText: map.mapSearchText || map.locationName || map.address || defaults.locationName || '', ...map });
 const normalizeFaq = (faq = [], defaults = romanticDefaults.faq) => (Array.isArray(faq) && faq.length ? faq : defaults).map((item, index) => ({
   id: item.id || `faq-${index + 1}`,
   question: item.question || item.q || '',
@@ -100,6 +101,7 @@ const getRomanticDefaults = () => ({
     { src: '', alt: 'Celebración' },
   ],
   mapSettings: {
+    mapSearchText: 'Rose Garden Hall, Santiago, Chile',
     locationName: 'Rose Garden Hall',
     address: 'Santiago, Chile',
     mapUrl: 'https://maps.google.com',
@@ -123,7 +125,7 @@ const normalizeInvitationBlocks = (blocks = []) => {
 };
 
 export const useBuilderStore = defineStore('builderStore', {
-  state: () => ({ basePrice: 20000, invitation: null }),
+  state: () => ({ basePrice: 20000, invitation: null, activePreviewTarget: null }),
   getters: {
     enabledBlocksSorted: (state) => (state.invitation?.blocks || []).filter((block) => block.enabled).slice().sort((a, b) => (a.order || 0) - (b.order || 0)),
     enabledBlocksPrice: (state) => (state.invitation?.blocks || []).filter((block) => block.enabled && !block.included).reduce((sum, block) => sum + Number(block.price || 0), 0),
@@ -137,7 +139,7 @@ export const useBuilderStore = defineStore('builderStore', {
       const usesRomanticMotion = template?.id === romanticMotionConfig.templateId || template?.templateComponent === 'romantic-motion';
       const defaults = usesRomanticMotion
         ? getRomanticDefaults()
-        : { base: normalizeBase({ coupleNames: '', eventDate: '', locationName: '', locationAddress: '', message: '', storyMessage: '' }, {}), details: {}, map: { locationName: '', address: '', mapUrl: '', embedUrl: '' }, faq: [], images: {}, blocks: getDefaultBlocks(), timeline: [], gallery: [], mapSettings: { locationName: '', address: '', mapUrl: '', embedUrl: '' } };
+        : { base: normalizeBase({ coupleNames: '', eventDate: '', locationName: '', locationAddress: '', message: '', storyMessage: '' }, {}), details: {}, map: { mapSearchText: '', locationName: '', address: '', mapUrl: '', embedUrl: '' }, faq: [], images: {}, blocks: getDefaultBlocks(), timeline: [], gallery: [], mapSettings: { mapSearchText: '', locationName: '', address: '', mapUrl: '', embedUrl: '' } };
       const theme = getTheme('modernRustic');
       const invitation = {
         id: Date.now(),
@@ -216,36 +218,61 @@ export const useBuilderStore = defineStore('builderStore', {
         },
       };
     },
+    setActivePreviewTarget(target) {
+      if (previewFocusTimeout) clearTimeout(previewFocusTimeout);
+      this.activePreviewTarget = target;
+      previewFocusTimeout = setTimeout(() => { this.clearActivePreviewTarget(); }, 1500);
+    },
+    clearActivePreviewTarget() {
+      if (previewFocusTimeout) clearTimeout(previewFocusTimeout);
+      previewFocusTimeout = null;
+      this.activePreviewTarget = null;
+    },
     updateBaseField(field, value) {
       if (!this.invitation) return;
       const base = normalizeBase(this.invitation.base);
-      this.invitation = { ...this.invitation, base: { ...base, [field]: value } };
+      const nextBase = { ...base, [field]: value };
+      if (field === 'eventDate') nextBase.countdownTargetDate = value;
+      const blocks = field === 'eventDate'
+        ? (this.invitation.blocks || []).map((block) => (block.type === 'countdown_wedding' ? { ...block, settings: { ...(block.settings || {}), targetDate: value } } : block))
+        : this.invitation.blocks;
+      this.invitation = { ...this.invitation, base: nextBase, blocks };
+      const targets = { coupleNames: 'hero', eventDate: 'hero', locationName: 'map', locationAddress: 'map', message: 'hero', storyMessage: 'story' };
+      this.setActivePreviewTarget(targets[field] || 'hero');
     },
     updateDetailsField(field, value) {
       if (!this.invitation) return;
       this.invitation = { ...this.invitation, details: { ...normalizeDetails(this.invitation.details), [field]: value } };
+      this.setActivePreviewTarget('details');
     },
     updateMapField(field, value) {
       if (!this.invitation) return;
       const map = { ...normalizeMap(this.invitation.map || this.invitation.mapSettings), [field]: value };
       this.invitation = { ...this.invitation, map, mapSettings: map };
-      this.updateBlockProps('map', map);
+      this.updateBlockProps('map', map, false);
+      this.setActivePreviewTarget('map');
     },
     updateFaqItem(index, field, value) {
       if (!this.invitation) return;
       const faq = normalizeFaq(this.invitation.faq).map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: value } : item));
       this.invitation = { ...this.invitation, faq };
+      this.setActivePreviewTarget('faq');
     },
-    updateImageField(field, value) {
+    updateImageField(field, value, metadata = null) {
       if (!this.invitation) return;
       const images = normalizeImages(this.invitation.images);
-      this.invitation = { ...this.invitation, images: { ...images, [field]: value } };
+      const imageFiles = { ...(this.invitation.imageFiles || {}) };
+      if (metadata) imageFiles[field] = metadata;
+      this.invitation = { ...this.invitation, images: { ...images, [field]: value }, imageFiles };
+      const targets = { heroImage: 'hero', storyImage: 'story', parallaxImage: 'story', detailsImage: 'details' };
+      this.setActivePreviewTarget(targets[field] || 'gallery');
     },
-    updateGalleryImage(index, value) {
+    updateGalleryImage(index, value, metadata = null) {
       if (!this.invitation) return;
       const images = normalizeImages(this.invitation.images);
-      const galleryImages = (images.galleryImages || []).map((image, imageIndex) => (imageIndex === index ? { ...image, src: value } : image));
+      const galleryImages = (images.galleryImages || []).map((image, imageIndex) => (imageIndex === index ? { ...image, src: value, file: metadata || image.file } : image));
       this.invitation = { ...this.invitation, images: { ...images, galleryImages } };
+      this.setActivePreviewTarget('gallery');
     },
     updateStyleColor(key, value) {
       if (!this.invitation) return;
@@ -261,6 +288,7 @@ export const useBuilderStore = defineStore('builderStore', {
         ...(key === 'backgroundColor' ? { secondaryColor: value, background: value, backgroundGradient: value } : {}),
       };
       this.invitation = { ...this.invitation, styles: { ...styles, colors, ...legacy } };
+      this.setActivePreviewTarget(key === 'backgroundColor' ? 'hero' : 'hero');
     },
     updateStyleFont(key, value) {
       if (!this.invitation) return;
@@ -271,6 +299,7 @@ export const useBuilderStore = defineStore('builderStore', {
         ...(key === 'bodyFont' ? { bodyFontFamily: value } : {}),
       };
       this.invitation = { ...this.invitation, styles: { ...styles, fonts, ...legacy } };
+      this.setActivePreviewTarget(key === 'headingsFont' ? 'details' : 'hero');
     },
     ensureBlocks() {
       if (!this.invitation) return [];
@@ -280,9 +309,15 @@ export const useBuilderStore = defineStore('builderStore', {
     },
     toggleBlock(blockId, enabled) {
       if (!this.invitation) return;
-      const blocks = this.ensureBlocks();
-      const nextBlocks = blocks.map((block) => (block.id === blockId || block.type === blockId ? { ...block, enabled: enabled ?? !block.enabled } : block));
+      let target = blockId;
+      const nextBlocks = (this.invitation.blocks || []).map((block) => {
+        if (block.id !== blockId && block.type !== blockId) return block;
+        target = block.type;
+        return { ...block, enabled: enabled ?? !block.enabled };
+      });
       this.invitation = { ...this.invitation, blocks: nextBlocks };
+      const targetAliases = { countdown_wedding: 'countdown', countdown_rsvp: 'countdown' };
+      this.setActivePreviewTarget(targetAliases[target] || target);
     },
     updateBlockOrder(blockId, direction) {
       if (!this.invitation) return;
@@ -294,7 +329,7 @@ export const useBuilderStore = defineStore('builderStore', {
       [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
       this.invitation = { ...this.invitation, blocks: reordered.map((block, orderIndex) => ({ ...block, order: orderIndex + 1 })) };
     },
-    updateBlockProps(blockId, props) {
+    updateBlockProps(blockId, props, focusPreview = true) {
       if (!this.invitation) return;
       const blocks = this.ensureBlocks();
       const nextBlocks = blocks.map((block) => (block.id === blockId || block.type === blockId ? { ...block, settings: { ...(block.settings || {}), ...props } } : block));
@@ -305,6 +340,7 @@ export const useBuilderStore = defineStore('builderStore', {
         mapSettings: mapBlock ? { ...(this.invitation.mapSettings || {}), ...(mapBlock.settings || {}) } : this.invitation.mapSettings,
         map: mapBlock ? { ...(this.invitation.map || {}), ...(mapBlock.settings || {}) } : this.invitation.map,
       };
+      if (focusPreview) this.setActivePreviewTarget(blockId === 'map' ? 'map' : blockId);
     },
     getEnabledBlocksSorted() { return this.enabledBlocksSorted; },
     getTotalPrice() { return this.totalPrice; },

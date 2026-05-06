@@ -8,7 +8,7 @@ import { getBlockConfig } from '../../../../components/blocks/index.js';
 import { romanticMotionConfig } from './romanticMotion.config';
 import './romanticMotionTemplate.css';
 
-const { computed, ref } = Vue;
+const { computed, nextTick, ref, watch } = Vue;
 
 const props = defineProps({ invitationData: { type: Object, default: () => ({}) } });
 
@@ -93,11 +93,22 @@ const eventLocation = computed(() => base.value.locationName || base.value.locat
 const eventAddress = computed(() => base.value.locationAddress || mapSettings.value.address || eventLocation.value);
 const eventDate = computed(() => base.value.eventDate || base.value.date || templateDefaults.base.eventDate);
 const countdownTargetDate = computed(() => base.value.countdownTargetDate || eventDate.value);
-const formatDate = (value) => new Date(value || eventDate.value).toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
-const formattedDate = computed(() => formatDate(eventDate.value));
-const ceremonyDate = computed(() => formatDate(details.value.ceremonyDate || eventDate.value));
-const receptionDate = computed(() => formatDate(details.value.receptionDate || eventDate.value));
+const hasTime = (value) => /T\d{2}:\d{2}/.test(String(value || ''));
+const formatEventDateTime = (value) => {
+  const dateValue = value || eventDate.value;
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return dateValue || '';
+  const formatted = date.toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
+  if (!hasTime(dateValue)) return formatted;
+  const time = date.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hour12: false });
+  return `${formatted} · ${time}`;
+};
+const formattedDate = computed(() => formatEventDateTime(eventDate.value));
+const ceremonyDate = computed(() => formatEventDateTime(details.value.ceremonyDate || eventDate.value));
+const receptionDate = computed(() => formatEventDateTime(details.value.receptionDate || eventDate.value));
+const activePreviewTarget = computed(() => props.invitationData?.activePreviewTarget || null);
 
+const hasCustomBackground = computed(() => Boolean(styleColors.value.backgroundColor));
 const themeVars = computed(() => {
   const backgroundColor = styleColors.value.backgroundColor || tokens.value.pageBg;
 
@@ -171,6 +182,15 @@ const setRevealRef = (el) => {
   if (el && !revealRefs.value.includes(el)) revealRefs.value.push(el);
 };
 
+
+watch(activePreviewTarget, async (target) => {
+  if (!target || !templateRoot.value) return;
+  await nextTick();
+  const section = templateRoot.value.querySelector(`[data-preview-target="${target}"]`);
+  if (!section) return;
+  section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}, { flush: 'post' });
+
 const getTemplateScrollParent = () => {
   let parent = templateRoot.value?.parentElement;
 
@@ -217,7 +237,7 @@ Vue.onUnmounted(() => {
 
 <template>
   <div class="romantic-template-viewport">
-    <div ref="templateRoot" class="romantic-template" :style="themeVars">
+    <div ref="templateRoot" class="romantic-template" :class="{ 'has-custom-background': hasCustomBackground }" :style="themeVars">
     <header class="romantic-template__header" :class="{ scrolled: headerScrolled }">
       <div class="romantic-template__header-inner romantic-template__container">
         <a class="romantic-template__initials romantic-template__logo" href="#home">{{ initials }}</a>
@@ -236,7 +256,7 @@ Vue.onUnmounted(() => {
       </div>
     </header>
 
-    <section id="home" class="romantic-template__hero hero">
+    <section id="home" class="romantic-template__hero hero" data-preview-target="hero" :class="{ 'is-preview-focused': activePreviewTarget === 'hero' }">
       <div class="hero-overlay" aria-hidden="true"></div>
       <div class="romantic-template__hero-grid romantic-template__container">
         <div class="romantic-template__hero-content motion-left" :ref="setRevealRef">
@@ -256,7 +276,7 @@ Vue.onUnmounted(() => {
       <span class="hero-scroll-indicator" aria-hidden="true"></span>
     </section>
 
-    <section v-if="hasBlock('story')" id="story" class="romantic-template__story story motion-section" :ref="setRevealRef">
+    <section v-if="hasBlock('story')" id="story" class="romantic-template__story story motion-section" data-preview-target="story" :class="{ 'is-preview-focused': activePreviewTarget === 'story' }" :ref="setRevealRef">
       <div class="romantic-template__story-grid romantic-template__container">
         <div class="romantic-template__story-content motion-left" :ref="setRevealRef">
           <p class="eyebrow">Nuestra historia</p>
@@ -272,13 +292,13 @@ Vue.onUnmounted(() => {
 
     <!-- TODO: Move this pattern to a reusable ParallaxBlock extra later. Props should be: imageUrl, height, overlayOpacity, mobileHeight, backgroundPosition. -->
     <section
-      class="romantic-parallax motion-section"
+      class="romantic-parallax motion-section" data-preview-target="story"
       :ref="setRevealRef"
       :style="{ '--parallax-image': `url(${imageSrc('parallaxImage', 3)})` }"
       aria-label="Imagen destacada de la pareja"
     ></section>
 
-    <section v-if="hasBlock('countdown_wedding')" class="romantic-template__countdown romantic-section motion-section" :ref="setRevealRef">
+    <section v-if="hasBlock('countdown_wedding')" class="romantic-template__countdown romantic-section motion-section" data-preview-target="countdown" :class="{ 'is-preview-focused': activePreviewTarget === 'countdown' }" :ref="setRevealRef">
       <CountdownBlock
         :target-date="blockByType('countdown_wedding').settings?.targetDate || countdownTargetDate"
         :title="blockByType('countdown_wedding').settings?.title || 'Cuenta regresiva'"
@@ -286,7 +306,7 @@ Vue.onUnmounted(() => {
       />
     </section>
 
-    <section id="details" class="romantic-template__details details motion-section" :ref="setRevealRef">
+    <section id="details" class="romantic-template__details details motion-section" data-preview-target="details" :class="{ 'is-preview-focused': activePreviewTarget === 'details' }" :ref="setRevealRef">
       <div class="section-heading romantic-template__container">
         <p class="eyebrow">Cuándo y dónde</p>
         <h2 class="romantic-section-title romantic-template__section-title">Todo lo importante para acompañarnos</h2>
@@ -314,15 +334,15 @@ Vue.onUnmounted(() => {
       </div>
     </section>
 
-    <section id="gallery" class="romantic-template__quote-break gallery motion-section" :ref="setRevealRef" :style="{ '--motion-parallax-image': `url(${sampleImages[2]})` }">
+    <section id="gallery" class="romantic-template__quote-break gallery motion-section" data-preview-target="gallery" :class="{ 'is-preview-focused': activePreviewTarget === 'gallery' }" :ref="setRevealRef" :style="{ '--motion-parallax-image': `url(${sampleImages[2]})` }">
       <p>Cada historia de amor merece celebrarse</p>
     </section>
 
-    <section v-if="hasBlock('gallery')" class="romantic-template__gallery gallery romantic-section motion-section" :ref="setRevealRef">
+    <section v-if="hasBlock('gallery')" class="romantic-template__gallery gallery romantic-section motion-section" data-preview-target="gallery" :class="{ 'is-preview-focused': activePreviewTarget === 'gallery' }" :ref="setRevealRef">
       <GalleryBlock :images="galleryImages" :title="blockByType('gallery').settings?.title || 'Galería'" integrated />
     </section>
 
-    <section v-if="hasBlock('rsvp')" id="rsvp" class="romantic-template__rsvp romantic-section motion-section" :ref="setRevealRef">
+    <section v-if="hasBlock('rsvp')" id="rsvp" class="romantic-template__rsvp romantic-section motion-section" data-preview-target="rsvp" :class="{ 'is-preview-focused': activePreviewTarget === 'rsvp' }" :ref="setRevealRef">
       <div class="rsvp-intro">
         <p class="eyebrow">RSVP</p>
         <h2 class="romantic-section-title romantic-template__section-title">Confirma tu asistencia</h2>
@@ -334,7 +354,7 @@ Vue.onUnmounted(() => {
       />
     </section>
 
-    <section v-if="hasBlock('map')" id="map" class="romantic-template__map-faq romantic-template__map-faq-grid romantic-template__container motion-section" :ref="setRevealRef">
+    <section v-if="hasBlock('map')" id="map" class="romantic-template__map-faq romantic-template__map-faq-grid romantic-template__container motion-section" data-preview-target="map" :class="{ 'is-preview-focused': activePreviewTarget === 'map' || activePreviewTarget === 'faq' }" :ref="setRevealRef">
       <div class="romantic-section map-wrap">
         <p class="eyebrow">Ubicación</p>
         <MapBlock
@@ -344,7 +364,7 @@ Vue.onUnmounted(() => {
           :embed-url="mapSettings.embedUrl || ''"
         />
       </div>
-      <div class="faq">
+      <div class="faq" data-preview-target="faq" :class="{ 'is-preview-focused': activePreviewTarget === 'faq' }">
         <p class="eyebrow">Información útil</p>
         <h2 class="romantic-section-title romantic-template__section-title">Preguntas frecuentes</h2>
         <article v-for="(item, i) in faqItems" :key="item.id" class="faq-item" :class="{ open: openFaq === i }">
@@ -359,7 +379,7 @@ Vue.onUnmounted(() => {
       </div>
     </section>
 
-    <section v-if="dynamicExtraBlocks.length" class="romantic-template__extras romantic-section motion-section" :ref="setRevealRef">
+    <section v-if="dynamicExtraBlocks.length" class="romantic-template__extras romantic-section motion-section" :data-preview-target="activePreviewTarget" :class="{ 'is-preview-focused': dynamicExtraBlocks.some((block) => block.type === activePreviewTarget) }" :ref="setRevealRef">
       <component
         :is="blockComponent(block.type)"
         v-for="block in dynamicExtraBlocks"

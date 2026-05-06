@@ -917,7 +917,6 @@
     height: 100%;
     object-fit: cover;
   }
-}
 
   .romantic-template__section,
   .romantic-section,
@@ -1002,4 +1001,74 @@
   .story-monogram {
     width: min(52%, 190px);
   }
+}
+
+.romantic-template .is-preview-focused {
+  outline: 2px solid var(--custom-accent-color, #A67C52);
+  outline-offset: 8px;
+  transition: outline 0.2s ease;
+}
+
+.romantic-template.has-custom-background .romantic-template__hero,
+.romantic-template.has-custom-background .romantic-template__story,
+.romantic-template.has-custom-background .romantic-template__details,
+.romantic-template.has-custom-background .romantic-template__gallery,
+.romantic-template.has-custom-background .romantic-template__countdown,
+.romantic-template.has-custom-background .romantic-template__map-faq,
+.romantic-template.has-custom-background .romantic-template__rsvp,
+.romantic-template.has-custom-background .romantic-template__extras {
+  background: var(--custom-page-bg);
+}
+
+.romantic-template p,
+.romantic-template a,
+.romantic-template li,
+.romantic-template label,
+.romantic-template input,
+.romantic-template select,
+.romantic-template textarea,
+.romantic-template button,
+.romantic-template .hero-meta,
+.romantic-template .hero-message,
+.romantic-template .eyebrow,
+.romantic-template .map-location,
+.romantic-template .map-address,
+.romantic-template .faq-trigger,
+.romantic-template .faq-answer p,
+.romantic-template .countdown-block__label,
+.romantic-template .rsvp-input,
+.romantic-template .rsvp-form label,
+.romantic-template .gallery-item,
+.romantic-template .timeline-time,
+.romantic-template .timeline-place,
+.romantic-template .timeline-item-title {
+  font-family: var(--font-body, 'Montserrat'), Inter, system-ui, sans-serif;
+  color: var(--custom-body-color, var(--theme-body-text, #575757));
+}
+
+.romantic-template__hero-names {
+  font-family: var(--font-names, 'Playfair Display'), Georgia, serif;
+  color: var(--custom-names-color, var(--custom-title-color, var(--theme-title-text, #303030)));
+}
+
+.romantic-template h2,
+.romantic-template h3,
+.romantic-template .romantic-section-title,
+.romantic-template .romantic-template__section-title,
+.romantic-template .romantic-template__detail-title,
+.romantic-template .countdown-block__title,
+.romantic-template .gallery-title,
+.romantic-template .story-title,
+.romantic-template .timeline-title,
+.romantic-template .rsvp-block h3,
+.romantic-template .map-block__head h3 {
+  font-family: var(--font-headings, 'Playfair Display'), Georgia, serif;
+  color: var(--custom-title-color, var(--theme-title-text, #303030));
+}
+
+.romantic-template .countdown-block__number,
+.romantic-template .faq-icon,
+.romantic-template .romantic-link,
+.romantic-template .map-help {
+  color: var(--custom-accent-color, var(--theme-accent, #303030));
 }

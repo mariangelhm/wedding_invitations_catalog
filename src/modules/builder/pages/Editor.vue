@@ -41,23 +41,22 @@ const blockOptions = [
   { type: 'rsvp', label: 'RSVP', description: 'Confirmación de asistencia.', price: 2000, preview: 'rsvp' },
 ];
 
-const backgroundSwatches = ['#C7355C', '#F97316', '#2563EB', '#16A34A', '#7C3AED', '#111827', '#FBE8EE', '#FFFFFF'];
+const backgroundOptions = [
+  { type: 'solid', label: 'Marfil', value: '#F7F7F5' },
+  { type: 'solid', label: 'Beige arena', value: '#EFEBE9' },
+  { type: 'solid', label: 'Rosa viejo', value: '#FAF3F0' },
+  { type: 'solid', label: 'Verde salvia', value: '#F2EFE9' },
+  { type: 'solid', label: 'Azul noche', value: '#111827' },
+  { type: 'gradient', label: 'Crema suave', value: 'linear-gradient(180deg, #F7F7F5 0%, #EFEBE9 100%)' },
+  { type: 'gradient', label: 'Rosa editorial', value: 'linear-gradient(180deg, #FAF3F0 0%, #FFFFFF 100%)' },
+  { type: 'gradient', label: 'Arena cálida', value: 'linear-gradient(135deg, #F6F1EA 0%, #E8E3DB 100%)' },
+];
 const letterColorSwatches = [
-  '#1A1A1A',
-  '#2F2E2E',
-  '#4A3F35',
-  '#57534E',
-  '#6B4242',
-  '#7A2E45',
-  '#A67C52',
-  '#C5A059',
-  '#354F52',
-  '#2C3E50',
-  '#84A59D',
-  '#B5838D',
-  '#D4A373',
-  '#FFFFFF',
-  '#F7F7F5',
+  '#111827', '#1A1A1A', '#2F2E2E', '#3A332E',
+  '#4A3F35', '#57534E', '#6B4242', '#7A2E45',
+  '#9F1239', '#A67C52', '#B5838D', '#C5A059',
+  '#D4A373', '#354F52', '#2C3E50', '#84A59D',
+  '#5B6C5D', '#6D5D6E', '#FFFFFF', '#F7F7F5',
   '#EFEBE9',
 ];
 const titleColorSwatches = letterColorSwatches;
@@ -87,7 +86,6 @@ watch(selectedTemplate, (template) => {
 
 const invitation = computed(() => builderStore.invitation);
 const orderedBlocks = computed(() => (invitation.value?.blocks || []).slice().sort((a, b) => a.order - b.order));
-const mapBlock = computed(() => orderedBlocks.value.find((block) => block.type === 'map'));
 const selectedExtras = computed(() => orderedBlocks.value.filter((block) => block.enabled && !block.included && (block.price || 0) > 0));
 
 const formatPrice = (value = 0) => `$${Number(value || 0).toLocaleString('es-CL')}`;
@@ -165,7 +163,20 @@ const applyThemePreset = (preset) => {
               <span v-if="invitation.styles.themeId===preset.id || invitation.styles.backgroundTheme===preset.id" class="theme-check">✓</span>
             </button>
           </div>
-          <div v-else class="swatch-grid"><button v-for="color in backgroundSwatches" :key="color" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation?.styles?.colors?.backgroundColor===color || invitation?.styles?.secondaryColor===color }" @click="builderStore.updateStyleColor('backgroundColor', color)" /></div>
+          <div v-else class="background-option-grid">
+            <button
+              v-for="option in backgroundOptions"
+              :key="option.value"
+              class="background-option-card"
+              :class="{ selected: invitation?.styles?.colors?.backgroundColor===option.value || invitation?.styles?.secondaryColor===option.value }"
+              type="button"
+              @click="builderStore.updateStyleColor('backgroundColor', option.value)"
+            >
+              <span class="background-option-preview" :style="{ background: option.value }"></span>
+              <span>{{ option.label }}</span>
+              <small>{{ option.type === 'gradient' ? 'Textura suave' : 'Color sólido' }}</small>
+            </button>
+          </div>
         </div>
         <div v-else-if="selectedSection === 'card'" class="settings-block"><BasicEditorForm /></div>
         <div v-else-if="selectedSection === 'style'" class="settings-block">
@@ -214,14 +225,6 @@ const applyThemePreset = (preset) => {
               </div>
             </div>
           </article>
-
-          <div v-if="mapBlock?.enabled" class="details-card">
-            <h4>Configuración de mapa</h4>
-            <div class="details-field"><label>Nombre del lugar</label><input :value="mapBlock.settings.locationName" type="text" @input="updateMapBlockProp('locationName', $event.target.value)" /></div>
-            <div class="details-field"><label>Dirección</label><input :value="mapBlock.settings.address" type="text" @input="updateMapBlockProp('address', $event.target.value)" /></div>
-            <div class="details-field"><label>URL normal de Google Maps</label><input :value="mapBlock.settings.mapUrl" type="text" @input="updateMapBlockProp('mapUrl', $event.target.value)" /></div>
-            <div class="details-field"><label>URL de insertar mapa</label><input :value="mapBlock.settings.embedUrl" type="text" @input="updateMapBlockProp('embedUrl', $event.target.value)" /></div>
-          </div>
         </div>
       </aside>
 

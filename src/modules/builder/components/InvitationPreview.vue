@@ -12,6 +12,7 @@ const props = defineProps({
 const builderStore = useBuilderStore();
 onMounted(() => { if (!builderStore.invitation) builderStore.createDraftInvitation(); });
 const invitation = computed(() => builderStore.invitation || null);
+const previewInvitation = computed(() => (invitation.value ? { ...invitation.value, activePreviewTarget: builderStore.activePreviewTarget } : null));
 const activeTemplateComponent = computed(() => getTemplateComponent(invitation.value?.templateComponent));
 </script>
 
@@ -20,7 +21,7 @@ const activeTemplateComponent = computed(() => getTemplateComponent(invitation.v
     <h2 v-if="showTitle">Invitation Preview</h2>
     <div class="invitation-preview__canvas">
       <p v-if="!invitation">No invitation selected</p>
-      <component :is="activeTemplateComponent" v-else-if="activeTemplateComponent" :invitationData="invitation" />
+      <component :is="activeTemplateComponent" v-else-if="activeTemplateComponent" :invitationData="previewInvitation" />
       <RomanticTemplate v-else :names="invitation?.base?.coupleNames || invitation?.base?.names" :date="invitation?.base?.eventDate || invitation?.base?.date" :location="invitation?.base?.locationName || invitation?.base?.location" :message="invitation?.base?.message" />
     </div>
   </section>

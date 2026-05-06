@@ -39,6 +39,7 @@ invitation = {
     receptionLocation,
   },
   map: {
+    mapSearchText,
     locationName,
     address,
     mapUrl,
@@ -86,7 +87,7 @@ Templates can declare their configurable fields and defaults in a template confi
 - `configurableFields.images` for `heroImage`, `storyImage`, `parallaxImage`, `detailsImage`, and `galleryImages`.
 - `configurableFields.base` for couple names, event date, location, primary messages, and countdown date.
 - `configurableFields.details` for ceremony and reception card titles, dates, and locations.
-- `configurableFields.map` for public and embedded map URLs.
+- `configurableFields.map` for search text plus public and embedded map URLs.
 - `configurableFields.faq` as `{ id, question, answer }` items.
 - `defaultBlocks` so the editor reflects the template's included and paid extras instead of enabling every block globally.
 
@@ -102,8 +103,8 @@ Themes are defined as presets in `src/modules/builder/data/themePresets.js`.
 
 - `themeId` identifies the selected preset.
 - `themeTokens` stores the resolved visual tokens used by templates.
-- Custom colors in `styles.colors` override theme tokens.
-- Templates should use the fallback order: custom config → theme tokens → template defaults.
+- Custom colors and backgrounds in `styles.colors` override theme tokens.
+- Templates should use the fallback order: custom config → theme tokens → template defaults. A custom `backgroundColor` should paint the template root and main sections consistently.
 
 Romantic Motion binds root CSS variables including:
 
@@ -153,7 +154,7 @@ Included blocks never add cost, and disabled blocks never add cost.
 
 ## Store actions
 
-`src/store/builder.store.js` owns draft mutation through reactive-safe actions:
+`src/store/builder.store.js` owns draft mutation and the transient `activePreviewTarget` preview-focus state through reactive-safe actions:
 
 - `createDraftInvitation(template)`
 - `ensureInvitationShape()`
@@ -164,6 +165,8 @@ Included blocks never add cost, and disabled blocks never add cost.
 - `updateFaqItem(index, field, value)`
 - `updateImageField(field, value)`
 - `updateGalleryImage(index, value)`
+- `setActivePreviewTarget(target)`
+- `clearActivePreviewTarget()`
 - `updateStyleColor(key, value)`
 - `updateStyleFont(key, value)`
 - `toggleBlock(blockId, enabled)`
@@ -184,6 +187,16 @@ When adding a new template:
 5. Render fixed template sections from enabled blocks where applicable.
 6. Render enabled non-fixed extras in a generic extras area through `src/components/blocks/index.js`.
 7. Preserve block state by toggling `enabled` instead of adding/removing block records.
+8. Add `data-preview-target` attributes for editable sections so editor changes can scroll and temporarily highlight the matching preview area.
+
+
+## Editor input conventions
+
+- Wedding, ceremony, and reception date values should be edited with `datetime-local` controls. The single wedding date field updates both `base.eventDate` and `base.countdownTargetDate`.
+- Template images should be uploaded with `input type="file" accept="image/*"`; editor previews can store object URLs in `invitation.images` while file metadata is kept separately for future upload flows.
+- Map configuration belongs in the main card/configuration panel. The extras panel only toggles, orders, and summarizes blocks.
+- Map search should use `map.mapSearchText` and open Google Maps search in a new tab; `mapUrl` and `embedUrl` remain configurable for link and embed rendering.
+- Field edits should call `setActivePreviewTarget(target)` so the preview scrolls to and highlights sections such as `hero`, `story`, `details`, `gallery`, `map`, `faq`, `rsvp`, and `countdown`.
 
 ## Naming conventions
 
