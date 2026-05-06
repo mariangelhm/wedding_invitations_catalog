@@ -13,14 +13,14 @@ const props = defineProps<{
   buttonLabel?: string;
 }>();
 const emit = defineEmits<{ (e: 'confirm', payload: { fullName: string; attendance: 'yes' | 'no'; guestsCount: number; foodRestrictions: string }): void; }>();
-const data = computed(() => ({
+const blockProps = computed(() => ({
   ...(props.block?.settings || {}),
   ...(props.block?.props || {}),
   ...(props.title !== undefined ? { title: props.title } : {}),
   ...(props.buttonLabel !== undefined ? { buttonLabel: props.buttonLabel } : {}),
 }));
-const resolvedTitle = computed(() => String(data.value.title || '¿Nos acompañas?'));
-const resolvedButtonLabel = computed(() => String(data.value.buttonLabel || 'Confirmar asistencia'));
+const resolvedTitle = computed(() => String(blockProps.value.title || '¿Nos acompañas?'));
+const resolvedButtonLabel = computed(() => String(blockProps.value.buttonLabel || 'Confirmar asistencia'));
 
 const fullName = ref('');
 const attendance = ref<'yes' | 'no'>('yes');

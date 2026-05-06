@@ -106,8 +106,28 @@ const goToCheckout = () => {
   console.log('go to checkout');
 };
 
-const toggleBlockAddon = (block) => {
-  builderStore.toggleBlock(block.id, !block.enabled);
+const DEBUG_BUILDER = true;
+function debugGroup(label, payload = {}) {
+  if (!DEBUG_BUILDER) return;
+
+  try {
+    console.group(`[BUILDER DEBUG] ${label}`);
+    Object.entries(payload).forEach(([key, value]) => {
+      console.log(key, value);
+    });
+    console.groupEnd();
+  } catch (error) {
+    console.error(`[BUILDER DEBUG] Failed logging ${label}`, error);
+  }
+}
+const onToggleExtra = (block, event) => {
+  const nextEnabled = Boolean(event?.target?.checked);
+  debugGroup('Extras UI toggle', {
+    blockId: block.id,
+    currentEnabled: block.enabled,
+    nextEnabled,
+  });
+  builderStore.toggleBlock(block.id, nextEnabled);
 };
 const updateMapBlockProp = (key, value) => { if (mapBlock.value) builderStore.updateBlockProps(mapBlock.value.id, { [key]: value }); };
 const onDragStart = (block) => { if (!block.enabled) return; draggingBlockId.value = block.id; };
@@ -224,7 +244,7 @@ const applyThemePreset = (preset) => {
             <p class="block-description">{{ block.description || blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p>
             <div class="block-footer">
               <label class="switch" :aria-label="`Activar ${block.type}`">
-                <input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block)" />
+                <input type="checkbox" :checked="block.enabled" @change="onToggleExtra(block, $event)" />
                 <span class="switch-slider"></span>
               </label>
               <span class="status-label">{{ block.enabled ? 'Activo' : 'Inactivo' }}</span>

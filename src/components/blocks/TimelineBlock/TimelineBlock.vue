@@ -19,7 +19,7 @@ const props = defineProps<{
   items?: TimelineItem[];
 }>();
 
-const data = computed(() => ({
+const blockProps = computed(() => ({
   ...(props.block?.settings || {}),
   ...(props.block?.props || {}),
   ...(props.title !== undefined ? { title: props.title } : {}),
@@ -30,9 +30,9 @@ const fallbackItems = [
   { time: '19:00', title: 'Celebración', place: 'Lugar por definir' },
   { time: '21:00', title: 'Fiesta', place: 'Lugar por definir' },
 ];
-const resolvedTitle = computed(() => String(data.value.title || 'Bitácora del evento'));
+const resolvedTitle = computed(() => String(blockProps.value.title || 'Bitácora del evento'));
 const resolvedItems = computed(() => {
-  const items = Array.isArray(data.value.items) ? data.value.items as TimelineItem[] : [];
+  const items = Array.isArray(blockProps.value.items) ? blockProps.value.items as TimelineItem[] : [];
   return items.length ? items : fallbackItems;
 });
 

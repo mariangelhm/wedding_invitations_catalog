@@ -15,18 +15,18 @@ const props = defineProps<{
   integrated?: boolean;
 }>();
 
-const data = computed(() => ({
+const blockProps = computed(() => ({
   ...(props.block?.settings || {}),
   ...(props.block?.props || {}),
   ...(props.title !== undefined ? { title: props.title } : {}),
   ...(props.images !== undefined ? { images: props.images } : {}),
   ...(props.integrated !== undefined ? { integrated: props.integrated } : {}),
 }));
-const resolvedTitle = computed(() => String(data.value.title || 'Nuestros momentos'));
-const resolvedIntegrated = computed(() => Boolean(data.value.integrated));
+const resolvedTitle = computed(() => String(blockProps.value.title || 'Nuestros momentos'));
+const resolvedIntegrated = computed(() => Boolean(blockProps.value.integrated));
 const localSampleImages = [{ src: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1200&q=80', alt: 'Foto principal' }, { src: 'https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=1200&q=80', alt: 'Momento especial' }, { src: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80', alt: 'Nuestra historia' }, { src: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1200&q=80', alt: 'Celebración' }];
 const normalizedItems = computed(() => {
-  const images = Array.isArray(data.value.images) ? data.value.images as GalleryImage[] : [];
+  const images = Array.isArray(blockProps.value.images) ? blockProps.value.images as GalleryImage[] : [];
   const customItems = images.map((item, index) => ({ src: (item?.src || '').trim(), alt: item?.alt || `Imagen ${index + 1}` }));
   if (customItems.some((i) => i.src)) return customItems.map((i) => ({ ...i, isRealImage: Boolean(i.src) }));
   return localSampleImages.map((item) => ({ ...item, isRealImage: true }));

@@ -1092,3 +1092,47 @@
   margin-bottom: 1rem;
   padding: 0.75rem 1rem;
 }
+
+
+@media (max-width: 768px) {
+  .romantic-template {
+    overflow-x: hidden;
+  }
+
+  .romantic-template__container {
+    width: min(calc(100% - 28px), 100%);
+  }
+
+  .romantic-template__header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .romantic-template__nav {
+    display: none;
+  }
+
+  .romantic-template__hero-grid,
+  .romantic-template__details-grid,
+  .romantic-template__map-faq-grid,
+  .romantic-template__rsvp-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .romantic-template__hero-names {
+    font-size: clamp(2.1rem, 10vw, 3.2rem);
+    line-height: 1;
+  }
+
+  .romantic-template__detail-title,
+  .romantic-template__section-title {
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+    line-height: 1.1;
+  }
+
+  .romantic-template img,
+  .romantic-template iframe {
+    max-width: 100%;
+  }
+}

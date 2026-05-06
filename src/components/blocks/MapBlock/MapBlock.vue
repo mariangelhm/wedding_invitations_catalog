@@ -15,7 +15,7 @@ const props = defineProps<{
   embedUrl?: string;
 }>();
 
-const data = computed(() => ({
+const blockProps = computed(() => ({
   ...(props.block?.settings || {}),
   ...(props.block?.props || {}),
   ...(props.locationName !== undefined ? { locationName: props.locationName } : {}),
@@ -23,10 +23,10 @@ const data = computed(() => ({
   ...(props.mapUrl !== undefined ? { mapUrl: props.mapUrl } : {}),
   ...(props.embedUrl !== undefined ? { embedUrl: props.embedUrl } : {}),
 }));
-const resolvedLocationName = computed(() => String(data.value.locationName || 'Ubicación por definir'));
-const resolvedAddress = computed(() => String(data.value.address || 'Dirección por definir'));
-const resolvedMapUrl = computed(() => String(data.value.mapUrl || '#'));
-const resolvedEmbedUrl = computed(() => String(data.value.embedUrl || ''));
+const resolvedLocationName = computed(() => String(blockProps.value.locationName || 'Ubicación por definir'));
+const resolvedAddress = computed(() => String(blockProps.value.address || 'Dirección por definir'));
+const resolvedMapUrl = computed(() => String(blockProps.value.mapUrl || '#'));
+const resolvedEmbedUrl = computed(() => String(blockProps.value.embedUrl || ''));
 
 const rootEl = ref<HTMLElement | null>(null);
 const isVisible = ref(false);

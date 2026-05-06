@@ -4,7 +4,7 @@ defineProps({ block: { type: Object, default: () => ({}) } });
 
 <template>
   <div class="unsupported-block-debug">
-    Extra no soportado: {{ block.type }} / {{ block.id }}
+    Extra no soportado: {{ block?.label || block?.type || 'sin tipo' }}
   </div>
 </template>
 

@@ -16,7 +16,7 @@ const props = defineProps<{
   variant?: 'primary' | 'minimal' | 'editorial';
 }>();
 
-const data = computed(() => ({
+const blockProps = computed(() => ({
   ...(props.block?.settings || {}),
   ...(props.block?.props || {}),
   ...(props.title !== undefined ? { title: props.title } : {}),
@@ -24,9 +24,9 @@ const data = computed(() => ({
   ...(props.date !== undefined ? { date: props.date } : {}),
   ...(props.variant !== undefined ? { variant: props.variant } : {}),
 }));
-const resolvedTitle = computed(() => String(data.value.title || 'Cuenta regresiva'));
-const resolvedTargetDate = computed(() => String(data.value.targetDate || data.value.date || new Date(Date.now() + 86400000).toISOString()));
-const resolvedVariant = computed(() => String(data.value.variant || 'primary'));
+const resolvedTitle = computed(() => String(blockProps.value.title || 'Cuenta regresiva'));
+const resolvedTargetDate = computed(() => String(blockProps.value.targetDate || blockProps.value.date || new Date(Date.now() + 86400000).toISOString()));
+const resolvedVariant = computed(() => String(blockProps.value.variant || 'primary'));
 const { days, hours, minutes, seconds } = useCountdown(resolvedTargetDate);
 const rootEl = ref<HTMLElement | null>(null); const isVisible = ref(false);
 onMounted(() => { const observer = new IntersectionObserver((entries) => { const [entry] = entries; if (entry.isIntersecting) { isVisible.value = true; observer.disconnect(); } }, { threshold: 0.2 }); if (rootEl.value) observer.observe(rootEl.value); });
