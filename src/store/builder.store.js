@@ -2,6 +2,25 @@ import { defineStore } from 'pinia';
 import { themePresets } from '../modules/builder/data/themePresets';
 import { romanticMotionConfig } from '../modules/invitations/templates/romantic-motion/romanticMotion.config';
 
+const DEBUG_BUILDER = true;
+const BLOCK_TYPE_ALIASES = {
+  countdown_wedding: 'countdown',
+  countdown_rsvp: 'countdown',
+  countdown_confirmation: 'countdown',
+  timeline: 'timeline',
+  bitacora: 'timeline',
+  map: 'map',
+  gallery: 'gallery',
+  story: 'story',
+  rsvp: 'rsvp',
+};
+const normalizeBlockType = (type) => BLOCK_TYPE_ALIASES[type] || type;
+const previewTargetForBlock = (block) => {
+  const normalizedType = normalizeBlockType(block?.type || block);
+  const targets = { countdown: 'countdown', gallery: 'gallery', map: 'map', rsvp: 'rsvp', story: 'story', timeline: 'extras' };
+  return targets[normalizedType] || 'extras';
+};
+
 const defaultCustomizableOptions = { colors: true, fonts: true, photos: true, music: false, map: true, components: true };
 let previewFocusTimeout = null;
 
@@ -148,18 +167,35 @@ const getRomanticDefaults = () => ({
   blocks: getDefaultBlocks(romanticMotionConfig.defaultBlocks),
 });
 
+const mergeBlockData = (defaultBlock, existing = {}) => ({
+  ...clone(defaultBlock),
+  ...existing,
+  settings: { ...(defaultBlock.settings || {}), ...(existing.props || {}), ...(existing.settings || {}) },
+  props: { ...(defaultBlock.settings || {}), ...(existing.settings || {}), ...(existing.props || {}) },
+  enabled: existing.enabled ?? defaultBlock.enabled ?? false,
+  included: existing.included ?? defaultBlock.included ?? false,
+});
 const normalizeInvitationBlocks = (blocks = []) => {
-  const byType = new Map(blocks.map((block) => [block.type, block]));
-  return Object.values(blockRegistry).map((defaultBlock) => {
-    const existing = byType.get(defaultBlock.type) || {};
-    return {
-      ...clone(defaultBlock),
-      ...existing,
-      settings: { ...(defaultBlock.settings || {}), ...(existing.settings || {}) },
-      enabled: existing.enabled ?? defaultBlock.enabled ?? false,
-      included: existing.included ?? defaultBlock.included ?? false,
-    };
-  }).sort((a, b) => (a.order || 0) - (b.order || 0)).map((block, index) => ({ ...block, order: index + 1 }));
+  const usedIndexes = new Set();
+  const defaults = Object.values(blockRegistry).map((defaultBlock) => {
+    const existingIndex = blocks.findIndex((block, index) => !usedIndexes.has(index) && (block?.id === defaultBlock.id || block?.type === defaultBlock.type));
+    const existing = existingIndex >= 0 ? blocks[existingIndex] : {};
+    if (existingIndex >= 0) usedIndexes.add(existingIndex);
+    return mergeBlockData(defaultBlock, existing);
+  });
+  const extraBlocks = blocks
+    .filter((block, index) => !usedIndexes.has(index))
+    .map((block) => ({
+      ...block,
+      settings: { ...(block.props || {}), ...(block.settings || {}) },
+      props: { ...(block.settings || {}), ...(block.props || {}) },
+      enabled: block.enabled ?? false,
+      included: block.included ?? false,
+    }));
+
+  return [...defaults, ...extraBlocks]
+    .sort((a, b) => (a.order || 0) - (b.order || 0))
+    .map((block, index) => ({ ...block, order: index + 1 }));
 };
 
 export const useBuilderStore = defineStore('builderStore', {
@@ -272,7 +308,11 @@ export const useBuilderStore = defineStore('builderStore', {
       const nextBase = { ...base, [field]: value };
       if (field === 'eventDate') nextBase.countdownTargetDate = value;
       const blocks = field === 'eventDate'
-        ? (this.invitation.blocks || []).map((block) => (block.type === 'countdown_wedding' ? { ...block, settings: { ...(block.settings || {}), targetDate: value } } : block))
+        ? (this.invitation.blocks || []).map((block) => (normalizeBlockType(block.type) === 'countdown' ? {
+          ...block,
+          settings: { ...(block.settings || {}), targetDate: value },
+          props: { ...(block.props || {}), targetDate: value },
+        } : block))
         : this.invitation.blocks;
       this.invitation = { ...this.invitation, base: nextBase, blocks };
       const targets = { coupleNames: 'hero', eventDate: 'hero', locationName: 'map', locationAddress: 'map', message: 'hero', storyMessage: 'story' };
@@ -287,33 +327,50 @@ export const useBuilderStore = defineStore('builderStore', {
     },
     updateDetailField(section, field, value) {
       if (!this.invitation) return;
-      const currentDetails = normalizeDetails(this.invitation.details);
+      const currentDetails = this.invitation.details || {};
+      const currentSection = currentDetails[section] || {};
       const nextDetails = {
         ...currentDetails,
         [section]: {
-          ...(currentDetails?.[section] || {}),
+          ...currentSection,
           [field]: value,
         },
       };
-      this.invitation = { ...this.invitation, details: normalizeDetails(nextDetails) };
+
+      if (DEBUG_BUILDER) {
+        console.group('[BUILDER DEBUG] updateDetailField');
+        console.log('section:', section);
+        console.log('field:', field);
+        console.log('value:', value);
+        console.log('details BEFORE:', JSON.parse(JSON.stringify(this.invitation.details)));
+        console.log('details AFTER:', JSON.parse(JSON.stringify(nextDetails)));
+        console.groupEnd();
+      }
+
+      this.invitation = { ...this.invitation, details: nextDetails };
+      if (DEBUG_BUILDER && !this.invitation.details) console.warn('[BUILDER DEBUG] details object missing after update');
       this.setActivePreviewTarget('details');
     },
     updateMapField(field, value) {
       if (!this.invitation) return;
-      const map = { ...normalizeMap(this.invitation.map || this.invitation.mapSettings), [field]: value };
-      this.invitation = { ...this.invitation, map, mapSettings: map };
-      this.updateBlockProps('map', map, false);
+      const map = {
+        ...(this.invitation.mapSettings || {}),
+        ...(this.invitation.map || {}),
+        [field]: value,
+      };
+      this.invitation = { ...this.invitation, map, mapSettings: { ...(this.invitation.mapSettings || {}), [field]: value } };
+      this.updateBlockProps('map', { [field]: value }, false);
       this.setActivePreviewTarget('map');
     },
-    updateFaqItem(index, field, value) {
+    updateFaqItem(idOrIndex, field, value) {
       if (!this.invitation) return;
-      const faq = normalizeFaq(this.invitation.faq).map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: value } : item));
+      const faq = (this.invitation.faq || []).map((item, itemIndex) => (item.id === idOrIndex || itemIndex === idOrIndex ? { ...item, [field]: value } : item));
       this.invitation = { ...this.invitation, faq };
       this.setActivePreviewTarget('faq');
     },
     updateImageField(field, value, metadata = null) {
       if (!this.invitation) return;
-      const images = normalizeImages(this.invitation.images);
+      const images = this.invitation.images || {};
       const imageFiles = { ...(this.invitation.imageFiles || {}) };
       if (metadata) imageFiles[field] = metadata;
       this.invitation = { ...this.invitation, images: { ...images, [field]: value }, imageFiles };
@@ -322,8 +379,10 @@ export const useBuilderStore = defineStore('builderStore', {
     },
     updateGalleryImage(index, value, metadata = null) {
       if (!this.invitation) return;
-      const images = normalizeImages(this.invitation.images);
-      const galleryImages = (images.galleryImages || []).map((image, imageIndex) => (imageIndex === index ? { ...image, src: value, file: metadata || image.file } : image));
+      const images = this.invitation.images || {};
+      const currentGalleryImages = Array.isArray(images.galleryImages) ? images.galleryImages : [];
+      const galleryImages = currentGalleryImages.map((image, imageIndex) => (imageIndex === index ? { ...image, src: value, file: metadata || image.file } : image));
+      if (!galleryImages[index]) galleryImages[index] = { src: value, alt: `Imagen ${index + 1}`, file: metadata || null };
       this.invitation = { ...this.invitation, images: { ...images, galleryImages } };
       this.setActivePreviewTarget('gallery');
     },
@@ -363,17 +422,30 @@ export const useBuilderStore = defineStore('builderStore', {
     toggleBlock(blockId, enabled) {
       if (!this.invitation) return;
       const currentBlocks = this.invitation?.blocks || [];
+      const nextEnabled = Boolean(enabled);
       const changedBlock = currentBlocks.find((block) => block.id === blockId || block.type === blockId);
+      const updatedBlocks = currentBlocks.map((block) => (block.id === blockId || block.type === blockId
+        ? { ...block, enabled: nextEnabled }
+        : block));
+
+      if (DEBUG_BUILDER && !changedBlock) console.warn('[BUILDER DEBUG] Block not found:', blockId);
+      if (DEBUG_BUILDER) {
+        console.group('[BUILDER DEBUG] toggleBlock');
+        console.log('blockId:', blockId);
+        console.log('enabled:', nextEnabled);
+        console.log('blocks BEFORE:', JSON.parse(JSON.stringify(this.invitation.blocks)));
+        console.log('target BEFORE:', this.invitation.blocks.find((block) => block.id === blockId || block.type === blockId));
+        console.log('target AFTER:', updatedBlocks.find((block) => block.id === blockId || block.type === blockId));
+        console.log('blocks AFTER:', JSON.parse(JSON.stringify(updatedBlocks)));
+        console.groupEnd();
+      }
 
       this.invitation = {
         ...this.invitation,
-        blocks: currentBlocks.map((block) => (block.id === blockId || block.type === blockId
-          ? { ...block, enabled: Boolean(enabled) }
-          : block)),
+        blocks: updatedBlocks,
       };
 
-      const targetAliases = { countdown_wedding: 'countdown', countdown: 'countdown', gallery: 'gallery', map: 'map', rsvp: 'rsvp', story: 'story' };
-      this.setActivePreviewTarget(targetAliases[changedBlock?.type] || 'extras');
+      this.setActivePreviewTarget(previewTargetForBlock(changedBlock?.type || blockId));
     },
     updateBlockOrder(blockId, direction) {
       if (!this.invitation) return;
@@ -388,15 +460,19 @@ export const useBuilderStore = defineStore('builderStore', {
     updateBlockProps(blockId, props, focusPreview = true) {
       if (!this.invitation) return;
       const blocks = this.ensureBlocks();
-      const nextBlocks = blocks.map((block) => (block.id === blockId || block.type === blockId ? { ...block, settings: { ...(block.settings || {}), ...props } } : block));
-      const mapBlock = nextBlocks.find((block) => block.type === 'map');
+      const nextBlocks = blocks.map((block) => (block.id === blockId || block.type === blockId || normalizeBlockType(block.type) === blockId ? {
+        ...block,
+        props: { ...(block.props || {}), ...props },
+        settings: { ...(block.settings || {}), ...props },
+      } : block));
+      const mapBlock = nextBlocks.find((block) => normalizeBlockType(block.type) === 'map');
       this.invitation = {
         ...this.invitation,
         blocks: nextBlocks,
-        mapSettings: mapBlock ? { ...(this.invitation.mapSettings || {}), ...(mapBlock.settings || {}) } : this.invitation.mapSettings,
-        map: mapBlock ? { ...(this.invitation.map || {}), ...(mapBlock.settings || {}) } : this.invitation.map,
+        mapSettings: mapBlock ? { ...(this.invitation.mapSettings || {}), ...(mapBlock.props || {}), ...(mapBlock.settings || {}) } : this.invitation.mapSettings,
+        map: mapBlock ? { ...(this.invitation.map || {}), ...(mapBlock.props || {}), ...(mapBlock.settings || {}) } : this.invitation.map,
       };
-      if (focusPreview) this.setActivePreviewTarget(blockId === 'map' ? 'map' : blockId);
+      if (focusPreview) this.setActivePreviewTarget(previewTargetForBlock(blockId));
     },
     getEnabledBlocksSorted() { return this.enabledBlocksSorted; },
     getTotalPrice() { return this.totalPrice; },

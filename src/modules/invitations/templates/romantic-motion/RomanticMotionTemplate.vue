@@ -4,6 +4,7 @@ import CountdownBlock from '../../../../components/blocks/CountdownBlock/Countdo
 import GalleryBlock from '../../../../components/blocks/GalleryBlock/GalleryBlock.vue';
 import MapBlock from '../../../../components/blocks/MapBlock/MapBlock.vue';
 import RSVPBlock from '../../../../components/blocks/RSVPBlock/RSVPBlock.vue';
+import UnsupportedBlock from '../../../../components/blocks/UnsupportedBlock.vue';
 import { blockRegistry as reusableBlockRegistry, getBlockConfig } from '../../../../components/blocks/index.js';
 import { romanticMotionConfig } from './romanticMotion.config';
 import './romanticMotionTemplate.css';
@@ -11,11 +12,21 @@ import './romanticMotionTemplate.css';
 const { computed, nextTick, ref, watch } = Vue;
 
 const props = defineProps({ invitationData: { type: Object, default: () => ({}) } });
-
-const UnsupportedBlock = {
-  props: { block: { type: Object, default: () => ({}) } },
-  template: `<section class="unsupported-block"><strong>Extra no soportado</strong><span>{{ block?.type || block?.id || 'desconocido' }}</span></section>`,
+const DEBUG_BUILDER = true;
+const BLOCK_TYPE_ALIASES = {
+  countdown_wedding: 'countdown',
+  countdown_rsvp: 'countdown',
+  countdown_confirmation: 'countdown',
+  timeline: 'timeline',
+  bitacora: 'timeline',
+  map: 'map',
+  gallery: 'gallery',
+  story: 'story',
+  rsvp: 'rsvp',
 };
+function normalizeBlockType(type) {
+  return BLOCK_TYPE_ALIASES[type] || type;
+}
 const blockRegistry = Object.fromEntries(Object.entries(reusableBlockRegistry).map(([type, config]) => [type, config.component]));
 
 const templateDefaults = romanticMotionConfig.defaults;
@@ -68,20 +79,28 @@ const defaultDetails = computed(() => ({
   },
 }));
 const details = computed(() => ({ ...templateDefaults.details, ...(props.invitationData?.details || {}) }));
-const ceremony = computed(() => ({
-  ...defaultDetails.value.ceremony,
-  ...(props.invitationData?.details?.ceremony || {}),
-  title: props.invitationData?.details?.ceremony?.title ?? props.invitationData?.details?.ceremonyTitle ?? defaultDetails.value.ceremony.title,
-  dateTime: props.invitationData?.details?.ceremony?.dateTime ?? props.invitationData?.details?.ceremonyDate ?? defaultDetails.value.ceremony.dateTime,
-  location: props.invitationData?.details?.ceremony?.location ?? props.invitationData?.details?.ceremonyLocation ?? defaultDetails.value.ceremony.location,
-}));
-const reception = computed(() => ({
-  ...defaultDetails.value.reception,
-  ...(props.invitationData?.details?.reception || {}),
-  title: props.invitationData?.details?.reception?.title ?? props.invitationData?.details?.receptionTitle ?? defaultDetails.value.reception.title,
-  dateTime: props.invitationData?.details?.reception?.dateTime ?? props.invitationData?.details?.receptionDate ?? defaultDetails.value.reception.dateTime,
-  location: props.invitationData?.details?.reception?.location ?? props.invitationData?.details?.receptionLocation ?? defaultDetails.value.reception.location,
-}));
+const ceremony = computed(() => {
+  const computedCeremony = {
+    ...defaultDetails.value.ceremony,
+    ...(props.invitationData?.details?.ceremony || {}),
+    title: props.invitationData?.details?.ceremony?.title ?? props.invitationData?.details?.ceremonyTitle ?? defaultDetails.value.ceremony.title,
+    dateTime: props.invitationData?.details?.ceremony?.dateTime ?? props.invitationData?.details?.ceremonyDate ?? defaultDetails.value.ceremony.dateTime,
+    location: props.invitationData?.details?.ceremony?.location ?? props.invitationData?.details?.ceremonyLocation ?? defaultDetails.value.ceremony.location,
+  };
+  if (DEBUG_BUILDER) console.log('[BUILDER DEBUG] ceremony computed', computedCeremony);
+  return computedCeremony;
+});
+const reception = computed(() => {
+  const computedReception = {
+    ...defaultDetails.value.reception,
+    ...(props.invitationData?.details?.reception || {}),
+    title: props.invitationData?.details?.reception?.title ?? props.invitationData?.details?.receptionTitle ?? defaultDetails.value.reception.title,
+    dateTime: props.invitationData?.details?.reception?.dateTime ?? props.invitationData?.details?.receptionDate ?? defaultDetails.value.reception.dateTime,
+    location: props.invitationData?.details?.reception?.location ?? props.invitationData?.details?.receptionLocation ?? defaultDetails.value.reception.location,
+  };
+  if (DEBUG_BUILDER) console.log('[BUILDER DEBUG] reception computed', computedReception);
+  return computedReception;
+});
 const userMap = computed(() => ({ ...templateDefaults.map, ...(props.invitationData?.mapSettings || {}), ...(props.invitationData?.map || {}) }));
 const faqItems = computed(() => (Array.isArray(props.invitationData?.faq) && props.invitationData.faq.length ? props.invitationData.faq : templateDefaults.faq).map((item, index) => ({
   id: item.id || `faq-${index + 1}`,
@@ -94,16 +113,31 @@ const tokens = computed(() => ({ ...fallbackEditorialTokens, ...(styles.value?.t
 const styleColors = computed(() => styles.value?.colors || {});
 const styleFonts = computed(() => styles.value?.fonts || {});
 const allBlocks = computed(() => props.invitationData?.blocks || []);
-const enabledBlocks = computed(() => allBlocks.value
-  .filter((block) => block.enabled === true)
-  .slice()
-  .sort((a, b) => Number(a.order || 0) - Number(b.order || 0)));
-const findBlockByTypeOrId = (type, id) => allBlocks.value.find((block) => block.id === id || block.type === type) || null;
-const countdownBlock = computed(() => findBlockByTypeOrId('countdown_wedding', 'countdown-wedding') || findBlockByTypeOrId('countdown', 'countdown-main'));
-const storyBlock = computed(() => findBlockByTypeOrId('story', 'story'));
-const galleryBlock = computed(() => findBlockByTypeOrId('gallery', 'gallery'));
-const mapBlock = computed(() => findBlockByTypeOrId('map', 'map'));
-const rsvpBlock = computed(() => findBlockByTypeOrId('rsvp', 'rsvp'));
+const enabledBlocks = computed(() => {
+  const enabled = allBlocks.value
+    .filter((block) => block.enabled === true)
+    .slice()
+    .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
+
+  if (DEBUG_BUILDER) {
+    console.group('[BUILDER DEBUG] RomanticMotion enabledBlocks');
+    console.log('all blocks:', props.invitationData?.blocks);
+    console.log('enabled blocks:', enabled);
+    console.log('block types:', enabled.map((block) => ({ id: block.id, type: block.type, normalizedType: normalizeBlockType(block.type) })));
+    console.groupEnd();
+  }
+
+  return enabled;
+});
+function findBlock(typeOrId) {
+  return allBlocks.value.find((block) => block.id === typeOrId || block.type === typeOrId || normalizeBlockType(block.type) === typeOrId) || null;
+}
+const countdownBlock = computed(() => findBlock('countdown'));
+const timelineBlock = computed(() => findBlock('timeline'));
+const storyBlock = computed(() => findBlock('story'));
+const galleryBlock = computed(() => findBlock('gallery'));
+const mapBlock = computed(() => findBlock('map'));
+const rsvpBlock = computed(() => findBlock('rsvp'));
 const mapBlockSettings = computed(() => mapBlock.value?.settings || {});
 const withoutEmptyValues = (value) => Object.fromEntries(Object.entries(value || {}).filter(([, entryValue]) => entryValue !== undefined && entryValue !== null && entryValue !== ''));
 const mapSettings = computed(() => ({ ...userMap.value, ...withoutEmptyValues(mapBlockSettings.value) }));
@@ -121,14 +155,38 @@ const galleryImages = computed(() => {
 });
 const imageSrc = (field, fallbackIndex) => userImages.value?.[field] || sampleImages[fallbackIndex];
 
-const fixedBlockIds = ['countdown-main', 'countdown-wedding', 'story', 'gallery', 'map', 'rsvp'];
-const fixedBlockTypes = ['countdown', 'countdown_wedding', 'story', 'gallery', 'map', 'rsvp'];
-const dynamicExtraBlocks = computed(() => (props.invitationData?.blocks || [])
-  .filter((block) => block.enabled === true)
-  .filter((block) => !fixedBlockIds.includes(block.id) && !fixedBlockTypes.includes(block.type))
+const fixedTypes = ['countdown', 'story', 'gallery', 'map', 'rsvp'];
+const dynamicExtraBlocks = computed(() => enabledBlocks.value
+  .filter((block) => !fixedTypes.includes(normalizeBlockType(block.type)))
   .sort((a, b) => Number(a.order || 0) - Number(b.order || 0)));
-const blockComponent = (type) => blockRegistry[type] || getBlockConfig(type)?.component || UnsupportedBlock;
-const blockProps = (block) => ({ ...(block.props || {}), ...(block.settings || {}) });
+function resolveBlockComponent(block) {
+  const normalizedType = normalizeBlockType(block.type);
+  const component = blockRegistry[normalizedType] || getBlockConfig(normalizedType)?.component;
+
+  if (!component) {
+    if (DEBUG_BUILDER) {
+      console.warn('[BUILDER DEBUG] Missing block component', {
+        id: block.id,
+        type: block.type,
+        normalizedType,
+        block,
+      });
+    }
+    return UnsupportedBlock;
+  }
+
+  if (DEBUG_BUILDER) {
+    console.log('[BUILDER DEBUG] Resolved block component', {
+      id: block.id,
+      type: block.type,
+      normalizedType,
+      component,
+    });
+  }
+
+  return component;
+}
+const blockProps = (block) => ({ ...(block?.settings || {}), ...(block?.props || {}) });
 
 const names = computed(() => base.value.coupleNames || base.value.names || templateDefaults.base.coupleNames);
 const nameParts = computed(() => names.value.split('&').map((part) => part.trim()).filter(Boolean));
@@ -231,9 +289,32 @@ watch(activePreviewTarget, async (target) => {
   if (!target || !templateRoot.value) return;
   await nextTick();
   const section = templateRoot.value.querySelector(`[data-preview-target="${target}"]`);
-  if (!section) return;
+  if (!section) {
+    if (DEBUG_BUILDER) console.warn('[BUILDER DEBUG] Preview target not found', target);
+    return;
+  }
   section.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }, { flush: 'post' });
+
+watch(
+  () => props.invitationData,
+  (value) => {
+    if (!DEBUG_BUILDER) return;
+    console.group('[BUILDER DEBUG] invitationData changed');
+    console.log(JSON.parse(JSON.stringify(value)));
+    console.groupEnd();
+  },
+  { deep: true },
+);
+
+watch([countdownBlock, mapBlock, rsvpBlock, dynamicExtraBlocks], () => {
+  if (!DEBUG_BUILDER) return;
+  console.log('[BUILDER DEBUG] countdownBlock', countdownBlock.value);
+  console.log('[BUILDER DEBUG] mapBlock', mapBlock.value);
+  console.log('[BUILDER DEBUG] rsvpBlock', rsvpBlock.value);
+  console.log('[BUILDER DEBUG] timelineBlock', timelineBlock.value);
+  console.log('[BUILDER DEBUG] dynamicExtraBlocks', dynamicExtraBlocks.value);
+}, { deep: true, immediate: true });
 
 const getTemplateScrollParent = () => {
   let parent = templateRoot.value?.parentElement;
@@ -361,16 +442,16 @@ Vue.onUnmounted(() => {
         <div class="romantic-template__details-list">
           <article class="romantic-template__detail-card">
             <span>01</span>
-            <h3 class="romantic-template__detail-title">{{ ceremony.title }}</h3>
-            <p>{{ ceremonyDate }}</p>
-            <p>{{ ceremony.location || eventLocation }}</p>
+            <h3 class="romantic-template__detail-title">{{ ceremony.title || 'Ceremonia' }}</h3>
+            <p>{{ ceremonyDate || 'Fecha por definir' }}</p>
+            <p>{{ ceremony.location || 'Ubicación por definir' }}</p>
             <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
           </article>
           <article class="romantic-template__detail-card romantic-template__detail-card--accent">
             <span>02</span>
-            <h3 class="romantic-template__detail-title">{{ reception.title }}</h3>
-            <p>{{ receptionDate }}</p>
-            <p>{{ reception.location || eventAddress }}</p>
+            <h3 class="romantic-template__detail-title">{{ reception.title || 'Celebración' }}</h3>
+            <p>{{ receptionDate || 'Fecha por definir' }}</p>
+            <p>{{ reception.location || 'Ubicación por definir' }}</p>
             <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
           </article>
         </div>
@@ -429,13 +510,24 @@ Vue.onUnmounted(() => {
       </div>
     </section>
 
-    <section v-if="dynamicExtraBlocks.length" class="romantic-template__dynamic-extras romantic-section motion-section" data-preview-target="extras" :class="{ 'is-preview-focused': activePreviewTarget === 'extras' }" :ref="setRevealRef">
+    <section
+      v-if="dynamicExtraBlocks.length"
+      class="romantic-template__dynamic-extras romantic-section motion-section"
+      data-preview-target="extras"
+      :class="{ 'is-preview-focused': activePreviewTarget === 'extras' }"
+      :ref="setRevealRef"
+    >
+      <div class="debug-extra-list" v-if="DEBUG_BUILDER">
+        Rendering dynamic extras:
+        {{ dynamicExtraBlocks.map((block) => `${block.id}:${block.type}:${block.enabled}`).join(', ') }}
+      </div>
+
       <component
-        :is="blockComponent(block.type)"
+        :is="resolveBlockComponent(block)"
         v-for="block in dynamicExtraBlocks"
         :key="`${block.id}-${block.type}-${block.enabled}`"
         :block="block"
-        v-bind="blockProps(block)"
+        v-bind="block.props"
       />
     </section>
 

@@ -43,9 +43,9 @@ const mapFieldModel = (field) => computed({
   set: (value) => builderStore.updateMapField(field, value),
 });
 
-const faqModel = (index, field) => computed({
-  get: () => builderStore.invitation?.faq?.[index]?.[field] || '',
-  set: (value) => builderStore.updateFaqItem(index, field, value),
+const faqModel = (item, field) => computed({
+  get: () => item?.[field] || '',
+  set: (value) => builderStore.updateFaqItem(item.id, field, value),
 });
 
 const coupleNames = baseFieldModel('coupleNames');
@@ -191,8 +191,8 @@ const useMapSearchLocation = () => {
 
       <h3>Preguntas frecuentes</h3>
       <div v-for="(item, index) in builderStore.invitation.faq" :key="item.id" class="form-fields">
-        <Input :model-value="faqModel(index, 'question').value" :label="`Pregunta ${index + 1}`" @update:model-value="faqModel(index, 'question').value = $event" />
-        <TextArea :model-value="faqModel(index, 'answer').value" :label="`Respuesta ${index + 1}`" :rows="2" @update:model-value="faqModel(index, 'answer').value = $event" />
+        <Input :model-value="faqModel(item, 'question').value" :label="`Pregunta ${index + 1}`" @update:model-value="faqModel(item, 'question').value = $event" />
+        <TextArea :model-value="faqModel(item, 'answer').value" :label="`Respuesta ${index + 1}`" :rows="2" @update:model-value="faqModel(item, 'answer').value = $event" />
       </div>
     </div>
   </section>

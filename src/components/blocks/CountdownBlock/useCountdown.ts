@@ -1,14 +1,14 @@
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, unref, type MaybeRef } from 'vue';
 
 /**
  * Reusable countdown composable.
  * Receives a target date string and exposes reactive day/hour/minute/second values.
  */
-export function useCountdown(targetDate: string) {
+export function useCountdown(targetDate: MaybeRef<string>) {
   const now = ref(Date.now());
   let timer: ReturnType<typeof setInterval> | null = null;
 
-  const target = computed(() => new Date(targetDate).getTime());
+  const target = computed(() => new Date(unref(targetDate)).getTime());
   const remainingMs = computed(() => target.value - now.value);
   const isExpired = computed(() => remainingMs.value <= 0 || Number.isNaN(remainingMs.value));
 
