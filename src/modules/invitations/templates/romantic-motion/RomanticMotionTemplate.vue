@@ -4,13 +4,19 @@ import CountdownBlock from '../../../../components/blocks/CountdownBlock/Countdo
 import GalleryBlock from '../../../../components/blocks/GalleryBlock/GalleryBlock.vue';
 import MapBlock from '../../../../components/blocks/MapBlock/MapBlock.vue';
 import RSVPBlock from '../../../../components/blocks/RSVPBlock/RSVPBlock.vue';
-import { getBlockConfig } from '../../../../components/blocks/index.js';
+import { blockRegistry as reusableBlockRegistry, getBlockConfig } from '../../../../components/blocks/index.js';
 import { romanticMotionConfig } from './romanticMotion.config';
 import './romanticMotionTemplate.css';
 
 const { computed, nextTick, ref, watch } = Vue;
 
 const props = defineProps({ invitationData: { type: Object, default: () => ({}) } });
+
+const UnsupportedBlock = {
+  props: { block: { type: Object, default: () => ({}) } },
+  template: `<section class="unsupported-block"><strong>Extra no soportado</strong><span>{{ block?.type || block?.id || 'desconocido' }}</span></section>`,
+};
+const blockRegistry = Object.fromEntries(Object.entries(reusableBlockRegistry).map(([type, config]) => [type, config.component]));
 
 const templateDefaults = romanticMotionConfig.defaults;
 const sampleImages = romanticMotionConfig.sampleImages;
@@ -49,7 +55,33 @@ const fallbackEditorialTokens = {
 };
 
 const base = computed(() => ({ ...templateDefaults.base, ...(props.invitationData?.base || {}) }));
+const defaultDetails = computed(() => ({
+  ceremony: {
+    title: templateDefaults.details.ceremony?.title || templateDefaults.details.ceremonyTitle || 'Ceremonia',
+    dateTime: templateDefaults.details.ceremony?.dateTime || templateDefaults.details.ceremonyDate || base.value.eventDate || '2027-06-14T18:00',
+    location: templateDefaults.details.ceremony?.location || templateDefaults.details.ceremonyLocation || 'Rose Garden Hall',
+  },
+  reception: {
+    title: templateDefaults.details.reception?.title || templateDefaults.details.receptionTitle || 'Celebración',
+    dateTime: templateDefaults.details.reception?.dateTime || templateDefaults.details.receptionDate || base.value.eventDate || '2027-06-14T21:00',
+    location: templateDefaults.details.reception?.location || templateDefaults.details.receptionLocation || 'Santiago, Chile',
+  },
+}));
 const details = computed(() => ({ ...templateDefaults.details, ...(props.invitationData?.details || {}) }));
+const ceremony = computed(() => ({
+  ...defaultDetails.value.ceremony,
+  ...(props.invitationData?.details?.ceremony || {}),
+  title: props.invitationData?.details?.ceremony?.title ?? props.invitationData?.details?.ceremonyTitle ?? defaultDetails.value.ceremony.title,
+  dateTime: props.invitationData?.details?.ceremony?.dateTime ?? props.invitationData?.details?.ceremonyDate ?? defaultDetails.value.ceremony.dateTime,
+  location: props.invitationData?.details?.ceremony?.location ?? props.invitationData?.details?.ceremonyLocation ?? defaultDetails.value.ceremony.location,
+}));
+const reception = computed(() => ({
+  ...defaultDetails.value.reception,
+  ...(props.invitationData?.details?.reception || {}),
+  title: props.invitationData?.details?.reception?.title ?? props.invitationData?.details?.receptionTitle ?? defaultDetails.value.reception.title,
+  dateTime: props.invitationData?.details?.reception?.dateTime ?? props.invitationData?.details?.receptionDate ?? defaultDetails.value.reception.dateTime,
+  location: props.invitationData?.details?.reception?.location ?? props.invitationData?.details?.receptionLocation ?? defaultDetails.value.reception.location,
+}));
 const userMap = computed(() => ({ ...templateDefaults.map, ...(props.invitationData?.mapSettings || {}), ...(props.invitationData?.map || {}) }));
 const faqItems = computed(() => (Array.isArray(props.invitationData?.faq) && props.invitationData.faq.length ? props.invitationData.faq : templateDefaults.faq).map((item, index) => ({
   id: item.id || `faq-${index + 1}`,
@@ -61,16 +93,27 @@ const styles = computed(() => props.invitationData?.styles || {});
 const tokens = computed(() => ({ ...fallbackEditorialTokens, ...(styles.value?.themeTokens || {}) }));
 const styleColors = computed(() => styles.value?.colors || {});
 const styleFonts = computed(() => styles.value?.fonts || {});
-const enabledBlocks = computed(() => (props.invitationData?.blocks || [])
-  .filter((block) => block.enabled)
+const allBlocks = computed(() => props.invitationData?.blocks || []);
+const enabledBlocks = computed(() => allBlocks.value
+  .filter((block) => block.enabled === true)
   .slice()
-  .sort((a, b) => (a.order || 0) - (b.order || 0)));
-const blocks = enabledBlocks;
-const mapBlockSettings = computed(() => blockByType('map').settings || {});
+  .sort((a, b) => Number(a.order || 0) - Number(b.order || 0)));
+const findBlockByTypeOrId = (type, id) => allBlocks.value.find((block) => block.id === id || block.type === type) || null;
+const countdownBlock = computed(() => findBlockByTypeOrId('countdown_wedding', 'countdown-wedding') || findBlockByTypeOrId('countdown', 'countdown-main'));
+const storyBlock = computed(() => findBlockByTypeOrId('story', 'story'));
+const galleryBlock = computed(() => findBlockByTypeOrId('gallery', 'gallery'));
+const mapBlock = computed(() => findBlockByTypeOrId('map', 'map'));
+const rsvpBlock = computed(() => findBlockByTypeOrId('rsvp', 'rsvp'));
+const mapBlockSettings = computed(() => mapBlock.value?.settings || {});
 const withoutEmptyValues = (value) => Object.fromEntries(Object.entries(value || {}).filter(([, entryValue]) => entryValue !== undefined && entryValue !== null && entryValue !== ''));
 const mapSettings = computed(() => ({ ...userMap.value, ...withoutEmptyValues(mapBlockSettings.value) }));
+const generatedMapEmbedUrl = computed(() => {
+  const query = mapSettings.value.address || base.value.locationAddress || mapSettings.value.locationName || base.value.locationName;
+  return query ? `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed` : templateDefaults.map.embedUrl;
+});
+const resolvedMapEmbedUrl = computed(() => mapSettings.value.embedUrl || generatedMapEmbedUrl.value);
 const galleryImages = computed(() => {
-  const configuredImages = blockByType('gallery').settings?.images;
+  const configuredImages = galleryBlock.value?.settings?.images;
   if (Array.isArray(configuredImages) && configuredImages.some((image) => image?.src)) return configuredImages;
   return Array.isArray(userImages.value.galleryImages) && userImages.value.galleryImages.length
     ? userImages.value.galleryImages
@@ -78,12 +121,13 @@ const galleryImages = computed(() => {
 });
 const imageSrc = (field, fallbackIndex) => userImages.value?.[field] || sampleImages[fallbackIndex];
 
-const hasBlock = (type) => blocks.value.some((block) => block.type === type);
-const blockByType = (type) => blocks.value.find((block) => block.type === type) || {};
-
-const fixedBlockTypes = ['countdown_wedding', 'story', 'gallery', 'map', 'rsvp'];
-const dynamicExtraBlocks = computed(() => enabledBlocks.value.filter((block) => !fixedBlockTypes.includes(block.type) && getBlockConfig(block.type)?.component));
-const blockComponent = (type) => getBlockConfig(type)?.component || null;
+const fixedBlockIds = ['countdown-main', 'countdown-wedding', 'story', 'gallery', 'map', 'rsvp'];
+const fixedBlockTypes = ['countdown', 'countdown_wedding', 'story', 'gallery', 'map', 'rsvp'];
+const dynamicExtraBlocks = computed(() => (props.invitationData?.blocks || [])
+  .filter((block) => block.enabled === true)
+  .filter((block) => !fixedBlockIds.includes(block.id) && !fixedBlockTypes.includes(block.type))
+  .sort((a, b) => Number(a.order || 0) - Number(b.order || 0)));
+const blockComponent = (type) => blockRegistry[type] || getBlockConfig(type)?.component || UnsupportedBlock;
 const blockProps = (block) => ({ ...(block.props || {}), ...(block.settings || {}) });
 
 const names = computed(() => base.value.coupleNames || base.value.names || templateDefaults.base.coupleNames);
@@ -104,8 +148,8 @@ const formatEventDateTime = (value) => {
   return `${formatted} · ${time}`;
 };
 const formattedDate = computed(() => formatEventDateTime(eventDate.value));
-const ceremonyDate = computed(() => formatEventDateTime(details.value.ceremonyDate || eventDate.value));
-const receptionDate = computed(() => formatEventDateTime(details.value.receptionDate || eventDate.value));
+const ceremonyDate = computed(() => formatEventDateTime(ceremony.value.dateTime || eventDate.value));
+const receptionDate = computed(() => formatEventDateTime(reception.value.dateTime || eventDate.value));
 const activePreviewTarget = computed(() => props.invitationData?.activePreviewTarget || null);
 
 const hasCustomBackground = computed(() => Boolean(styleColors.value.backgroundColor));
@@ -276,12 +320,12 @@ Vue.onUnmounted(() => {
       <span class="hero-scroll-indicator" aria-hidden="true"></span>
     </section>
 
-    <section v-if="hasBlock('story')" id="story" class="romantic-template__story story motion-section" data-preview-target="story" :class="{ 'is-preview-focused': activePreviewTarget === 'story' }" :ref="setRevealRef">
+    <section v-if="storyBlock?.enabled" id="story" class="romantic-template__story story motion-section" data-preview-target="story" :class="{ 'is-preview-focused': activePreviewTarget === 'story' }" :ref="setRevealRef">
       <div class="romantic-template__story-grid romantic-template__container">
         <div class="romantic-template__story-content motion-left" :ref="setRevealRef">
           <p class="eyebrow">Nuestra historia</p>
           <h2 class="romantic-section-title romantic-template__section-title romantic-template__story-title">Un sí para celebrar con quienes más queremos</h2>
-          <p>{{ blockByType('story').settings?.message || base.storyMessage || templateDefaults.base.storyMessage }}</p>
+          <p>{{ storyBlock?.settings?.message || base.storyMessage || templateDefaults.base.storyMessage }}</p>
         </div>
         <div class="romantic-template__story-media motion-right" :ref="setRevealRef">
           <img :src="imageSrc('storyImage', 1)" alt="Momento romántico de la pareja" />
@@ -298,10 +342,12 @@ Vue.onUnmounted(() => {
       aria-label="Imagen destacada de la pareja"
     ></section>
 
-    <section v-if="hasBlock('countdown_wedding')" class="romantic-template__countdown romantic-section motion-section" data-preview-target="countdown" :class="{ 'is-preview-focused': activePreviewTarget === 'countdown' }" :ref="setRevealRef">
+    <section v-if="countdownBlock?.enabled" class="romantic-template__countdown romantic-section motion-section" data-preview-target="countdown" :class="{ 'is-preview-focused': activePreviewTarget === 'countdown' }" :ref="setRevealRef">
       <CountdownBlock
-        :target-date="blockByType('countdown_wedding').settings?.targetDate || countdownTargetDate"
-        :title="blockByType('countdown_wedding').settings?.title || 'Cuenta regresiva'"
+        :block="countdownBlock"
+        v-bind="blockProps(countdownBlock)"
+        :target-date="countdownBlock?.settings?.targetDate || countdownTargetDate"
+        :title="countdownBlock?.settings?.title || 'Cuenta regresiva'"
         variant="editorial"
       />
     </section>
@@ -315,16 +361,16 @@ Vue.onUnmounted(() => {
         <div class="romantic-template__details-list">
           <article class="romantic-template__detail-card">
             <span>01</span>
-            <h3 class="romantic-template__detail-title">{{ details.ceremonyTitle }}</h3>
+            <h3 class="romantic-template__detail-title">{{ ceremony.title }}</h3>
             <p>{{ ceremonyDate }}</p>
-            <p>{{ details.ceremonyLocation || eventLocation }}</p>
+            <p>{{ ceremony.location || eventLocation }}</p>
             <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
           </article>
           <article class="romantic-template__detail-card romantic-template__detail-card--accent">
             <span>02</span>
-            <h3 class="romantic-template__detail-title">{{ details.receptionTitle }}</h3>
+            <h3 class="romantic-template__detail-title">{{ reception.title }}</h3>
             <p>{{ receptionDate }}</p>
-            <p>{{ details.receptionLocation || eventAddress }}</p>
+            <p>{{ reception.location || eventAddress }}</p>
             <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
           </article>
         </div>
@@ -338,30 +384,34 @@ Vue.onUnmounted(() => {
       <p>Cada historia de amor merece celebrarse</p>
     </section>
 
-    <section v-if="hasBlock('gallery')" class="romantic-template__gallery gallery romantic-section motion-section" data-preview-target="gallery" :class="{ 'is-preview-focused': activePreviewTarget === 'gallery' }" :ref="setRevealRef">
-      <GalleryBlock :images="galleryImages" :title="blockByType('gallery').settings?.title || 'Galería'" integrated />
+    <section v-if="galleryBlock?.enabled" class="romantic-template__gallery gallery romantic-section motion-section" data-preview-target="gallery" :class="{ 'is-preview-focused': activePreviewTarget === 'gallery' }" :ref="setRevealRef">
+      <GalleryBlock :block="galleryBlock" v-bind="blockProps(galleryBlock)" :images="galleryImages" :title="galleryBlock?.settings?.title || 'Galería'" integrated />
     </section>
 
-    <section v-if="hasBlock('rsvp')" id="rsvp" class="romantic-template__rsvp romantic-section motion-section" data-preview-target="rsvp" :class="{ 'is-preview-focused': activePreviewTarget === 'rsvp' }" :ref="setRevealRef">
+    <section v-if="rsvpBlock?.enabled" id="rsvp" class="romantic-template__rsvp romantic-section motion-section" data-preview-target="rsvp" :class="{ 'is-preview-focused': activePreviewTarget === 'rsvp' }" :ref="setRevealRef">
       <div class="rsvp-intro">
         <p class="eyebrow">RSVP</p>
         <h2 class="romantic-section-title romantic-template__section-title">Confirma tu asistencia</h2>
         <p>Tu respuesta nos ayuda a preparar cada detalle de esta celebración.</p>
       </div>
       <RSVPBlock
-        :title="blockByType('rsvp').settings?.title || 'Confirma tu asistencia'"
-        :button-label="blockByType('rsvp').settings?.buttonLabel || 'Enviar confirmación'"
+        :block="rsvpBlock"
+        v-bind="blockProps(rsvpBlock)"
+        :title="rsvpBlock?.settings?.title || 'Confirma tu asistencia'"
+        :button-label="rsvpBlock?.settings?.buttonLabel || 'Enviar confirmación'"
       />
     </section>
 
-    <section v-if="hasBlock('map')" id="map" class="romantic-template__map-faq romantic-template__map-faq-grid romantic-template__container motion-section" data-preview-target="map" :class="{ 'is-preview-focused': activePreviewTarget === 'map' || activePreviewTarget === 'faq' }" :ref="setRevealRef">
+    <section v-if="mapBlock?.enabled" id="map" class="romantic-template__map-faq romantic-template__map-faq-grid romantic-template__container motion-section" data-preview-target="map" :class="{ 'is-preview-focused': activePreviewTarget === 'map' || activePreviewTarget === 'faq' }" :ref="setRevealRef">
       <div class="romantic-section map-wrap">
         <p class="eyebrow">Ubicación</p>
         <MapBlock
+          :block="mapBlock"
+          v-bind="blockProps(mapBlock)"
           :location-name="mapSettings.locationName || eventLocation"
           :address="mapSettings.address || ''"
           :map-url="mapSettings.mapUrl || ''"
-          :embed-url="mapSettings.embedUrl || ''"
+          :embed-url="resolvedMapEmbedUrl"
         />
       </div>
       <div class="faq" data-preview-target="faq" :class="{ 'is-preview-focused': activePreviewTarget === 'faq' }">
@@ -379,11 +429,12 @@ Vue.onUnmounted(() => {
       </div>
     </section>
 
-    <section v-if="dynamicExtraBlocks.length" class="romantic-template__extras romantic-section motion-section" :data-preview-target="activePreviewTarget" :class="{ 'is-preview-focused': dynamicExtraBlocks.some((block) => block.type === activePreviewTarget) }" :ref="setRevealRef">
+    <section v-if="dynamicExtraBlocks.length" class="romantic-template__dynamic-extras romantic-section motion-section" data-preview-target="extras" :class="{ 'is-preview-focused': activePreviewTarget === 'extras' }" :ref="setRevealRef">
       <component
         :is="blockComponent(block.type)"
         v-for="block in dynamicExtraBlocks"
-        :key="block.id"
+        :key="`${block.id}-${block.type}-${block.enabled}`"
+        :block="block"
         v-bind="blockProps(block)"
       />
     </section>

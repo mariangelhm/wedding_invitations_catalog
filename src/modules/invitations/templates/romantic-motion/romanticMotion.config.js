@@ -51,11 +51,13 @@ export const romanticMotionConfig = {
       countdownTargetDate: '2027-06-14T18:00:00',
     },
     details: {
+      ceremony: { title: 'Ceremonia', dateTime: '2027-06-14T18:00:00', location: 'Rose Garden Hall' },
+      reception: { title: 'Celebración', dateTime: '2027-06-14T21:00:00', location: 'Santiago, Chile' },
       ceremonyTitle: 'Ceremonia',
       ceremonyDate: '2027-06-14T18:00:00',
       ceremonyLocation: 'Rose Garden Hall',
       receptionTitle: 'Celebración',
-      receptionDate: '2027-06-14T18:00:00',
+      receptionDate: '2027-06-14T21:00:00',
       receptionLocation: 'Santiago, Chile',
     },
     map: {

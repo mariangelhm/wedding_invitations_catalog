@@ -745,13 +745,13 @@
   color: var(--custom-body-color, var(--theme-muted-text, #757575));
 }
 
-.romantic-template__extras {
+.romantic-template__dynamic-extras {
   display: grid;
   gap: 24px;
   background: var(--custom-section-bg, var(--theme-section-bg, #FFFFFF));
 }
 
-.romantic-template__extras > * {
+.romantic-template__dynamic-extras > * {
   width: 100%;
 }
 
@@ -1007,8 +1007,15 @@
   outline: 2px solid var(--custom-accent-color, #A67C52);
   outline-offset: 8px;
   transition: outline 0.2s ease;
+  animation: previewFocusPulse 1.2s ease;
 }
 
+@keyframes previewFocusPulse {
+  0% { box-shadow: 0 0 0 0 rgba(166, 124, 82, 0.35); }
+  100% { box-shadow: 0 0 0 18px rgba(166, 124, 82, 0); }
+}
+
+.romantic-template.has-custom-background,
 .romantic-template.has-custom-background .romantic-template__hero,
 .romantic-template.has-custom-background .romantic-template__story,
 .romantic-template.has-custom-background .romantic-template__details,
@@ -1016,7 +1023,7 @@
 .romantic-template.has-custom-background .romantic-template__countdown,
 .romantic-template.has-custom-background .romantic-template__map-faq,
 .romantic-template.has-custom-background .romantic-template__rsvp,
-.romantic-template.has-custom-background .romantic-template__extras {
+.romantic-template.has-custom-background .romantic-template__dynamic-extras {
   background: var(--custom-page-bg);
 }
 
@@ -1072,3 +1079,6 @@
 .romantic-template .map-help {
   color: var(--custom-accent-color, var(--theme-accent, #303030));
 }
+
+.unsupported-block{border:1px dashed var(--custom-accent-color,#A67C52);border-radius:14px;padding:18px;display:grid;gap:4px;background:color-mix(in srgb,var(--custom-page-bg,#fff) 88%,#fff);color:var(--custom-body-color,#575757)}
+.unsupported-block strong{color:var(--custom-title-color,#303030);font-family:var(--font-headings,'Playfair Display'),Georgia,serif}

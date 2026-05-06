@@ -41,23 +41,32 @@ const blockOptions = [
   { type: 'rsvp', label: 'RSVP', description: 'Confirmación de asistencia.', price: 2000, preview: 'rsvp' },
 ];
 
+const backgroundSolids = [
+  '#FFFFFF', '#FDFDFD', '#F7F7F5', '#F4F1EA', '#EFEBE9',
+  '#FAF3F0', '#FDECEF', '#F8E1E7', '#F2D7DD', '#E8E3DB',
+  '#D8C7B0', '#F2EFE9', '#EAF1ED', '#DDE7E1', '#EAF2F8',
+  '#DCE8F2', '#F4EDE4', '#FFF7ED', '#F5E6D3', '#111827',
+  '#1A1A1A', '#2F2E2E', '#354F52', '#2C3E50', '#3A332E',
+];
 const backgroundOptions = [
-  { type: 'solid', label: 'Marfil', value: '#F7F7F5' },
-  { type: 'solid', label: 'Beige arena', value: '#EFEBE9' },
-  { type: 'solid', label: 'Rosa viejo', value: '#FAF3F0' },
-  { type: 'solid', label: 'Verde salvia', value: '#F2EFE9' },
-  { type: 'solid', label: 'Azul noche', value: '#111827' },
-  { type: 'gradient', label: 'Crema suave', value: 'linear-gradient(180deg, #F7F7F5 0%, #EFEBE9 100%)' },
-  { type: 'gradient', label: 'Rosa editorial', value: 'linear-gradient(180deg, #FAF3F0 0%, #FFFFFF 100%)' },
+  ...backgroundSolids.map((value) => ({ type: 'solid', label: value, value })),
+  { type: 'gradient', label: 'Marfil suave', value: 'linear-gradient(180deg, #FFFFFF 0%, #F4F1EA 100%)' },
+  { type: 'gradient', label: 'Rosa editorial', value: 'linear-gradient(135deg, #FAF3F0 0%, #FFFFFF 55%, #F8E1E7 100%)' },
   { type: 'gradient', label: 'Arena cálida', value: 'linear-gradient(135deg, #F6F1EA 0%, #E8E3DB 100%)' },
+  { type: 'gradient', label: 'Salvia suave', value: 'linear-gradient(135deg, #F2EFE9 0%, #DDE7E1 100%)' },
+  { type: 'gradient', label: 'Noche elegante', value: 'linear-gradient(135deg, #111827 0%, #2F2E2E 100%)' },
+  { type: 'texture', label: 'Papel editorial', value: 'radial-gradient(circle at 20% 20%, rgba(166,124,82,.10), transparent 30%), linear-gradient(180deg, #F7F7F5, #EFEBE9)' },
+  { type: 'texture', label: 'Formas suaves', value: 'radial-gradient(circle at 12% 18%, rgba(181,131,141,.22), transparent 22%), radial-gradient(circle at 86% 12%, rgba(166,124,82,.14), transparent 24%), linear-gradient(180deg, #FFFFFF, #F4F1EA)' },
+  { type: 'texture', label: 'Lino claro', value: 'repeating-linear-gradient(45deg, rgba(166,124,82,.05) 0 1px, transparent 1px 7px), linear-gradient(180deg, #F7F7F5, #FFFFFF)' },
+  { type: 'texture', label: 'Dusty Rose', value: 'radial-gradient(circle at 18% 12%, rgba(194,91,108,.16), transparent 24%), linear-gradient(180deg, #FAF3F0, #FFFFFF)' },
 ];
 const letterColorSwatches = [
-  '#111827', '#1A1A1A', '#2F2E2E', '#3A332E',
-  '#4A3F35', '#57534E', '#6B4242', '#7A2E45',
-  '#9F1239', '#A67C52', '#B5838D', '#C5A059',
-  '#D4A373', '#354F52', '#2C3E50', '#84A59D',
-  '#5B6C5D', '#6D5D6E', '#FFFFFF', '#F7F7F5',
-  '#EFEBE9',
+  '#000000', '#111827', '#1A1A1A', '#2F2E2E', '#3A332E',
+  '#4A3F35', '#57534E', '#6B4242', '#7A2E45', '#9F1239',
+  '#A61E4D', '#BE3455', '#C25B6C', '#A67C52', '#B5838D',
+  '#C5A059', '#D4A373', '#354F52', '#2C3E50', '#1F4E5F',
+  '#84A59D', '#5B6C5D', '#6D5D6E', '#8A7A68', '#FFFFFF',
+  '#F7F7F5', '#EFEBE9', '#F8E1E7', '#E8E3DB', '#DDE7E1',
 ];
 const titleColorSwatches = letterColorSwatches;
 const bodyColorSwatches = letterColorSwatches;
@@ -174,7 +183,7 @@ const applyThemePreset = (preset) => {
             >
               <span class="background-option-preview" :style="{ background: option.value }"></span>
               <span>{{ option.label }}</span>
-              <small>{{ option.type === 'gradient' ? 'Textura suave' : 'Color sólido' }}</small>
+              <small>{{ option.type === 'solid' ? 'Color sólido' : 'Textura suave' }}</small>
             </button>
           </div>
         </div>

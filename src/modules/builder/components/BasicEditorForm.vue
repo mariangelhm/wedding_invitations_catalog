@@ -28,14 +28,14 @@ const weddingDate = computed({
   set: (value) => builderStore.updateBaseField('eventDate', value),
 });
 
-const detailsDateModel = (field) => computed({
-  get: () => toDateTimeLocal(builderStore.invitation?.details?.[field]),
-  set: (value) => builderStore.updateDetailsField(field, value),
+const detailFieldModel = (section, field) => computed({
+  get: () => builderStore.invitation?.details?.[section]?.[field] || '',
+  set: (value) => builderStore.updateDetailField(section, field, value),
 });
 
-const detailsFieldModel = (field) => computed({
-  get: () => builderStore.invitation?.details?.[field] || '',
-  set: (value) => builderStore.updateDetailsField(field, value),
+const detailDateModel = (section, field) => computed({
+  get: () => toDateTimeLocal(builderStore.invitation?.details?.[section]?.[field]),
+  set: (value) => builderStore.updateDetailField(section, field, value),
 });
 
 const mapFieldModel = (field) => computed({
@@ -54,12 +54,12 @@ const locationAddress = baseFieldModel('locationAddress');
 const message = baseFieldModel('message');
 const storyMessage = baseFieldModel('storyMessage');
 
-const ceremonyTitle = detailsFieldModel('ceremonyTitle');
-const ceremonyDate = detailsDateModel('ceremonyDate');
-const ceremonyLocation = detailsFieldModel('ceremonyLocation');
-const receptionTitle = detailsFieldModel('receptionTitle');
-const receptionDate = detailsDateModel('receptionDate');
-const receptionLocation = detailsFieldModel('receptionLocation');
+const ceremonyTitle = detailFieldModel('ceremony', 'title');
+const ceremonyDate = detailDateModel('ceremony', 'dateTime');
+const ceremonyLocation = detailFieldModel('ceremony', 'location');
+const receptionTitle = detailFieldModel('reception', 'title');
+const receptionDate = detailDateModel('reception', 'dateTime');
+const receptionLocation = detailFieldModel('reception', 'location');
 
 const mapSearchText = mapFieldModel('mapSearchText');
 const mapLocationName = mapFieldModel('locationName');
@@ -69,6 +69,11 @@ const embedUrl = mapFieldModel('embedUrl');
 
 const uploadLabel = computed(() => (isMobileEditor.value ? 'Subir desde el teléfono' : 'Subir desde la computadora'));
 const selectedFileNames = ref({});
+const mapPreviewUrl = ref('');
+const showAdvancedMapOptions = ref(false);
+
+const mapsSearchUrl = (query) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+const mapsEmbedUrl = (query) => `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
 
 const fileMetadata = (file) => (file ? { name: file.name, size: file.size, type: file.type, lastModified: file.lastModified } : null);
 const onImageFileSelected = (field, event) => {
@@ -86,11 +91,22 @@ const onGalleryFilesSelected = (event) => {
   selectedFileNames.value = { ...selectedFileNames.value, galleryImages: Array.from(event.target.files || []).map((file) => file.name).join(', ') };
 };
 
-const openMapSearch = () => {
+const previewMapSearch = () => {
   const query = mapSearchText.value || `${locationName.value} ${locationAddress.value}`.trim();
   if (!query) return;
-  window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, '_blank', 'noopener,noreferrer');
+  mapPreviewUrl.value = mapsEmbedUrl(query);
   builderStore.setActivePreviewTarget('map');
+};
+
+const useMapSearchLocation = () => {
+  const query = mapSearchText.value || `${locationName.value} ${locationAddress.value}`.trim();
+  if (!query) return;
+  const embed = mapsEmbedUrl(query);
+  mapPreviewUrl.value = embed;
+  builderStore.updateBaseField('locationAddress', query);
+  builderStore.updateMapField('address', query);
+  builderStore.updateMapField('embedUrl', embed);
+  builderStore.updateMapField('mapUrl', mapsSearchUrl(query));
 };
 </script>
 
@@ -127,17 +143,24 @@ const openMapSearch = () => {
 
       <h3>Mapa</h3>
       <label class="editor-field editor-field--map-search">
-        <span>Buscar ubicación en Google Maps</span>
+        <span>Buscar dirección</span>
         <div class="editor-field__inline">
           <input v-model="mapSearchText" type="search" placeholder="Nombre del lugar o dirección" />
-          <button type="button" @click="openMapSearch">Buscar mapa</button>
+          <button type="button" @click="previewMapSearch">Previsualizar mapa</button>
         </div>
-        <small>Busca la dirección, abre Compartir &gt; Insertar un mapa y pega la URL de inserción si quieres mostrar el mapa embebido.</small>
+        <small>Escribe una dirección para previsualizarla sin salir del editor.</small>
       </label>
+      <div v-if="mapPreviewUrl || embedUrl" class="editor-map-preview">
+        <iframe :src="mapPreviewUrl || embedUrl" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <button type="button" @click="useMapSearchLocation">Usar esta ubicación</button>
+      </div>
       <Input v-model="mapLocationName" label="Nombre del lugar en mapa" />
       <Input v-model="mapLocationAddress" label="Dirección del mapa" />
       <Input v-model="mapUrl" label="URL de Google Maps" />
-      <Input v-model="embedUrl" label="URL de insertar mapa" />
+      <button class="editor-advanced-toggle" type="button" @click="showAdvancedMapOptions = !showAdvancedMapOptions">Opciones avanzadas</button>
+      <div v-if="showAdvancedMapOptions" class="form-fields">
+        <Input v-model="embedUrl" label="URL de insertar mapa" />
+      </div>
 
       <h3>Imágenes</h3>
       <label class="editor-field editor-field--file">
@@ -184,5 +207,9 @@ const openMapSearch = () => {
 .editor-field__inline { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem; }
 .editor-field__inline button { border: 0; border-radius: 0.55rem; background: #111827; color: #fff; cursor: pointer; padding: 0.6rem 0.8rem; font-weight: 700; }
 .editor-field--file input { background: #fff; }
+.editor-map-preview { display: grid; gap: 8px; }
+.editor-map-preview iframe { width: 100%; height: 220px; border: 0; border-radius: 12px; background: #f3f4f6; }
+.editor-map-preview button, .editor-advanced-toggle { border: 0; border-radius: 0.55rem; background: #111827; color: #fff; cursor: pointer; padding: 0.6rem 0.8rem; font-weight: 700; }
+.editor-advanced-toggle { justify-self: start; background: #374151; }
 @media (max-width: 640px) { .editor-field__inline { grid-template-columns: 1fr; } }
 </style>

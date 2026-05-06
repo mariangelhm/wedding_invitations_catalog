@@ -37,7 +37,45 @@ const normalizeBase = (base = {}, defaults = romanticDefaults.base) => ({
   countdownTargetDate: base.countdownTargetDate || base.eventDate || defaults.countdownTargetDate || defaults.eventDate || '',
 });
 
-const normalizeDetails = (details = {}, defaults = romanticDefaults.details) => ({ ...defaults, ...details });
+const normalizeDetails = (details = {}, defaults = romanticDefaults.details) => {
+  const defaultCeremony = defaults.ceremony || {
+    title: defaults.ceremonyTitle || 'Ceremonia',
+    dateTime: defaults.ceremonyDate || romanticDefaults.base.eventDate,
+    location: defaults.ceremonyLocation || romanticDefaults.base.locationName,
+  };
+  const defaultReception = defaults.reception || {
+    title: defaults.receptionTitle || 'Celebración',
+    dateTime: defaults.receptionDate || romanticDefaults.base.eventDate,
+    location: defaults.receptionLocation || romanticDefaults.base.locationAddress,
+  };
+  const ceremony = {
+    ...defaultCeremony,
+    ...(details.ceremony || {}),
+    title: details.ceremony?.title ?? details.ceremonyTitle ?? defaultCeremony.title,
+    dateTime: details.ceremony?.dateTime ?? details.ceremonyDate ?? defaultCeremony.dateTime,
+    location: details.ceremony?.location ?? details.ceremonyLocation ?? defaultCeremony.location,
+  };
+  const reception = {
+    ...defaultReception,
+    ...(details.reception || {}),
+    title: details.reception?.title ?? details.receptionTitle ?? defaultReception.title,
+    dateTime: details.reception?.dateTime ?? details.receptionDate ?? defaultReception.dateTime,
+    location: details.reception?.location ?? details.receptionLocation ?? defaultReception.location,
+  };
+
+  return {
+    ...defaults,
+    ...details,
+    ceremony,
+    reception,
+    ceremonyTitle: ceremony.title,
+    ceremonyDate: ceremony.dateTime,
+    ceremonyLocation: ceremony.location,
+    receptionTitle: reception.title,
+    receptionDate: reception.dateTime,
+    receptionLocation: reception.location,
+  };
+};
 const normalizeMap = (map = {}, defaults = romanticDefaults.map) => ({ ...defaults, mapSearchText: map.mapSearchText || map.locationName || map.address || defaults.locationName || '', ...map });
 const normalizeFaq = (faq = [], defaults = romanticDefaults.faq) => (Array.isArray(faq) && faq.length ? faq : defaults).map((item, index) => ({
   id: item.id || `faq-${index + 1}`,
@@ -242,7 +280,22 @@ export const useBuilderStore = defineStore('builderStore', {
     },
     updateDetailsField(field, value) {
       if (!this.invitation) return;
-      this.invitation = { ...this.invitation, details: { ...normalizeDetails(this.invitation.details), [field]: value } };
+      const currentDetails = normalizeDetails(this.invitation.details);
+      const nextDetails = { ...currentDetails, [field]: value };
+      this.invitation = { ...this.invitation, details: normalizeDetails(nextDetails) };
+      this.setActivePreviewTarget('details');
+    },
+    updateDetailField(section, field, value) {
+      if (!this.invitation) return;
+      const currentDetails = normalizeDetails(this.invitation.details);
+      const nextDetails = {
+        ...currentDetails,
+        [section]: {
+          ...(currentDetails?.[section] || {}),
+          [field]: value,
+        },
+      };
+      this.invitation = { ...this.invitation, details: normalizeDetails(nextDetails) };
       this.setActivePreviewTarget('details');
     },
     updateMapField(field, value) {
@@ -309,15 +362,18 @@ export const useBuilderStore = defineStore('builderStore', {
     },
     toggleBlock(blockId, enabled) {
       if (!this.invitation) return;
-      let target = blockId;
-      const nextBlocks = (this.invitation.blocks || []).map((block) => {
-        if (block.id !== blockId && block.type !== blockId) return block;
-        target = block.type;
-        return { ...block, enabled: enabled ?? !block.enabled };
-      });
-      this.invitation = { ...this.invitation, blocks: nextBlocks };
-      const targetAliases = { countdown_wedding: 'countdown', countdown_rsvp: 'countdown' };
-      this.setActivePreviewTarget(targetAliases[target] || target);
+      const currentBlocks = this.invitation?.blocks || [];
+      const changedBlock = currentBlocks.find((block) => block.id === blockId || block.type === blockId);
+
+      this.invitation = {
+        ...this.invitation,
+        blocks: currentBlocks.map((block) => (block.id === blockId || block.type === blockId
+          ? { ...block, enabled: Boolean(enabled) }
+          : block)),
+      };
+
+      const targetAliases = { countdown_wedding: 'countdown', countdown: 'countdown', gallery: 'gallery', map: 'map', rsvp: 'rsvp', story: 'story' };
+      this.setActivePreviewTarget(targetAliases[changedBlock?.type] || 'extras');
     },
     updateBlockOrder(blockId, direction) {
       if (!this.invitation) return;
