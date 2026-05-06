@@ -41,9 +41,35 @@ const blockOptions = [
   { type: 'rsvp', label: 'RSVP', description: 'Confirmación de asistencia.', price: 2000, preview: 'rsvp' },
 ];
 
-const backgroundSwatches = ['#C7355C', '#F97316', '#2563EB', '#16A34A', '#7C3AED', '#111827', '#FBE8EE', '#FFFFFF'];
-const titleColorSwatches = ['#111827', '#374151', '#4B5563', '#6B7280', '#C7355C', '#B76E79', '#9A6B4F', '#B88A44', '#D4AF37', '#FFFFFF', '#F8FAFC', '#1F2937'];
-const bodyColorSwatches = ['#111827', '#374151', '#4B5563', '#6B7280', '#C7355C', '#B76E79', '#9A6B4F', '#B88A44', '#D4AF37', '#FFFFFF', '#F8FAFC', '#1F2937'];
+const backgroundSolids = [
+  '#FFFFFF', '#FDFDFD', '#F7F7F5', '#F4F1EA', '#EFEBE9',
+  '#FAF3F0', '#FDECEF', '#F8E1E7', '#F2D7DD', '#E8E3DB',
+  '#D8C7B0', '#F2EFE9', '#EAF1ED', '#DDE7E1', '#EAF2F8',
+  '#DCE8F2', '#F4EDE4', '#FFF7ED', '#F5E6D3', '#111827',
+  '#1A1A1A', '#2F2E2E', '#354F52', '#2C3E50', '#3A332E',
+];
+const backgroundOptions = [
+  ...backgroundSolids.map((value) => ({ type: 'solid', label: value, value })),
+  { type: 'gradient', label: 'Marfil suave', value: 'linear-gradient(180deg, #FFFFFF 0%, #F4F1EA 100%)' },
+  { type: 'gradient', label: 'Rosa editorial', value: 'linear-gradient(135deg, #FAF3F0 0%, #FFFFFF 55%, #F8E1E7 100%)' },
+  { type: 'gradient', label: 'Arena cálida', value: 'linear-gradient(135deg, #F6F1EA 0%, #E8E3DB 100%)' },
+  { type: 'gradient', label: 'Salvia suave', value: 'linear-gradient(135deg, #F2EFE9 0%, #DDE7E1 100%)' },
+  { type: 'gradient', label: 'Noche elegante', value: 'linear-gradient(135deg, #111827 0%, #2F2E2E 100%)' },
+  { type: 'texture', label: 'Papel editorial', value: 'radial-gradient(circle at 20% 20%, rgba(166,124,82,.10), transparent 30%), linear-gradient(180deg, #F7F7F5, #EFEBE9)' },
+  { type: 'texture', label: 'Formas suaves', value: 'radial-gradient(circle at 12% 18%, rgba(181,131,141,.22), transparent 22%), radial-gradient(circle at 86% 12%, rgba(166,124,82,.14), transparent 24%), linear-gradient(180deg, #FFFFFF, #F4F1EA)' },
+  { type: 'texture', label: 'Lino claro', value: 'repeating-linear-gradient(45deg, rgba(166,124,82,.05) 0 1px, transparent 1px 7px), linear-gradient(180deg, #F7F7F5, #FFFFFF)' },
+  { type: 'texture', label: 'Dusty Rose', value: 'radial-gradient(circle at 18% 12%, rgba(194,91,108,.16), transparent 24%), linear-gradient(180deg, #FAF3F0, #FFFFFF)' },
+];
+const letterColorSwatches = [
+  '#000000', '#111827', '#1A1A1A', '#2F2E2E', '#3A332E',
+  '#4A3F35', '#57534E', '#6B4242', '#7A2E45', '#9F1239',
+  '#A61E4D', '#BE3455', '#C25B6C', '#A67C52', '#B5838D',
+  '#C5A059', '#D4A373', '#354F52', '#2C3E50', '#1F4E5F',
+  '#84A59D', '#5B6C5D', '#6D5D6E', '#8A7A68', '#FFFFFF',
+  '#F7F7F5', '#EFEBE9', '#F8E1E7', '#E8E3DB', '#DDE7E1',
+];
+const titleColorSwatches = letterColorSwatches;
+const bodyColorSwatches = letterColorSwatches;
 const fontStacks = {
   'Playfair Display': "'Playfair Display', Georgia, serif",
   'Cormorant Garamond': "'Cormorant Garamond', Georgia, serif",
@@ -69,8 +95,7 @@ watch(selectedTemplate, (template) => {
 
 const invitation = computed(() => builderStore.invitation);
 const orderedBlocks = computed(() => (invitation.value?.blocks || []).slice().sort((a, b) => a.order - b.order));
-const mapBlock = computed(() => orderedBlocks.value.find((block) => block.type === 'map'));
-const selectedExtras = computed(() => orderedBlocks.value.filter((block) => block.enabled && (block.price || 0) > 0));
+const selectedExtras = computed(() => orderedBlocks.value.filter((block) => block.enabled && !block.included && (block.price || 0) > 0));
 
 const formatPrice = (value = 0) => `$${Number(value || 0).toLocaleString('es-CL')}`;
 const goToCheckout = () => {
@@ -81,9 +106,8 @@ const goToCheckout = () => {
   console.log('go to checkout');
 };
 
-const toggleBlockAddon = (item) => {
-  // Toggle enabled flag only. Blocks are never deleted so they can be re-enabled immediately.
-  builderStore.toggleBlock(item.type);
+const toggleBlockAddon = (item, event) => {
+  builderStore.toggleBlock(item.id, event?.target?.checked);
 };
 const onDragStart = (block) => { if (!block.enabled) return; draggingBlockId.value = block.id; };
 const onDropOver = (block) => { if (!block.enabled || !draggingBlockId.value || draggingBlockId.value === block.id) return; dropTargetBlockId.value = block.id; };
@@ -136,7 +160,7 @@ const applyThemePreset = (preset) => {
         <div v-if="selectedSection === 'background'" class="settings-block">
           <div class="tab-row"><button class="tab-btn" :class="{ active: backgroundTab==='themes' }" @click="backgroundTab='themes'">Temas</button><button class="tab-btn" :class="{ active: backgroundTab==='colors' }" @click="backgroundTab='colors'">Colores</button></div>
           <div v-if="backgroundTab==='themes'" class="theme-grid">
-            <button v-for="preset in themePresets" :key="preset.id" class="theme-card" :class="{ selected: invitation.styles.backgroundTheme===preset.id }" @click="applyThemePreset(preset)">
+            <button v-for="preset in themePresets" :key="preset.id" class="theme-card" :class="{ selected: invitation.styles.themeId===preset.id || invitation.styles.backgroundTheme===preset.id }" @click="applyThemePreset(preset)">
               <div class="theme-main">
                 <strong>{{ preset.name }}</strong>
                 <small>{{ preset.description }}</small>
@@ -144,25 +168,44 @@ const applyThemePreset = (preset) => {
               <div class="theme-palette">
                 <span v-for="(tone, idx) in preset.palette" :key="`${preset.id}-${idx}`" :style="{ background: tone }"></span>
               </div>
-              <span v-if="invitation.styles.backgroundTheme===preset.id" class="theme-check">✓</span>
+              <span v-if="invitation.styles.themeId===preset.id || invitation.styles.backgroundTheme===preset.id" class="theme-check">✓</span>
             </button>
           </div>
-          <div v-else class="swatch-grid"><button v-for="color in backgroundSwatches" :key="color" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation?.styles?.secondaryColor===color }" @click="invitation.styles.secondaryColor = color" /></div>
+          <div v-else class="background-option-grid">
+            <button
+              v-for="option in backgroundOptions"
+              :key="option.value"
+              class="background-option-card"
+              :class="{ selected: invitation?.styles?.colors?.backgroundColor===option.value || invitation?.styles?.secondaryColor===option.value }"
+              type="button"
+              @click="builderStore.updateStyleColor('backgroundColor', option.value)"
+            >
+              <span class="background-option-preview" :style="{ background: option.value }"></span>
+              <span>{{ option.label }}</span>
+              <small>{{ option.type === 'solid' ? 'Color sólido' : 'Textura suave' }}</small>
+            </button>
+          </div>
         </div>
         <div v-else-if="selectedSection === 'card'" class="settings-block"><BasicEditorForm /></div>
         <div v-else-if="selectedSection === 'style'" class="settings-block">
-          <div class="tab-row"><button class="tab-btn" :class="{ active: selectedTypographyTab==='names' }" @click="selectedTypographyTab='names'">Nombres</button><button class="tab-btn" :class="{ active: selectedTypographyTab==='general' }" @click="selectedTypographyTab='general'">General</button></div>
+          <div class="tab-row"><button class="tab-btn" :class="{ active: selectedTypographyTab==='names' }" @click="selectedTypographyTab='names'">Nombres</button><button class="tab-btn" :class="{ active: selectedTypographyTab==='headings' }" @click="selectedTypographyTab='headings'">Títulos</button><button class="tab-btn" :class="{ active: selectedTypographyTab==='general' }" @click="selectedTypographyTab='general'">General</button></div>
           <template v-if="selectedTypographyTab==='names'">
             <h4>Fuente para nombres</h4>
-            <div class="font-card-list"><button v-for="font in fontOptions" :key="`couple-${font}`" class="font-card" :class="{ selected: invitation.styles.coupleFontFamily===font }" :style="{ fontFamily: fontStacks[font] }" @click="invitation.styles.coupleFontFamily = font">{{ font }}</button></div>
-            <h4>Color de nombres/títulos</h4>
-            <div class="swatch-grid text-swatches"><button v-for="color in titleColorSwatches" :key="`title-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.titleColor===color }" @click="invitation.styles.titleColor = color" /></div>
+            <div class="font-card-list"><button v-for="font in fontOptions" :key="`couple-${font}`" class="font-card" :class="{ selected: invitation.styles.fonts?.namesFont===font || invitation.styles.coupleFontFamily===font }" :style="{ fontFamily: fontStacks[font] }" @click="builderStore.updateStyleFont('namesFont', font)">{{ font }}</button></div>
+            <h4>Color de nombres</h4>
+            <div class="swatch-grid text-swatches"><button v-for="color in letterColorSwatches" :key="`names-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.colors?.namesColor===color || invitation.styles.namesColor===color }" @click="builderStore.updateStyleColor('namesColor', color)" /></div>
+          </template>
+          <template v-else-if="selectedTypographyTab==='headings'">
+            <h4>Fuente para títulos</h4>
+            <div class="font-card-list"><button v-for="font in fontOptions" :key="`heading-${font}`" class="font-card" :class="{ selected: invitation.styles.fonts?.headingsFont===font }" :style="{ fontFamily: fontStacks[font] }" @click="builderStore.updateStyleFont('headingsFont', font)">{{ font }}</button></div>
+            <h4>Color de títulos</h4>
+            <div class="swatch-grid text-swatches"><button v-for="color in titleColorSwatches" :key="`title-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.colors?.titleColor===color || invitation.styles.titleColor===color }" @click="builderStore.updateStyleColor('titleColor', color)" /></div>
           </template>
           <template v-else>
             <h4>Fuente general</h4>
-            <div class="font-card-list"><button v-for="font in fontOptions" :key="`body-${font}`" class="font-card" :class="{ selected: invitation.styles.bodyFontFamily===font }" :style="{ fontFamily: fontStacks[font] }" @click="invitation.styles.bodyFontFamily = font">{{ font }}</button></div>
+            <div class="font-card-list"><button v-for="font in fontOptions" :key="`body-${font}`" class="font-card" :class="{ selected: invitation.styles.fonts?.bodyFont===font || invitation.styles.bodyFontFamily===font }" :style="{ fontFamily: fontStacks[font] }" @click="builderStore.updateStyleFont('bodyFont', font)">{{ font }}</button></div>
             <h4>Color de texto general</h4>
-            <div class="swatch-grid text-swatches"><button v-for="color in bodyColorSwatches" :key="`body-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.bodyTextColor===color }" @click="invitation.styles.bodyTextColor = color; invitation.styles.textColor = color" /></div>
+            <div class="swatch-grid text-swatches"><button v-for="color in bodyColorSwatches" :key="`body-${color}`" class="color-swatch" :style="{ background: color }" :class="{ selected: invitation.styles.colors?.bodyColor===color || invitation.styles.bodyTextColor===color }" @click="builderStore.updateStyleColor('bodyColor', color)" /></div>
           </template>
         </div>
         <div v-else class="block-list">
@@ -172,31 +215,24 @@ const applyThemePreset = (preset) => {
               <div class="extra-preview" :class="`extra-preview--${blockOptions.find((i)=>i.type===block.type)?.preview}`"></div>
               <div class="block-head-meta">
                 <h4>{{ block.label || blockOptions.find((i)=>i.type===block.type)?.label || block.type }}</h4>
-                <small v-if="block.price > 0" class="price-badge">${{ block.price }}</small>
-                <small v-else class="price-badge price-badge--free">Incluido</small>
+                <small v-if="block.included" class="price-badge price-badge--free">Incluido</small>
+                <small v-else-if="block.price > 0" class="price-badge">${{ block.price }}</small>
+                <small v-else class="price-badge price-badge--free">Sin costo</small>
               </div>
             </div>
             <p class="block-description">{{ block.description || blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p>
             <div class="block-footer">
               <label class="switch" :aria-label="`Activar ${block.type}`">
-                <input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block)" />
+                <input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block, $event)" />
                 <span class="switch-slider"></span>
               </label>
               <span class="status-label">{{ block.enabled ? 'Activo' : 'Inactivo' }}</span>
               <div v-if="block.enabled" class="move-actions">
-                <button class="mini-btn" @click="builderStore.moveBlockUp(block.id)">↑</button>
-                <button class="mini-btn" @click="builderStore.moveBlockDown(block.id)">↓</button>
+                <button class="mini-btn" @click="builderStore.updateBlockOrder(block.id, 'up')">↑</button>
+                <button class="mini-btn" @click="builderStore.updateBlockOrder(block.id, 'down')">↓</button>
               </div>
             </div>
           </article>
-
-          <div v-if="mapBlock?.enabled" class="details-card">
-            <h4>Configuración de mapa</h4>
-            <div class="details-field"><label>Nombre del lugar</label><input v-model="mapBlock.settings.locationName" type="text" /></div>
-            <div class="details-field"><label>Dirección</label><input v-model="mapBlock.settings.address" type="text" /></div>
-            <div class="details-field"><label>URL normal de Google Maps</label><input v-model="mapBlock.settings.mapUrl" type="text" /></div>
-            <div class="details-field"><label>URL de insertar mapa</label><input v-model="mapBlock.settings.embedUrl" type="text" /></div>
-          </div>
         </div>
       </aside>
 
