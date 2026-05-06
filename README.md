@@ -1149,3 +1149,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Reduced hero names, section titles, story titles, detail titles, and quote typography so the invitation reads as editorial instead of poster-sized.
 - Aligned the details image panel to the combined height of the two stacked detail cards on desktop, with a safe 320px image height when stacked on mobile.
 - Introduced the internal `romantic-parallax` background-window pattern and documented the future `ParallaxBlock` extraction path without creating the reusable block yet.
+
+## HU-114 Romantic Motion margin, parallax and mobile fixes
+- Balanced Romantic Motion margins with the shared `romantic-template__container`, using `calc(100% - 40px)` on desktop and `calc(100% - 28px)` on mobile instead of overly tight gutters or full-viewport widths.
+- Updated the parallax window to a true full-width background layer with `background-attachment: fixed`, a subtle overlay, and solid surrounding sections above it.
+- Added the mobile parallax fallback to normal scroll with a fixed 360px visual window for reliable rendering on small devices.
+- Cleaned up mobile layout spacing, hero stacking, title sizing, media heights, and overflow safeguards to avoid horizontal scroll.

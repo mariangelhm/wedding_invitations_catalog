@@ -184,7 +184,7 @@ Vue.onUnmounted(() => {
 <template>
   <div ref="templateRoot" class="romantic-template" :style="themeVars">
     <header class="romantic-template__header" :class="{ scrolled: headerScrolled }">
-      <div class="romantic-template__header-inner">
+      <div class="romantic-template__header-inner romantic-template__container">
         <a class="romantic-template__initials" href="#home">{{ initials }}</a>
         <nav class="romantic-template__nav" :class="{ open: menuOpen }" aria-label="Navegación de la invitación">
           <a href="#story" @click="menuOpen = false">Nosotros</a>
@@ -193,7 +193,7 @@ Vue.onUnmounted(() => {
           <a href="#map" @click="menuOpen = false">P&R</a>
           <a href="#rsvp" @click="menuOpen = false">RSVP</a>
         </nav>
-        <button class="romantic-template__hamburger" type="button" :aria-expanded="menuOpen" @click="menuOpen = !menuOpen">
+        <button class="romantic-template__hamburger romantic-template__mobile-toggle" type="button" :aria-expanded="menuOpen" @click="menuOpen = !menuOpen">
           <span></span>
           <span></span>
           <span></span>
@@ -203,7 +203,7 @@ Vue.onUnmounted(() => {
 
     <section id="home" class="romantic-template__hero hero">
       <div class="hero-overlay" aria-hidden="true"></div>
-      <div class="romantic-template__hero-grid">
+      <div class="romantic-template__hero-grid romantic-template__container">
         <div class="romantic-template__hero-content motion-left" :ref="setRevealRef">
           <p class="eyebrow romantic-template__hero-eyebrow">Nos vamos a casar</p>
           <h1 class="romantic-template__hero-names">{{ names }}</h1>
@@ -221,7 +221,7 @@ Vue.onUnmounted(() => {
     </section>
 
     <section id="story" class="romantic-template__story story motion-section" :ref="setRevealRef">
-      <div class="romantic-template__story-grid">
+      <div class="romantic-template__story-grid romantic-template__container">
         <div class="romantic-template__story-content motion-left" :ref="setRevealRef">
           <p class="eyebrow">Nuestra historia</p>
           <h2 class="romantic-section-title romantic-template__section-title romantic-template__story-title">Un sí para celebrar con quienes más queremos</h2>
@@ -251,11 +251,11 @@ Vue.onUnmounted(() => {
     </section>
 
     <section id="details" class="romantic-template__details details motion-section" :ref="setRevealRef">
-      <div class="section-heading">
+      <div class="section-heading romantic-template__container">
         <p class="eyebrow">Cuándo y dónde</p>
         <h2 class="romantic-section-title romantic-template__section-title">Todo lo importante para acompañarnos</h2>
       </div>
-      <div class="romantic-template__details-grid">
+      <div class="romantic-template__details-grid romantic-template__container">
         <div class="romantic-template__details-list">
           <article class="romantic-template__detail-card">
             <span>01</span>
@@ -298,7 +298,7 @@ Vue.onUnmounted(() => {
       />
     </section>
 
-    <section id="map" class="romantic-template__map-faq romantic-template__map-faq-grid motion-section" :ref="setRevealRef">
+    <section id="map" class="romantic-template__map-faq romantic-template__map-faq-grid romantic-template__container motion-section" :ref="setRevealRef">
       <div class="romantic-section map-wrap">
         <p class="eyebrow">Ubicación</p>
         <MapBlock
