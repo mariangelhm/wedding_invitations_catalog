@@ -35,7 +35,7 @@ export const blockRegistry = {
     label: 'Mapa',
     previewType: 'map',
     draggable: true,
-    configurableProps: ['locationName', 'address', 'mapUrl'],
+    configurableProps: ['locationName', 'address', 'mapUrl', 'embedUrl'],
   },
   timeline: {
     component: TimelineBlock,
