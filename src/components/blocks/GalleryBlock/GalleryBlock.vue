@@ -2,10 +2,32 @@
 import { computed, onMounted, ref } from 'vue';
 import './galleryBlock.css';
 
-const props = withDefaults(defineProps<{ title?: string; images?: Array<{ src: string; alt?: string }>; integrated?: boolean; }>(), { title: 'Nuestros momentos', images: () => [], integrated: false });
+type GalleryImage = { src?: string; alt?: string };
+type GalleryBlockData = {
+  props?: Record<string, unknown>;
+  settings?: Record<string, unknown>;
+};
+
+const props = defineProps<{
+  block?: GalleryBlockData;
+  title?: string;
+  images?: GalleryImage[];
+  integrated?: boolean;
+}>();
+
+const data = computed(() => ({
+  ...(props.block?.settings || {}),
+  ...(props.block?.props || {}),
+  ...(props.title !== undefined ? { title: props.title } : {}),
+  ...(props.images !== undefined ? { images: props.images } : {}),
+  ...(props.integrated !== undefined ? { integrated: props.integrated } : {}),
+}));
+const resolvedTitle = computed(() => String(data.value.title || 'Nuestros momentos'));
+const resolvedIntegrated = computed(() => Boolean(data.value.integrated));
 const localSampleImages = [{ src: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1200&q=80', alt: 'Foto principal' }, { src: 'https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=1200&q=80', alt: 'Momento especial' }, { src: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80', alt: 'Nuestra historia' }, { src: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1200&q=80', alt: 'Celebración' }];
 const normalizedItems = computed(() => {
-  const customItems = (props.images || []).map((item, index) => ({ src: (item?.src || '').trim(), alt: item?.alt || `Imagen ${index + 1}` }));
+  const images = Array.isArray(data.value.images) ? data.value.images as GalleryImage[] : [];
+  const customItems = images.map((item, index) => ({ src: (item?.src || '').trim(), alt: item?.alt || `Imagen ${index + 1}` }));
   if (customItems.some((i) => i.src)) return customItems.map((i) => ({ ...i, isRealImage: Boolean(i.src) }));
   return localSampleImages.map((item) => ({ ...item, isRealImage: true }));
 });
@@ -15,8 +37,8 @@ onMounted(() => { const observer = new IntersectionObserver((entries) => { const
 const openLightbox = (index:number) => { if (!normalizedItems.value[index]?.src) return; lightboxIndex.value = index; lightboxOpen.value = true; };
 </script>
 <template>
-  <section ref="rootEl" class="gallery-block" :class="[{ 'gallery-block--integrated': integrated }, { 'is-visible': isVisible }]">
-    <h3 class="gallery-title">{{ title }}</h3>
+  <section ref="rootEl" class="gallery-block" :class="[{ 'gallery-block--integrated': resolvedIntegrated }, { 'is-visible': isVisible }]">
+    <h3 class="gallery-title">{{ resolvedTitle }}</h3>
     <div class="gallery-grid">
       <article v-for="(image, index) in normalizedItems" :key="`${image.alt}-${index}`" class="gallery-item" :class="{ 'gallery-item--placeholder': !image.isRealImage }" @click="openLightbox(index)">
         <img v-if="image.isRealImage" :src="image.src" :alt="image.alt" loading="lazy" @error="$event.target.style.display='none'" />

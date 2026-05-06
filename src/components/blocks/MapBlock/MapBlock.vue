@@ -1,8 +1,32 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import './mapBlock.css';
 
-const props = defineProps<{ locationName: string; address: string; mapUrl: string; embedUrl?: string }>();
+type MapBlockData = {
+  props?: Record<string, unknown>;
+  settings?: Record<string, unknown>;
+};
+
+const props = defineProps<{
+  block?: MapBlockData;
+  locationName?: string;
+  address?: string;
+  mapUrl?: string;
+  embedUrl?: string;
+}>();
+
+const data = computed(() => ({
+  ...(props.block?.settings || {}),
+  ...(props.block?.props || {}),
+  ...(props.locationName !== undefined ? { locationName: props.locationName } : {}),
+  ...(props.address !== undefined ? { address: props.address } : {}),
+  ...(props.mapUrl !== undefined ? { mapUrl: props.mapUrl } : {}),
+  ...(props.embedUrl !== undefined ? { embedUrl: props.embedUrl } : {}),
+}));
+const resolvedLocationName = computed(() => String(data.value.locationName || 'Ubicación por definir'));
+const resolvedAddress = computed(() => String(data.value.address || 'Dirección por definir'));
+const resolvedMapUrl = computed(() => String(data.value.mapUrl || '#'));
+const resolvedEmbedUrl = computed(() => String(data.value.embedUrl || ''));
 
 const rootEl = ref<HTMLElement | null>(null);
 const isVisible = ref(false);
@@ -30,18 +54,18 @@ onMounted(() => {
       <div v-if="showTooltip" class="map-tooltip">Para obtener el link: abre Google Maps, busca el lugar, toca Compartir y copia el enlace.</div>
     </header>
 
-    <p class="map-location">{{ locationName }}</p>
-    <p class="map-address">{{ address }}</p>
-    <div v-if="embedUrl" class="map-embed-wrap">
+    <p class="map-location">{{ resolvedLocationName }}</p>
+    <p class="map-address">{{ resolvedAddress }}</p>
+    <div v-if="resolvedEmbedUrl" class="map-embed-wrap">
       <iframe
         class="map-embed"
-        :src="embedUrl"
+        :src="resolvedEmbedUrl"
         loading="lazy"
         allowfullscreen
         referrerpolicy="no-referrer-when-downgrade"
       ></iframe>
     </div>
     <div v-else class="map-fallback-preview" aria-hidden="true"><span>Vista de mapa disponible al pegar una URL de inserción</span></div>
-    <a v-if="mapUrl" class="map-btn" :href="mapUrl" target="_blank" rel="noopener noreferrer">Abrir en Google Maps</a>
+    <a class="map-btn" :href="resolvedMapUrl" target="_blank" rel="noopener noreferrer">Abrir en Google Maps</a>
   </section>
 </template>

@@ -106,8 +106,8 @@ const goToCheckout = () => {
   console.log('go to checkout');
 };
 
-const toggleBlockAddon = (item, event) => {
-  builderStore.toggleBlock(item.id, event?.target?.checked);
+const toggleBlockAddon = (block) => {
+  builderStore.toggleBlock(block.id, !block.enabled);
 };
 const updateMapBlockProp = (key, value) => { if (mapBlock.value) builderStore.updateBlockProps(mapBlock.value.id, { [key]: value }); };
 const onDragStart = (block) => { if (!block.enabled) return; draggingBlockId.value = block.id; };
@@ -224,7 +224,7 @@ const applyThemePreset = (preset) => {
             <p class="block-description">{{ block.description || blockOptions.find((i)=>i.type===block.type)?.description || '' }}</p>
             <div class="block-footer">
               <label class="switch" :aria-label="`Activar ${block.type}`">
-                <input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block, $event)" />
+                <input type="checkbox" :checked="block.enabled" @change="toggleBlockAddon(block)" />
                 <span class="switch-slider"></span>
               </label>
               <span class="status-label">{{ block.enabled ? 'Activo' : 'Inactivo' }}</span>
