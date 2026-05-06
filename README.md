@@ -1130,3 +1130,28 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Los headers internos de plantillas renderizadas en el editor no deben usar posicionamiento fijo contra el viewport del navegador.
 - Para previews dentro del editor, usa `position: sticky` o `position: absolute` dentro del contenedor raíz de la plantilla.
 - El contenedor raíz de la plantilla debe aislar layout/overflow para que navegación, hamburguesa y overlays no se dibujen encima del toolbar del editor.
+
+## HU-111 Romantic Motion layout recovery
+- Romantic Motion now uses a controlled two-column hero: text remains in the left content column while the editorial image and decorative layers stay contained in the right media column.
+- Hero image layering is intentionally limited to the media wrapper: a subtle circle, the image, and a small cream initials caption use local z-index stacking without crossing over the names or CTA.
+- The details section uses a safe grid with stacked detail cards on the left and a fixed-height image panel on the right, so the image fills its panel and does not leave gray empty space below.
+- The parallax break is the only scroll-layer image effect for now; details and story images are normal grid content instead of sticky or absolute overlapping layers.
+- Dangerous overlap rules were removed from the Romantic Motion layout, including hero negative margins, uncontrolled section-image overlap, and oversized title sizing that could cut text.
+
+## HU-112: Hero refinement + true parallax section added (Wix-style)
+- Romantic Motion keeps the safe two-column hero, but the media column is now larger and more visually dominant while remaining fully contained in its own grid column.
+- Hero, story, and detail typography were reduced to a calmer editorial scale so the template reads like a premium magazine layout instead of a poster.
+- A dedicated Wix-style parallax image section was added between story and details; it is the only scroll-depth image effect and falls back to normal scrolling on mobile.
+- Details imagery is kept clean with a fixed-height visual panel and no fake layers, sticky behavior, negative margins, or overlapping section tricks.
+
+## HU-113 Romantic Motion polish
+- Reduced Romantic Motion horizontal gutters to a narrower template width (`calc(100% - 24px)` on desktop and `calc(100% - 20px)` on mobile) with calmer 72px desktop and 40px mobile section rhythm.
+- Reduced hero names, section titles, story titles, detail titles, and quote typography so the invitation reads as editorial instead of poster-sized.
+- Aligned the details image panel to the combined height of the two stacked detail cards on desktop, with a safe 320px image height when stacked on mobile.
+- Introduced the internal `romantic-parallax` background-window pattern and documented the future `ParallaxBlock` extraction path without creating the reusable block yet.
+
+## HU-114 Romantic Motion margin, parallax and mobile fixes
+- Balanced Romantic Motion margins with the shared `romantic-template__container`, using `calc(100% - 40px)` on desktop and `calc(100% - 28px)` on mobile instead of overly tight gutters or full-viewport widths.
+- Updated the parallax window to a true full-width background layer with `background-attachment: fixed`, a subtle overlay, and solid surrounding sections above it.
+- Added the mobile parallax fallback to normal scroll with a fixed 360px visual window for reliable rendering on small devices.
+- Cleaned up mobile layout spacing, hero stacking, title sizing, media heights, and overflow safeguards to avoid horizontal scroll.

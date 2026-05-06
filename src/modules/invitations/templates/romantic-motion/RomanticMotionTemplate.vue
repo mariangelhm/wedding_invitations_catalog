@@ -184,7 +184,7 @@ Vue.onUnmounted(() => {
 <template>
   <div ref="templateRoot" class="romantic-template" :style="themeVars">
     <header class="romantic-template__header" :class="{ scrolled: headerScrolled }">
-      <div class="romantic-template__header-inner">
+      <div class="romantic-template__header-inner romantic-template__container">
         <a class="romantic-template__initials" href="#home">{{ initials }}</a>
         <nav class="romantic-template__nav" :class="{ open: menuOpen }" aria-label="Navegación de la invitación">
           <a href="#story" @click="menuOpen = false">Nosotros</a>
@@ -193,7 +193,7 @@ Vue.onUnmounted(() => {
           <a href="#map" @click="menuOpen = false">P&R</a>
           <a href="#rsvp" @click="menuOpen = false">RSVP</a>
         </nav>
-        <button class="romantic-template__hamburger" type="button" :aria-expanded="menuOpen" @click="menuOpen = !menuOpen">
+        <button class="romantic-template__hamburger romantic-template__mobile-toggle" type="button" :aria-expanded="menuOpen" @click="menuOpen = !menuOpen">
           <span></span>
           <span></span>
           <span></span>
@@ -202,31 +202,45 @@ Vue.onUnmounted(() => {
     </header>
 
     <section id="home" class="romantic-template__hero hero">
-      <div class="hero-overlay"></div>
-      <div class="hero-frame motion-left" :ref="setRevealRef">
-        <p class="eyebrow">Nos vamos a casar</p>
-        <h1 class="hero-names">{{ names }}</h1>
-        <div class="hero-divider" aria-hidden="true"></div>
-        <p class="hero-meta">{{ formattedDate }} · {{ eventLocation }}</p>
-        <a href="#rsvp" class="romantic-btn romantic-btn--ghost">Confirmar asistencia</a>
-      </div>
-      <div class="hero-media motion-right" :ref="setRevealRef">
-        <img :src="sampleImages[0]" alt="wedding" />
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="romantic-template__hero-grid romantic-template__container">
+        <div class="romantic-template__hero-content motion-left" :ref="setRevealRef">
+          <p class="eyebrow romantic-template__hero-eyebrow">Nos vamos a casar</p>
+          <h1 class="romantic-template__hero-names">{{ names }}</h1>
+          <div class="hero-divider" aria-hidden="true"></div>
+          <p class="hero-meta">{{ formattedDate }} · {{ eventLocation }}</p>
+          <a href="#rsvp" class="romantic-btn romantic-btn--ghost">Confirmar asistencia</a>
+        </div>
+        <div class="romantic-template__hero-media motion-right" :ref="setRevealRef">
+          <div class="romantic-template__hero-circle" aria-hidden="true"></div>
+          <img :src="sampleImages[0]" alt="Retrato editorial de boda" />
+          <div class="romantic-template__hero-caption">{{ initials }}</div>
+        </div>
       </div>
       <span class="hero-scroll-indicator" aria-hidden="true"></span>
     </section>
 
     <section id="story" class="romantic-template__story story motion-section" :ref="setRevealRef">
-      <div class="story-copy motion-left" :ref="setRevealRef">
-        <p class="eyebrow">Nuestra historia</p>
-        <h2 class="romantic-section-title">Un sí para celebrar con quienes más queremos</h2>
-        <p>{{ base.storyMessage || 'Nuestra historia merece celebrarse contigo. Te esperamos para compartir una noche íntima, alegre y llena de detalles que recuerden este comienzo.' }}</p>
-      </div>
-      <div class="story-media motion-right" :ref="setRevealRef">
-        <img :src="sampleImages[1]" alt="wedding" />
-        <div class="story-monogram">{{ initials }}</div>
+      <div class="romantic-template__story-grid romantic-template__container">
+        <div class="romantic-template__story-content motion-left" :ref="setRevealRef">
+          <p class="eyebrow">Nuestra historia</p>
+          <h2 class="romantic-section-title romantic-template__section-title romantic-template__story-title">Un sí para celebrar con quienes más queremos</h2>
+          <p>{{ base.storyMessage || 'Nuestra historia merece celebrarse contigo. Te esperamos para compartir una noche íntima, alegre y llena de detalles que recuerden este comienzo.' }}</p>
+        </div>
+        <div class="romantic-template__story-media motion-right" :ref="setRevealRef">
+          <img :src="sampleImages[1]" alt="Momento romántico de la pareja" />
+          <div class="story-monogram">{{ initials }}</div>
+        </div>
       </div>
     </section>
+
+    <!-- TODO: Move this pattern to a reusable ParallaxBlock extra later. Props should be: imageUrl, height, overlayOpacity, mobileHeight, backgroundPosition. -->
+    <section
+      class="romantic-parallax motion-section"
+      :ref="setRevealRef"
+      :style="{ '--parallax-image': `url(${sampleImages[3]})` }"
+      aria-label="Imagen destacada de la pareja"
+    ></section>
 
     <section v-if="hasBlock('countdown_wedding')" class="romantic-template__countdown romantic-section motion-section" :ref="setRevealRef">
       <CountdownBlock
@@ -237,34 +251,34 @@ Vue.onUnmounted(() => {
     </section>
 
     <section id="details" class="romantic-template__details details motion-section" :ref="setRevealRef">
-      <div class="section-heading">
+      <div class="section-heading romantic-template__container">
         <p class="eyebrow">Cuándo y dónde</p>
-        <h2 class="romantic-section-title">Todo lo importante para acompañarnos</h2>
+        <h2 class="romantic-section-title romantic-template__section-title">Todo lo importante para acompañarnos</h2>
       </div>
-      <div class="details-content">
-        <div class="details-grid">
-          <article class="detail-card">
+      <div class="romantic-template__details-grid romantic-template__container">
+        <div class="romantic-template__details-list">
+          <article class="romantic-template__detail-card">
             <span>01</span>
-            <h3>Ceremonia</h3>
+            <h3 class="romantic-template__detail-title">Ceremonia</h3>
             <p>{{ formattedDate }}</p>
             <p>{{ eventLocation }}</p>
             <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
           </article>
-          <article class="detail-card detail-card--accent">
+          <article class="romantic-template__detail-card romantic-template__detail-card--accent">
             <span>02</span>
-            <h3>Celebración</h3>
+            <h3 class="romantic-template__detail-title">Celebración</h3>
             <p>{{ formattedDate }}</p>
             <p>{{ mapSettings.address || eventLocation }}</p>
             <a class="romantic-link" :href="mapSettings.mapUrl || '#'" target="_blank" rel="noreferrer">Ver mapa</a>
           </article>
         </div>
-        <div class="details-image">
-          <img :src="sampleImages[3]" alt="wedding" />
+        <div class="romantic-template__details-visual">
+          <img :src="sampleImages[4]" alt="Mesa decorada para celebración de boda" />
         </div>
       </div>
     </section>
 
-    <section id="gallery" class="romantic-template__parallax gallery motion-section" :ref="setRevealRef" :style="{ '--motion-parallax-image': `url(${sampleImages[2]})` }">
+    <section id="gallery" class="romantic-template__quote-break gallery motion-section" :ref="setRevealRef" :style="{ '--motion-parallax-image': `url(${sampleImages[2]})` }">
       <p>Cada historia de amor merece celebrarse</p>
     </section>
 
@@ -275,7 +289,7 @@ Vue.onUnmounted(() => {
     <section id="rsvp" class="romantic-template__rsvp romantic-section motion-section" :ref="setRevealRef">
       <div class="rsvp-intro">
         <p class="eyebrow">RSVP</p>
-        <h2 class="romantic-section-title">Confirma tu asistencia</h2>
+        <h2 class="romantic-section-title romantic-template__section-title">Confirma tu asistencia</h2>
         <p>Tu respuesta nos ayuda a preparar cada detalle de esta celebración.</p>
       </div>
       <RSVPBlock
@@ -284,7 +298,7 @@ Vue.onUnmounted(() => {
       />
     </section>
 
-    <section id="map" class="romantic-template__map-faq motion-section" :ref="setRevealRef">
+    <section id="map" class="romantic-template__map-faq romantic-template__map-faq-grid romantic-template__container motion-section" :ref="setRevealRef">
       <div class="romantic-section map-wrap">
         <p class="eyebrow">Ubicación</p>
         <MapBlock
@@ -297,7 +311,7 @@ Vue.onUnmounted(() => {
       </div>
       <div class="faq">
         <p class="eyebrow">Información útil</p>
-        <h2 class="romantic-section-title">Preguntas frecuentes</h2>
+        <h2 class="romantic-section-title romantic-template__section-title">Preguntas frecuentes</h2>
         <article v-for="(item, i) in faqs" :key="item.q" class="faq-item" :class="{ open: openFaq === i }">
           <button class="faq-trigger" type="button" @click="openFaq = openFaq === i ? -1 : i">
             <span>{{ item.q }}</span>
