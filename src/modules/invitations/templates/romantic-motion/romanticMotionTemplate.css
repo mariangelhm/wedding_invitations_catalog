@@ -1,7 +1,19 @@
+.romantic-template-viewport {
+  width: 100%;
+  background: transparent;
+  display: block;
+}
+
 .romantic-template {
+  --romantic-template-width: min(calc(100% - 40px), 1140px);
+  --romantic-section-y: 72px;
   --motion-shadow: 0 24px 70px color-mix(in srgb, var(--theme-title-text, #303030) 12%, transparent);
   --motion-soft-shadow: 0 14px 38px color-mix(in srgb, var(--theme-title-text, #303030) 10%, transparent);
-  background: var(--theme-page-bg, #F4F1EA);
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--theme-page-bg, #F7F7F5);
   color: var(--theme-body-text, #575757);
   font-family: Inter, system-ui, sans-serif;
   line-height: 1.65;
@@ -9,6 +21,7 @@
   scroll-behavior: smooth;
 }
 
+.romantic-template,
 .romantic-template *,
 .romantic-template *::before,
 .romantic-template *::after {
@@ -28,24 +41,25 @@
 }
 
 .romantic-template__header {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 50;
-  color: var(--theme-hero-text, #FFFFFF);
+  color: var(--theme-title-text, #303030);
   transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
 }
 
 .romantic-template__header.scrolled {
   background: color-mix(in srgb, var(--theme-section-bg, #FFFFFF) 92%, transparent);
-  color: var(--theme-title-text, #303030);
   box-shadow: 0 10px 28px color-mix(in srgb, var(--theme-title-text, #303030) 8%, transparent);
   backdrop-filter: blur(18px);
 }
 
+.romantic-template__container {
+  width: var(--romantic-template-width);
+  margin-inline: auto;
+}
+
 .romantic-template__header-inner {
-  width: min(1180px, calc(100% - 40px));
   min-height: 72px;
-  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -104,59 +118,34 @@
 
 .romantic-template__hero {
   position: relative;
-  min-height: clamp(680px, 92vh, 860px);
-  margin-top: -72px;
-  padding: 128px max(24px, 7vw) 72px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
-  align-items: end;
-  gap: clamp(28px, 6vw, 86px);
-  background: var(--theme-hero-bg, linear-gradient(135deg, #4D4A43 0%, #303030 100%));
+  min-height: clamp(600px, 84vh, 800px);
+  padding: var(--romantic-section-y) 0;
+  background: var(--theme-hero-bg, #F7F7F5);
   background-position: center;
   background-size: cover;
   color: var(--theme-hero-text, #FFFFFF);
-  overflow: hidden;
-}
-
-.romantic-template__hero::before,
-.romantic-template__hero::after {
-  content: '';
-  position: absolute;
-  border: 1px solid color-mix(in srgb, var(--theme-hero-text, #FFFFFF) 24%, transparent);
-  border-radius: 999px;
-  pointer-events: none;
-}
-
-.romantic-template__hero::before {
-  width: min(62vw, 620px);
-  aspect-ratio: 1;
-  right: -12vw;
-  top: 12vh;
-}
-
-.romantic-template__hero::after {
-  width: min(46vw, 420px);
-  aspect-ratio: 1;
-  left: -16vw;
-  bottom: -12vh;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
+  z-index: 0;
   background: var(--theme-hero-overlay, rgba(0, 0, 0, 0.3));
 }
 
-.hero-frame,
-.hero-media,
-.hero-card,
-.hero-scroll-indicator {
+.romantic-template__hero-grid {
   position: relative;
   z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(420px, 1.15fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
 }
 
-.hero-frame {
-  max-width: 900px;
+.romantic-template__hero-content {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
   display: grid;
   justify-items: start;
   gap: 18px;
@@ -171,11 +160,16 @@
   text-transform: uppercase;
 }
 
-.hero-names {
-  max-width: 720px;
+.romantic-template__hero-eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+}
+
+.romantic-template__hero-names {
+  max-width: 520px;
   margin: 0;
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-size: clamp(2.3rem, 4.2vw, 4rem);
   font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 0.95;
@@ -196,54 +190,66 @@
   font-size: clamp(1rem, 1.6vw, 1.25rem);
 }
 
-.hero-media {
+.romantic-template__hero-media {
   position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 520px;
+  z-index: 1;
+  min-width: 0;
+  height: clamp(580px, 80vh, 900px);
   overflow: hidden;
+  border-radius: 4px;
   border: 1px solid color-mix(in srgb, var(--theme-hero-text, #FFFFFF) 24%, transparent);
+  background: color-mix(in srgb, var(--theme-hero-text, #FFFFFF) 8%, transparent);
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.18);
 }
 
-.hero-media img {
+.romantic-template__hero-circle {
+  position: absolute;
+  z-index: 0;
+  right: -18%;
+  top: -14%;
+  width: min(76%, 520px);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--theme-hero-text, #FFFFFF) 38%, transparent);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.romantic-template__hero-media img {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.hero-card {
-  align-self: center;
-  justify-self: end;
-  width: min(100%, 300px);
-  padding: 32px 26px;
-  display: grid;
-  gap: 12px;
+.romantic-template__hero-caption {
+  position: absolute;
+  right: clamp(16px, 3vw, 32px);
+  bottom: clamp(16px, 3vw, 32px);
+  z-index: 2;
+  min-width: 118px;
+  padding: 18px 20px;
+  border: 1px solid var(--theme-border, #E6E2D8);
+  background: color-mix(in srgb, var(--theme-section-alt-bg, #F4F1EA) 92%, transparent);
+  color: var(--theme-title-text, #303030);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.16em;
   text-align: center;
-  border: 1px solid color-mix(in srgb, var(--theme-hero-text, #FFFFFF) 34%, transparent);
-  background: color-mix(in srgb, var(--theme-hero-text, #FFFFFF) 10%, transparent);
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(12px);
+  box-shadow: var(--motion-soft-shadow);
 }
 
-.hero-card span {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.4rem;
-  letter-spacing: 0.18em;
-}
-
-.hero-card strong {
-  color: var(--theme-hero-text, #FFFFFF);
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(3.2rem, 7vw, 5.4rem);
-  font-weight: 500;
-  line-height: 1;
-}
-
-.hero-card small {
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.hero-scroll-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  z-index: 1;
+  width: 1px;
+  height: 48px;
+  background: var(--theme-hero-text, #FFFFFF);
+  opacity: 0.6;
+  animation: heroFloat 1.8s ease-in-out infinite;
 }
 
 .romantic-btn {
@@ -277,40 +283,34 @@
   color: var(--theme-hero-button-hover-text, var(--theme-page-bg, #F4F1EA));
 }
 
-.hero-scroll-indicator {
-  position: absolute;
-  left: 50%;
-  bottom: 32px;
-  width: 1px;
-  height: 52px;
-  background: var(--theme-hero-text, #FFFFFF);
-  opacity: 0.72;
-  animation: heroFloat 1.8s ease-in-out infinite;
-}
-
 .romantic-section {
-  padding: clamp(76px, 9vw, 128px) max(24px, 8vw);
+  width: var(--romantic-template-width);
+  margin: 0 auto;
+  padding: var(--romantic-section-y) 0;
 }
 
-.romantic-section-title {
+.romantic-section-title,
+.romantic-template__section-title {
+  max-width: 100%;
   margin: 0;
   color: var(--theme-title-text, #303030);
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
   font-weight: 500;
   letter-spacing: -0.035em;
   line-height: 1.05;
+  overflow-wrap: break-word;
+  text-wrap: balance;
 }
 
 .section-heading {
-  max-width: 760px;
-  margin-bottom: clamp(30px, 5vw, 54px);
+  margin: 0 auto clamp(28px, 4vw, 44px);
   display: grid;
   gap: 10px;
 }
 
 .section-heading .eyebrow,
-.story-copy .eyebrow,
+.romantic-template__story-content .eyebrow,
 .rsvp-intro .eyebrow,
 .map-wrap > .eyebrow,
 .faq > .eyebrow {
@@ -318,30 +318,42 @@
 }
 
 .romantic-template__story {
+  position: relative;
+  z-index: 1;
   background:
     radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--theme-accent, #303030) 10%, transparent), transparent 30%),
     var(--theme-section-bg, #FFFFFF);
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.8fr);
-  align-items: center;
-  gap: clamp(36px, 7vw, 96px);
-  padding: clamp(88px, 10vw, 150px) max(24px, 8vw);
+  padding: var(--romantic-section-y) 0;
 }
 
-.story-copy {
+.romantic-template__story-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.85fr);
+  align-items: center;
+  gap: clamp(36px, 7vw, 96px);
+}
+
+.romantic-template__story-content {
+  min-width: 0;
   display: grid;
   gap: 18px;
 }
 
-.story-copy p:last-child {
+.romantic-template__story-title {
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
+  line-height: 1.05;
+}
+
+.romantic-template__story-content p:last-child {
   max-width: 620px;
   margin: 0;
   color: var(--theme-body-text, #575757);
   font-size: clamp(1.02rem, 1.6vw, 1.18rem);
 }
 
-.story-media {
+.romantic-template__story-media {
   position: relative;
+  min-width: 0;
   min-height: 480px;
   display: grid;
   place-items: center;
@@ -349,7 +361,7 @@
   box-shadow: var(--motion-shadow);
 }
 
-.story-media img {
+.romantic-template__story-media img {
   width: 100%;
   height: 100%;
   min-height: 480px;
@@ -357,7 +369,7 @@
   display: block;
 }
 
-.story-media::before {
+.romantic-template__story-media::before {
   content: '';
   position: absolute;
   inset: 28px;
@@ -366,42 +378,31 @@
   pointer-events: none;
 }
 
-.story-orb {
-  position: absolute;
-  border-radius: 999px;
-  background: linear-gradient(145deg, var(--theme-section-alt-bg, #F4F1EA), var(--theme-surface-bg, #FFFFFF));
-  box-shadow: var(--motion-soft-shadow);
-}
-
-.story-orb--large {
-  width: min(86%, 380px);
-  aspect-ratio: 1;
-}
-
-.story-orb--small {
-  right: 8%;
-  bottom: 10%;
-  width: 132px;
-  aspect-ratio: 1;
-  background: var(--theme-accent, #303030);
-  opacity: 0.16;
-}
-
 .story-monogram {
-  position: relative;
-  z-index: 1;
-  width: min(66%, 280px);
+  position: absolute;
+  z-index: 2;
+  right: clamp(18px, 4vw, 42px);
+  bottom: clamp(18px, 4vw, 42px);
+  width: min(46%, 220px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--theme-title-text, #303030) 22%, transparent);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--theme-surface-bg, #FFFFFF) 82%, transparent);
+  background: color-mix(in srgb, var(--theme-surface-bg, #FFFFFF) 84%, transparent);
   color: var(--theme-title-text, #303030);
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
   letter-spacing: 0.18em;
-  box-shadow: var(--motion-shadow);
+  box-shadow: var(--motion-soft-shadow);
+}
+
+
+.romantic-template__countdown,
+.romantic-template__gallery,
+.romantic-template__rsvp {
+  width: 100%;
+  margin: 0;
 }
 
 .romantic-template__countdown {
@@ -420,76 +421,102 @@
   text-align: center;
 }
 
-.romantic-template__details {
-  background: var(--theme-page-bg, #F4F1EA);
-  padding: clamp(84px, 10vw, 140px) max(24px, 8vw);
+.romantic-parallax {
+  height: 68vh;
+  min-height: 520px;
+  background-image: var(--parallax-image);
+  background-attachment: fixed;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  overflow: hidden;
 }
 
-.details-content {
+.romantic-parallax::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+.romantic-template__details {
+  position: relative;
+  z-index: 1;
+  background: var(--theme-details-bg, #F7F7F7);
+  padding: var(--romantic-section-y) 0;
+}
+
+.romantic-template__details-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
-  gap: clamp(18px, 3vw, 34px);
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 1fr);
+  gap: clamp(28px, 4vw, 56px);
   align-items: stretch;
 }
 
-.details-grid {
+.romantic-template__details-list {
+  min-width: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(18px, 3vw, 34px);
+  grid-template-rows: 1fr 1fr;
+  gap: 24px;
 }
 
-.detail-card {
-  min-height: 320px;
-  padding: clamp(28px, 5vw, 54px);
+.romantic-template__detail-card {
+  min-width: 0;
+  min-height: 268px;
+  padding: clamp(28px, 4vw, 46px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   overflow: hidden;
-  box-sizing: border-box;
   border: 1px solid var(--theme-border, #E6E2D8);
   background: var(--theme-surface-bg, #FFFFFF);
   box-shadow: var(--motion-soft-shadow);
 }
 
-.detail-card--accent {
+.romantic-template__detail-card--accent {
   background: var(--theme-section-alt-bg, #F4F1EA);
 }
 
-.detail-card span {
+.romantic-template__detail-card span {
   color: var(--theme-accent, #303030);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.18em;
 }
 
-.detail-card h3 {
+.romantic-template__detail-title {
   max-width: 100%;
   margin: auto 0 16px;
   color: var(--theme-title-text, #303030);
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-size: clamp(1.7rem, 2.2vw, 2.4rem);
   font-weight: 500;
-  line-height: 1;
-  overflow-wrap: break-word;
+  line-height: 1.05;
+  overflow-wrap: normal;
   word-break: normal;
 }
 
-.detail-card p {
+.romantic-template__detail-card p {
+  max-width: 100%;
   margin: 0 0 8px;
   color: var(--theme-body-text, #575757);
+  overflow-wrap: break-word;
 }
 
-.details-image {
-  min-height: 100%;
+.romantic-template__details-visual {
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
   background: var(--theme-section-alt-bg, #F4F1EA);
   box-shadow: var(--motion-soft-shadow);
 }
 
-.details-image img {
+.romantic-template__details-visual img {
   width: 100%;
   height: 100%;
-  min-height: 100%;
   object-fit: cover;
   display: block;
 }
@@ -511,25 +538,27 @@
   padding-bottom: 4px;
 }
 
-.romantic-template__parallax {
-  min-height: 460px;
+.romantic-template__quote-break {
+  height: 62vh;
+  min-height: 420px;
   padding: max(60px, 8vw) 24px;
   display: grid;
   place-items: center;
   text-align: center;
   background-image: linear-gradient(var(--theme-quote-overlay, rgba(0, 0, 0, 0.25)), var(--theme-quote-overlay, rgba(0, 0, 0, 0.25))), var(--motion-parallax-image), var(--theme-quote-bg, var(--theme-section-alt-bg, #EFEBE9));
-  background-attachment: fixed;
+  background-attachment: scroll;
   background-position: center;
   background-size: cover;
 }
 
-.romantic-template__parallax p {
+.romantic-template__quote-break p {
   max-width: 840px;
   margin: 0;
   color: var(--theme-quote-text, var(--theme-title-text, #303030));
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.2rem, 5vw, 4.6rem);
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
   line-height: 1.04;
+  text-wrap: balance;
 }
 
 .romantic-template__gallery {
@@ -537,7 +566,7 @@
 }
 
 .romantic-template__gallery .gallery-block {
-  max-width: 1120px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: clamp(18px, 3vw, 30px);
   border-color: var(--theme-border, #E6E2D8);
@@ -546,6 +575,8 @@
 }
 
 .romantic-template__rsvp {
+  position: relative;
+  z-index: 1;
   background: var(--theme-rsvp-bg, #EFEBE9);
   color: var(--theme-rsvp-text, #2F2E2E);
   display: grid;
@@ -554,7 +585,8 @@
   gap: clamp(30px, 6vw, 86px);
 }
 
-.romantic-template__rsvp .romantic-section-title {
+.romantic-template__rsvp .romantic-section-title,
+.romantic-template__rsvp .romantic-template__section-title {
   color: var(--theme-rsvp-text, #2F2E2E);
 }
 
@@ -596,12 +628,23 @@
 }
 
 .romantic-template__map-faq {
+  position: relative;
+  z-index: 1;
   background: var(--theme-section-bg, #FFFFFF);
-  padding: clamp(84px, 10vw, 140px) max(24px, 8vw);
+  padding: var(--romantic-section-y) 0;
+}
+
+.romantic-template__map-faq-grid {
   display: grid;
-  grid-template-columns: minmax(420px, 1.15fr) minmax(320px, 0.85fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   align-items: start;
   gap: clamp(28px, 5vw, 72px);
+}
+
+.romantic-template__map-faq .romantic-section-title,
+.romantic-template__map-faq .romantic-template__section-title {
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
+  overflow-wrap: anywhere;
 }
 
 .map-wrap,
@@ -632,7 +675,7 @@
   overflow: hidden;
   border-radius: 6px;
   border: 1px solid var(--theme-border, #E6E2D8);
-  background: var(--theme-page-bg, #F4F1EA);
+  background: var(--theme-details-bg, #F7F7F7);
 }
 
 .map-wrap .map-embed {
@@ -761,48 +804,162 @@
     display: grid;
   }
 
-  .romantic-template__hero,
-  .romantic-template__story,
-  .details-content,
-  .details-grid,
-  .romantic-template__rsvp,
-  .romantic-template__map-faq {
+  .romantic-template__rsvp {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .romantic-template__hero {
-    min-height: 720px;
-    align-items: center;
-  }
-
-  .hero-media {
-    min-height: 360px;
-  }
-
-  .story-media {
-    min-height: 360px;
-  }
-
-  .romantic-template__parallax {
-    min-height: 330px;
-    background-attachment: scroll;
   }
 }
 
 @media (max-width: 768px) {
-  .hero-names {
-    font-size: clamp(2.2rem, 10vw, 3.5rem);
+  .romantic-template {
+    --romantic-template-width: min(calc(100% - 28px), 100%);
+    --romantic-section-y: 48px;
+    width: 100%;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .romantic-template,
+  .romantic-template * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .romantic-template__header-inner {
+    width: min(calc(100% - 28px), 100%);
+    margin-inline: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .romantic-template__logo {
+    writing-mode: horizontal-tb;
+    white-space: nowrap;
+    display: inline-flex;
+    gap: 4px;
+  }
+
+  .romantic-template__nav {
+    display: none;
+  }
+
+  .romantic-template__mobile-toggle {
+    display: inline-flex;
+  }
+
+  .romantic-template__hero-grid,
+  .romantic-template__story-grid,
+  .romantic-template__details-grid,
+  .romantic-template__map-faq-grid,
+  .romantic-template__rsvp-grid,
+  .romantic-template__rsvp {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .romantic-template__hero {
+    min-height: auto;
+    padding: 72px 0 48px;
+  }
+
+  .romantic-template__hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .romantic-template__hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: left;
+  }
+
+  .romantic-template__hero-names {
+    max-width: 100%;
+    font-size: clamp(2rem, 10vw, 3.2rem);
+    line-height: 1;
+  }
+
+  .romantic-template__hero-media {
+    width: 100%;
+    height: 340px;
+    overflow: hidden;
+  }
+
+  .romantic-template__hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .romantic-template__section,
+  .romantic-section,
+  .romantic-template__story,
+  .romantic-template__details,
+  .romantic-template__rsvp,
+  .romantic-template__map-faq {
+    padding: 48px 0;
+  }
+
+  .romantic-template__section-title,
+  .romantic-template__story-title,
+  .romantic-template__detail-title {
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+    line-height: 1.08;
+    overflow-wrap: break-word;
+  }
+
+  .romantic-template__story-media,
+  .romantic-template__story-media img {
+    min-height: 360px;
+  }
+
+  .romantic-template__details-list {
+    grid-template-rows: auto;
+    gap: 20px;
+  }
+
+  .romantic-template__details-visual {
+    height: 320px;
+    min-height: 0;
+  }
+
+  .romantic-parallax {
+    height: 360px;
+    min-height: 360px;
+    background-attachment: scroll;
+    background-position: center;
+  }
+
+  .romantic-template img,
+  .romantic-template iframe {
+    max-width: 100%;
+  }
+
+  .romantic-template__quote-break {
+    height: 360px;
+    min-height: 360px;
+    background-attachment: scroll;
+  }
+
+  .motion-left,
+  .motion-right {
+    transform: translateY(36px);
   }
 }
 
 @media (max-width: 560px) {
-  .romantic-template__hero {
-    min-height: 680px;
-    padding-inline: 22px;
+  .romantic-template__hero,
+  .romantic-section,
+  .romantic-template__story,
+  .romantic-template__details,
+  .romantic-template__rsvp,
+  .romantic-template__map-faq {
+    padding-inline: 0;
   }
 
-  .detail-card h3 {
-    font-size: clamp(2rem, 12vw, 3.1rem);
+  .romantic-template__detail-card {
+    min-height: 240px;
   }
 
   .map-wrap .map-embed-wrap {
@@ -814,23 +971,7 @@
     min-height: 240px;
   }
 
-  .hero-media {
-    min-height: 300px;
-  }
-
-  .romantic-section,
-  .romantic-template__story,
-  .romantic-template__details,
-  .romantic-template__rsvp,
-  .romantic-template__map-faq {
-    padding-inline: 22px;
-  }
-
-  .detail-card {
-    min-height: 260px;
-  }
-
   .story-monogram {
-    width: min(76%, 250px);
+    width: min(52%, 190px);
   }
 }
