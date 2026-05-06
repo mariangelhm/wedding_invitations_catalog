@@ -109,6 +109,7 @@ const goToCheckout = () => {
 const toggleBlockAddon = (item, event) => {
   builderStore.toggleBlock(item.id, event?.target?.checked);
 };
+const updateMapBlockProp = (key, value) => { if (mapBlock.value) builderStore.updateBlockProps(mapBlock.value.id, { [key]: value }); };
 const onDragStart = (block) => { if (!block.enabled) return; draggingBlockId.value = block.id; };
 const onDropOver = (block) => { if (!block.enabled || !draggingBlockId.value || draggingBlockId.value === block.id) return; dropTargetBlockId.value = block.id; };
 const onDropBlock = (targetBlock) => {
