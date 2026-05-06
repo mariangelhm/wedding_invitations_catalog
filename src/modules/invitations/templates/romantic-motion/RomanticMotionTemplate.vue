@@ -182,10 +182,11 @@ Vue.onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="templateRoot" class="romantic-template" :style="themeVars">
+  <div class="romantic-template-viewport">
+    <div ref="templateRoot" class="romantic-template" :style="themeVars">
     <header class="romantic-template__header" :class="{ scrolled: headerScrolled }">
       <div class="romantic-template__header-inner romantic-template__container">
-        <a class="romantic-template__initials" href="#home">{{ initials }}</a>
+        <a class="romantic-template__initials romantic-template__logo" href="#home">{{ initials }}</a>
         <nav class="romantic-template__nav" :class="{ open: menuOpen }" aria-label="Navegación de la invitación">
           <a href="#story" @click="menuOpen = false">Nosotros</a>
           <a href="#details" @click="menuOpen = false">Detalles</a>
@@ -329,5 +330,6 @@ Vue.onUnmounted(() => {
       <p>{{ formattedDate }}</p>
       <p>Gracias por ser parte de nuestra historia</p>
     </footer>
+    </div>
   </div>
 </template> 

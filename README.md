@@ -1155,3 +1155,9 @@ The `builderStore` creates and stores a default invitation draft with a consiste
 - Updated the parallax window to a true full-width background layer with `background-attachment: fixed`, a subtle overlay, and solid surrounding sections above it.
 - Added the mobile parallax fallback to normal scroll with a fixed 360px visual window for reliable rendering on small devices.
 - Cleaned up mobile layout spacing, hero stacking, title sizing, media heights, and overflow safeguards to avoid horizontal scroll.
+
+## HU-115 Romantic Motion viewport and mobile padding fix
+- Added a `romantic-template-viewport` wrapper so the invitation is centered on a neutral viewport background without moving internal sections.
+- Applied template-level width and padding (`min(100%, 1140px)`, 24px desktop, 16px mobile) for consistent breathing space like a Wix-style preview.
+- Improved the mobile header layout with horizontal logo mode, hidden nav, and visible mobile toggle while preserving the existing section order.
+- Reinforced responsive overflow safety so Romantic Motion stays within the viewport on mobile.

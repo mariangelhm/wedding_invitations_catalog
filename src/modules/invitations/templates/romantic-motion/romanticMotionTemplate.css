@@ -1,11 +1,20 @@
+.romantic-template-viewport {
+  width: 100%;
+  background: #f3f3f3;
+  display: flex;
+  justify-content: center;
+}
+
 .romantic-template {
   --romantic-template-width: min(calc(100% - 40px), 1140px);
   --romantic-section-y: 72px;
   --motion-shadow: 0 24px 70px color-mix(in srgb, var(--theme-title-text, #303030) 12%, transparent);
   --motion-soft-shadow: 0 14px 38px color-mix(in srgb, var(--theme-title-text, #303030) 10%, transparent);
-  width: 100%;
+  width: min(100%, 1140px);
   max-width: 100%;
-  background: var(--theme-page-bg, #F4F1EA);
+  padding: 24px;
+  box-sizing: border-box;
+  background: #ffffff;
   color: var(--theme-body-text, #575757);
   font-family: Inter, system-ui, sans-serif;
   line-height: 1.65;
@@ -797,12 +806,21 @@
   .romantic-template {
     --romantic-template-width: min(calc(100% - 28px), 100%);
     --romantic-section-y: 48px;
+    width: 100%;
+    padding: 16px;
     overflow-x: hidden;
   }
 
   .romantic-template__header-inner {
     width: min(calc(100% - 28px), 100%);
     margin-inline: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .romantic-template__logo {
+    writing-mode: horizontal-tb;
   }
 
   .romantic-template__nav {
@@ -844,6 +862,7 @@
     width: 100%;
     height: 340px;
   }
+}
 
   .romantic-template__section,
   .romantic-section,
